@@ -33,15 +33,12 @@
         .navbar .menu a {
             font-size: 16px;
         }
-        .navbar .actions a {
+
+        .navbar .actions a.signin {
             font-size: 16px;
             padding: 10px 20px;
             border-radius: 20px;
             background-color: #34a853;
-            color: #ffffff;
-        }
-        .navbar .actions a.signin {
-            background-color: transparent;
             color: #ffffff;
         }
         .content {
@@ -57,10 +54,6 @@
     </style>
 </head>
 <body>
-
-<!-- <?php
-include "tCreation.php";
-?> -->
     <div class="navbar">
         <div class="logo">
             LetMeVolunteer
@@ -71,7 +64,6 @@ include "tCreation.php";
             <a href="#">Blog</a>
         </div>
         <div class="actions">
-            <a href="#" class="organize">Organize an event</a>
             <a href="#" class="signin">Sign in</a>
         </div>
     </div>
