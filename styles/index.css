@@ -31,12 +31,14 @@ body {
     font-size: 16px;
 }
 
-.navbar .signin-button a {
+.navbar .signup-button a {
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 20px;
     background-color: #34a853;
     color: #ffffff;
+    display: inline-block;
+    text-decoration: none;
 }
 
 .content {

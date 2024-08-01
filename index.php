@@ -16,8 +16,8 @@
             <a href="#">About</a>
             <a href="#">Blog</a>
         </div>
-        <div class="signin-button">
-            <a href="pages/login/login.php" class="signin-button">Sign in</a>
+        <div class="signup-button">
+            <a href="pages/signup/signup.php">Sign Up</a>
         </div>
     </div>
     <div class="content">
