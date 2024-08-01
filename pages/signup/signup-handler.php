@@ -1,39 +1,44 @@
 <?php
 
-include "../../dhb.inc.php"
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
+include "../../dbh.inc.php";
+
+// Posting data from form to variables.
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    $fullname = $_POST['fullname']; // Add htmlspecialchars()
-    $username = $_POST['username']; // Add htmlspecialchars()
-    $email = $_POST['email']; // Add htmlspecialchars()
-    $pwd = $_POST['pwd']; //Add htmlspecialchars()
-    $created_at = $_POST['created_at'];
+    $fullname = htmlspecialchars($_POST['fullname']);
+    $username = htmlspecialchars($_POST['username']);
+    $email = htmlspecialchars($_POST['email']);
+    $pwd = htmlspecialchars($_POST['pwd']);
+    $created_at = date('Y-m-d H:i:s');
 
+    // Error handler to exit, if no value is inputted by user.
+    if (empty($fullname) || empty($username) || empty($email) || empty($pwd))
+    {
+        exit("Please fill all fields.");
+    }
+
+    // Adding insert script to variable.
     $insert = "INSERT INTO users (fullname, username, email, pwd, created_at) VALUES ('$fullname', '$username', '$email', '$pwd', '$created_at')";
 
+    // Running query to insert values to table.
     if(mysqli_query($con, $insert))
     {
         echo "New Record Inserted.";
     }
     else
     {
-        echo "Error: " . $insert.mysqli_error($con);
+        echo "Error: " . $insert . mysqli_error($con);
     }
 
-    if (empty($username) || empty($pwd))
-    {
-        exit();
-    }    
-
-    echo $username;
-    echo "<br>";
-    echo $pwd;
-
+    // Redirects user to sign up page after running code.
     header("Location: signup.php");
 }
 else
 {
+    // Redirects illegal users to signup page.
     header("Location: signup.php");
-    die();
 }

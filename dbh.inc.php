@@ -1,5 +1,9 @@
 <?php
 
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 // Database Connection
 $serverName = "localhost";
 $userName = "root";
@@ -13,37 +17,41 @@ if(!$con)
 {
     die("Connection Failed: " . mysqli_connect_error() . "<br>Error Code: " . mysqli_connect_errno());
 }
+else
+{
+    echo "Connection Success!<br>";
+}
 
 // Database Creation
 $dbCreate = "CREATE DATABASE IF NOT EXISTS $dbName";
 
-if(mysqli_query($con,$dbCreate))
+if(mysqli_query($con, $dbCreate))
 {
     echo "Database Created Successfully";
 }
 else
 {
-    die("Error Creating Database: " . mysqli_error()); //Check and try adding $conn inside mysqli_error().
+    die("Error Creating Database: " . mysqli_error($con));
 }
 
+// Select the database
+mysqli_select_db($con, $dbName);
+
 // Table Creation
-
-mysqli_select_db($con, $db); //Will the code work without this?
-
-$sql="CREATE TABLE IF NOT EXISTS users (
+$table_create = "CREATE TABLE IF NOT EXISTS users (
     id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    fullname VARCHAR(255) NOT NULL, 
     username VARCHAR(30) NOT NULL,
+    email VARCHAR(255) NOT NULL, 
     pwd VARCHAR(255) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIME
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 )";
 
-if(mysqli_query($conn,$sql))
+if(mysqli_query($con, $table_create))
 {
     echo "<br>Table Created Successfully";
 }
 else
 {
-    echo "Error Creating Table: " . mysqli_error($conn);
+    echo "Error Creating Table: " . mysqli_error($con);
 }
-
-header("Location: pages/signup/signup.php");
