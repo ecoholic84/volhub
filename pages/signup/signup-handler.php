@@ -4,7 +4,7 @@
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 
-include "../../dbh.inc.php";
+include_once "../../dbh.inc.php";
 
 // Posting data from form to variables.
 if ($_SERVER["REQUEST_METHOD"] == "POST")

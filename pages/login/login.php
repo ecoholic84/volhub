@@ -7,7 +7,7 @@
     <!-- <link rel="stylesheet" href="../styles/login.css"> -->
     <link rel="stylesheet" href="https://matcha.mizu.sh/matcha.css">
 
-    <?php include "../../dbh.inc.php"; ?>
+    <?php include_once "../../dbh.inc.php"; ?>
 
 </head>
 <body>
