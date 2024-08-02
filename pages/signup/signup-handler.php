@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
 
     // Redirects user to sign up page after running code.
-    header("Location: signup.php");
+    header("Location: ../profile-creation.php");
 }
 else
 {
