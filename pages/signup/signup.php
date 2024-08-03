@@ -25,6 +25,9 @@
                 <label for="pwd">Password</label>
                 <input type="password" id="pwd"name="pwd" placeholder="Password" required>
                 <br>
+                <label for="pwd">Repeat Password</label>
+                <input type="password" id="pwdrepeat"name="pwdrepeat" placeholder="Repeat Password" required>
+                <br>
                 <button type="submit">Create Account</button>
         </form>
     </div>
