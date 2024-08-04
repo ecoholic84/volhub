@@ -33,6 +33,7 @@
     </div>
 
     <?php
+    // Error Handler Functions
     if (isset($_GET["error"]))
     {
         if ($_GET["error"] == "emptyInput")

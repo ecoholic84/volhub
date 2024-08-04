@@ -4,7 +4,7 @@
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 
-include_once "../../dbh.inc.php";
+include_once "../../includes/dbh.inc.php";
 
 // Posting data from form to variables.
 if ($_SERVER["REQUEST_METHOD"] == "POST")
@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $pwdRepeat = htmlspecialchars($_POST['pwdrepeat']);
     $created_at = date('Y-m-d H:i:s');
 
-    require_once 'functions.inc.php';
+    require_once '../../includes/functions.inc.php';
 
     /*.......................ERROR HANDLERS.......................*/
 
