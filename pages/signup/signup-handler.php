@@ -23,14 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     // Function to exit, if no value is inputted by user.
     if (emptyInputSignup($fullname, $username, $email, $pwd, $pwdRepeat) !== false)
     {
-        header("Location: signup.php?error=emptyinput");
+        header("Location: signup.php?error=emptyInput");
         exit();
     }
 
     // Function to check if the username is valid.
     if (!invalidId($username))
     {
-        header("Location: signup.php?error=invalidusername");
+        header("Location: signup.php?error=invalidUsername");
         exit();
     }
     
@@ -38,27 +38,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     if (idExists($con, $username, $email) !== false)
     {
         header("Location: signup.php?error=usernameTaken");
-        exit("Username is taken. Try another.");
+        exit();
     }
 
     // Function to validate email id.
     if (invalidEmail($email) !== false)
     {
-        header("Location: signup.php?error=invalidemail");
+        header("Location: signup.php?error=invalidEmail");
         exit();
     }
 
     // Function to check if the password is less than 8.
     if (strlen($pwd) < 8)
     {
-        header("Location: signup.php?error=passwordtooShort");
-        exit("Password should have atleast 8 characters.");
+        header("Location: signup.php?error=passwordTooShort");
+        exit();
     }
 
     // Function to check if the password repeat matches.
     if (pwdMatch($pwd, $pwdRepeat) !== false)
     {
-        header("Location: signup.php?error=passwordsdontmatch");
+        header("Location: signup.php?error=passwordsDontMatch");
         exit();
     }
 

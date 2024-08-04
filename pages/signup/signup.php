@@ -31,5 +31,44 @@
                 <button type="submit">Create Account</button>
         </form>
     </div>
+
+    <?php
+    if (isset($_GET["error"]))
+    {
+        if ($_GET["error"] == "emptyInput")
+        {
+            echo "<p>Fill in all fields!</p>";
+        }
+        else if ($_GET["error"] == "invalidUsername")
+        {
+            echo "<p>Choose a proper username!</p>";
+        }
+        else if ($_GET["error"] == "usernameTaken")
+        {
+            echo "<p>Sorry,username is taken. Try again!</p>";
+        }
+        else if ($_GET["error"] == "invalidEmail")
+        {
+            echo "<p>Choose a proper email!</p>";
+        }
+        else if ($_GET["error"] == "passwordTooShort")
+        {
+            echo "<p>Password should be atleast 8 characters!</p>";
+        }
+        else if ($_GET["error"] == "passwordsDontqMatch")
+        {
+            echo "<p>Passwords Doesn't Match!</p>";
+        }
+        else if ($_GET["error"] == "stmtFailed")
+        {
+            echo "<p>Something went wrong, try again!</p>";
+        }
+        else if ($_GET["error"] == "none")
+        {
+            echo "<p>You have signed up!</p>";
+        }
+    }
+        ?>
+
 </body>
 </html>
