@@ -67,12 +67,19 @@ function idExists($con, $username, $email)
 
     if ($row = mysqli_fetch_assoc($resultData))
     {
-        return $row;
+
+        if ($row['userUsername'] === $username)
+        {
+            return "userUsername";
+        }
+        else if ($row['userEmail'] === $email)
+        {
+            return "userEmail";
+        }
     }
     else
     {
-        $result = false;
-        return $result;
+        return false;
     }
     mysqli_stmt_close($stmt);
 }
