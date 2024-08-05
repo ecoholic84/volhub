@@ -14,19 +14,19 @@
             <form action="signup-handler.php" method="POST">
 
                 <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Full Name" required>
+                <input type="text" id="fullname"name="fullname" placeholder="Full Name" required>
                 <br>
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Username" required>
                 <br>
                 <label for="email">Email Address</label> 
-                <input type="text" id="email" name="email" placeholder="Email Address" required>
+                <input type="text" id="email"name="email" placeholder="Email Address" required>
                 <br>
                 <label for="pwd">Password</label>
-                <input type="password" id="pwd" name="pwd" placeholder="Password" required>
+                <input type="password" id="pwd"name="pwd" placeholder="Password" required>
                 <br>
-                <label for="pwdrepeat">Repeat Password</label>
-                <input type="password" id="pwdrepeat" name="pwdrepeat" placeholder="Repeat Password" required>
+                <label for="pwd">Repeat Password</label>
+                <input type="password" id="pwdrepeat"name="pwdrepeat" placeholder="Repeat Password" required>
                 <br>
                 <button type="submit">Create Account</button>
         </form>
@@ -46,11 +46,7 @@
         }
         else if ($_GET["error"] == "usernameTaken")
         {
-            echo "<p>Sorry, username is taken. Try again!</p>";
-        }
-        else if ($_GET["error"] == "emailExists")
-        {
-            echo "<p>This email already exists!</p>";
+            echo "<p>Sorry,username is taken. Try again!</p>";
         }
         else if ($_GET["error"] == "invalidEmail")
         {
@@ -58,11 +54,11 @@
         }
         else if ($_GET["error"] == "passwordTooShort")
         {
-            echo "<p>Password should be at least 8 characters!</p>";
+            echo "<p>Password should be atleast 8 characters!</p>";
         }
-        else if ($_GET["error"] == "passwordsDontMatch")
+        else if ($_GET["error"] == "passwordsDontqMatch")
         {
-            echo "<p>Passwords don't match!</p>";
+            echo "<p>Passwords Doesn't Match!</p>";
         }
         else if ($_GET["error"] == "stmtFailed")
         {
