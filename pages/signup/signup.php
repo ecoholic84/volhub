@@ -48,6 +48,10 @@
         {
             echo "<p>Sorry,username is taken. Try again!</p>";
         }
+        else if ($_GET["error"] == "emailTaken")
+        {
+            echo "<p>Sorry, this email is already registered. Use another email!</p>";
+        }
         else if ($_GET["error"] == "invalidEmail")
         {
             echo "<p>Choose a proper email!</p>";

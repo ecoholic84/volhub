@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
     
     // Function to check if username is taken.
-    if (idExists($con, $username, $email) !== false)
+    if (idExists($con, $username) !== false)
     {
         header("Location: signup.php?error=usernameTaken");
         exit();
@@ -45,6 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     if (invalidEmail($email) !== false)
     {
         header("Location: signup.php?error=invalidEmail");
+        exit();
+    }
+
+    // Function to check if email is already registered.
+    if (emailExists($con, $email) !== false)
+    {
+        header("Location: signup.php?error=emailTaken");
         exit();
     }
 
