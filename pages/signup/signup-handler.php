@@ -4,7 +4,7 @@
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 
-include_once "../../dbh.inc.php";
+include_once "../../includes/dbh.inc.php";
 
 // Posting data from form to variables.
 if ($_SERVER["REQUEST_METHOD"] == "POST")
@@ -13,29 +13,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
     $pwd = htmlspecialchars($_POST['pwd']);
+    $pwdRepeat = htmlspecialchars($_POST['pwdrepeat']);
     $created_at = date('Y-m-d H:i:s');
 
-    // Error handler to exit, if no value is inputted by user.
-    if (empty($fullname) || empty($username) || empty($email) || empty($pwd))
+    require_once '../../includes/functions.inc.php';
+
+    /*.......................ERROR HANDLERS.......................*/
+
+    // Function to exit, if no value is inputted by user.
+    if (emptyInputSignup($fullname, $username, $email, $pwd, $pwdRepeat) !== false)
     {
-        exit("Please fill all fields.");
+        header("Location: signup.php?error=emptyInput");
+        exit();
     }
 
-    // Adding insert script to variable.
-    $insert = "INSERT INTO users (fullname, username, email, pwd, created_at) VALUES ('$fullname', '$username', '$email', '$pwd', '$created_at')";
-
-    // Running query to insert values to table.
-    if(mysqli_query($con, $insert))
+    // Function to check if the username is valid.
+    if (!invalidId($username))
     {
-        echo "New Record Inserted.";
+        header("Location: signup.php?error=invalidUsername");
+        exit();
     }
-    else
+    
+    // Function to check if username is taken.
+    if (idExists($con, $username) !== false)
     {
-        echo "Error: " . $insert . mysqli_error($con);
+        header("Location: signup.php?error=usernameTaken");
+        exit();
     }
 
-    // Redirects user to sign up page after running code.
-    header("Location: ../profile-creation.php");
+    // Function to validate email id.
+    if (invalidEmail($email) !== false)
+    {
+        header("Location: signup.php?error=invalidEmail");
+        exit();
+    }
+
+    // Function to check if email is already registered.
+    if (emailExists($con, $email) !== false)
+    {
+        header("Location: signup.php?error=emailTaken");
+        exit();
+    }
+
+    // Function to check if the password is less than 8.
+    if (strlen($pwd) < 8)
+    {
+        header("Location: signup.php?error=passwordTooShort");
+        exit();
+    }
+
+    // Function to check if the password repeat matches.
+    if (pwdMatch($pwd, $pwdRepeat) !== false)
+    {
+        header("Location: signup.php?error=passwordsDontMatch");
+        exit();
+    }
+
+    /*........................................................*/
+
+    createUser($con, $fullname, $username, $email, $pwd, $created_at);
 }
 else
 {
