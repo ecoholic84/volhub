@@ -121,7 +121,7 @@ function createUser($con, $fullname, $username, $email, $pwd, $created_at)
     mysqli_stmt_bind_param($stmt, "sssss", $fullname, $username, $email, $hashedPwd, $created_at);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    header("Location: ../profile-creation.php");
+    header("Location: ../pages/profile/profile-index.php");
     exit();
 }
 

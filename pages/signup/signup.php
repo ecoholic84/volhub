@@ -73,7 +73,7 @@
             echo "<p>You have signed up!</p>";
         }
     }
-        ?>
+    ?>
 
 </body>
 </html>
