@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VolunteerConnect</title>
+    <title>VolunHub</title>
     <style>
         [x-cloak] {
             display: none
@@ -35,7 +35,7 @@
                                         fill="currentColor" />
                                 </svg>
                             </span>
-                            <span>VOLHUB</span>
+                            <span>VOLUNHUB</span>
                         </a>
                         <div :class="{'flex': showMenu, 'hidden md:flex': !showMenu }"
                             class="absolute z-50 flex-col items-center justify-center w-full h-auto px-2 text-center text-gray-400 -translate-x-1/2 border-0 border-gray-700 rounded-full md:border md:w-auto md:h-10 left-1/2 md:flex-row md:items-center">
