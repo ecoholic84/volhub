@@ -118,7 +118,10 @@
                         </span>
                     </div>
                     <div class="mt-8 text-sm text-gray-300">By signing up, you agree to our terms and services.</div>
+                    <div class="mb-20"> </div>
                 </div>
+                <?php include_once "includes/features.php" ?>
+                <?php include_once "includes/about-us.php" ?>
                 <?php include_once "includes/footer.php" ?>
             </div>
     </div>
