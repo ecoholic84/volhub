@@ -167,8 +167,8 @@
         }, $data.cursorSpeed);
 
     })"
-    class="flex items-center justify-center mx-auto text-center max-w-7xl">
-    <div class="relative flex items-center justify-center h-auto">
+    class="class=flex items-center justify-center mx-auto text-center max-w-7xl h-24 overflow-hidden">
+    <div class="relative flex items-center justify-center h-auto min-h-[1.5em]">
         <p class="text-7xl font-white leading-tight" x-text="text"></p>
         <span class="absolute right-0 w-2 -mr-2 bg-black h-3/4" x-ref="cursor"></span>
     </div>
@@ -179,8 +179,7 @@
                     </h1>
                     <p
                         class="mx-auto mt-6 text-sm text-left text-gray-200 md:text-center md:mt-12 sm:text-base md:max-w-xl md:text-lg xl:text-xl">
-                        If you are ready to change the way you design websites, then you'll want to use our block
-                        builder to make it fun and easy!</p>
+                        Connecting Organizers and Volunteers Seamlessly.</p>
                     <div
                         class="relative flex items-center mx-auto mt-12 overflow-hidden text-left border border-gray-700 rounded-md md:max-w-md md:text-center">
                         <input type="text" name="email" placeholder="Email Address"
