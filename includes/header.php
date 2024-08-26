@@ -10,24 +10,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-black to-gray-800">
-    <nav class="w-full"
+    <nav class="w-full border-b border-gray-700"
          x-data="{
-             tabSelected: 1,
-             tabId: $id('tabs'),
-             mobileMenuOpen: false,
-             tabButtonClicked(tabButton){
-                 this.tabSelected = tabButton.id.replace(this.tabId + '-', '');
-                 this.tabRepositionMarker(tabButton);
-             },
-             tabRepositionMarker(tabButton){
-                 this.$refs.tabMarker.style.width=tabButton.offsetWidth + 'px';
-                 this.$refs.tabMarker.style.height=tabButton.offsetHeight + 'px';
-                 this.$refs.tabMarker.style.left=tabButton.offsetLeft + 'px';
-             }
-         }"
-         x-init="tabRepositionMarker($refs.tabButtons.firstElementChild);">
+             mobileMenuOpen: false
+         }">
         <div class="px-2 sm:px-6 lg:px-8">
-            <div class="relative flex h-24 items-center justify-between">
+            <div class="relative flex h-16 items-center justify-between">
                 <!-- Left side (logo and mobile menu button) -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -48,17 +36,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                             </svg>
                         </button>
-                    </div>
-                </div>
-                
-                <!-- Center (slider) -->
-                <div class="flex-1 flex justify-center">
-                    <div x-ref="tabButtons" class="relative inline-grid items-center justify-center h-10 grid-cols-2 p-1 bg-gray-800 rounded-lg select-none">
-                        <button :id="$id(tabId)" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-24 sm:w-32 h-8 px-3 text-sm font-medium text-gray-300 transition-all rounded-md cursor-pointer whitespace-nowrap">Dashboard</button>
-                        <button :id="$id(tabId)" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-24 sm:w-32 h-8 px-3 text-sm font-medium text-gray-300 transition-all rounded-md cursor-pointer whitespace-nowrap">Organize</button>
-                        <div x-ref="tabMarker" class="absolute left-0 z-10 w-1/2 h-full duration-300 ease-out" x-cloak>
-                            <div class="w-full h-full bg-gray-700 rounded-md shadow-sm"></div>
-                        </div>
                     </div>
                 </div>
                 
@@ -100,5 +77,9 @@
             </div>
         </div>
     </nav>
+
+    <!-- Subheader content will be included here -->
+    <?php include 'subheader.php'; ?>
+
 </body>
 </html>
