@@ -5,38 +5,60 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VolunHub</title>
+    <title>VolHub</title>
     <style>
         [x-cloak] {
             display: none
         }
+
+        .moving-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(to right, rgba(75, 85, 99, 0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(75, 85, 99, 0.2) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: moveGrid 15s linear infinite;
+    z-index: -1;
+}
+
+@keyframes moveGrid {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 50px 50px;
+    }
+}
+
+/* Add this new class */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+}
     </style>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="flex items-start justify-center h-full bg-white">
-    <div class="flex items-center justify-center w-full max-w-full">
-        <section
-            class="w-full px-3 antialiased bg-gradient-to-br from-gray-900 via-black to-gray-800 lg:px-6 min-h-screen">
-            <div class="mx-auto max-w-7xl">
-                <nav class="flex items-center w-full h-24 select-none" x-data="{ showMenu: false }">
-                    <div
-                        class="relative flex flex-wrap items-start justify-between w-full mx-auto font-medium md:items-center md:h-24 md:justify-between">
-                        <a href="#_"
-                            class="flex items-center w-1/4 py-4 pl-6 pr-4 space-x-2 font-extrabold text-white md:py-0">
-                            <span
-                                class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-900 rounded-full bg-gradient-to-br from-white via-gray-200 to-white">
-                                <svg class="w-auto h-5 -translate-y-px" viewBox="0 0 69 66" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="m31.2 12.2-3.9 12.3-13.4.5-13.4.5 10.7 7.7L21.8 41l-3.9 12.1c-2.2 6.7-3.8 12.4-3.6 12.5.2.2 5-3 10.6-7.1 5.7-4.1 10.9-7.2 11.5-6.8.6.4 5.3 3.8 10.5 7.5 5.2 3.8 9.6 6.6 9.8 6.4.2-.2-1.4-5.8-3.6-12.5l-3.9-12.2 8.5-6.2c14.7-10.6 14.8-9.6-.4-9.7H44.2L40 12.5C37.7 5.6 35.7 0 35.5 0c-.3 0-2.2 5.5-4.3 12.2Z"
-                                        fill="currentColor" />
-                                </svg>
-                            </span>
-                            <span>VOLUNHUB</span>
-                        </a>
+<body class="flex items-start justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 overflow-x-hidden">
+    <div class="moving-grid"></div>
+    <div class="content-wrapper w-full">
+        <div class="mx-auto max-w-7xl px-3 lg:px-6">
+            <nav class="flex items-center w-full h-24 select-none" x-data="{ showMenu: false }">
+                <div class="relative flex flex-wrap items-start justify-between w-full mx-auto font-medium md:items-center md:h-24 md:justify-between">
+                    <a href="#_" class="flex items-center w-1/4 py-4 pl-6 pr-4 space-x-2 font-extrabold text-white md:py-0">
+                        <span class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-900 rounded-full bg-gradient-to-br from-white via-gray-200 to-white">
+                            <svg class="w-auto h-5 -translate-y-px" viewBox="0 0 69 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="m31.2 12.2-3.9 12.3-13.4.5-13.4.5 10.7 7.7L21.8 41l-3.9 12.1c-2.2 6.7-3.8 12.4-3.6 12.5.2.2 5-3 10.6-7.1 5.7-4.1 10.9-7.2 11.5-6.8.6.4 5.3 3.8 10.5 7.5 5.2 3.8 9.6 6.6 9.8 6.4.2-.2-1.4-5.8-3.6-12.5l-3.9-12.2 8.5-6.2c14.7-10.6 14.8-9.6-.4-9.7H44.2L40 12.5C37.7 5.6 35.7 0 35.5 0c-.3 0-2.2 5.5-4.3 12.2Z" fill="currentColor" />
+                            </svg>
+                        </span>
+                        <span>VOLHUB</span>
+                    </a>
                         <div :class="{'flex': showMenu, 'hidden md:flex': !showMenu }"
                             class="absolute z-50 flex-col items-center justify-center w-full h-auto px-2 text-center text-gray-400 -translate-x-1/2 border-0 border-gray-700 rounded-full md:border md:w-auto md:h-10 left-1/2 md:flex-row md:items-center">
                             <a href="#"
@@ -96,90 +118,85 @@
                     </div>
                 </nav>
                 <div class="container px-6 py-32 mx-auto md:text-center md:px-4">
-                    <h1
-                        class="text-4xl font-extrabold leading-none leading-10 tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
-                        <span class="block">Nothing great is</span> <span
-                            class="relative inline-block mt-3 text-white">
+                <h1 class="text-4xl font-extrabold leading-none leading-10 tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
+                    <span class="block">Nothing great is</span> 
+                    <span class="relative inline-block mt-3 text-white">
                         <!-- Typing Effect -->
-
                         <div 
-    x-data="{
-        text: '',
-        textArray : ['made alone', 'achieved in isolation', 'built without teamwork'],
-        textIndex: 0,
-        charIndex: 0,
-        typeSpeed: 110,
-        cursorSpeed: 550,
-        pauseEnd: 1500,
-        pauseStart: 20,
-        direction: 'forward',
-    }" 
-    x-init="$nextTick(() => {
-        let typingInterval = setInterval(startTyping, $data.typeSpeed);
-        
-        function startTyping(){
-            let current = $data.textArray[ $data.textIndex ];
-            
-            // check to see if we hit the end of the string
-            if($data.charIndex > current.length){
-                    $data.direction = 'backward';
-                    clearInterval(typingInterval);
-                    
-                    setTimeout(function(){
-                        typingInterval = setInterval(startTyping, $data.typeSpeed);
-                    }, $data.pauseEnd);
-            }   
-                
-            $data.text = current.substring(0, $data.charIndex);
-            
-            if($data.direction == 'forward')
-            {
-                $data.charIndex += 1;
-            } 
-            else 
-            {
-                if($data.charIndex == 0)
-                {
-                    $data.direction = 'forward';
-                    clearInterval(typingInterval);
-                    setTimeout(function(){
-                        $data.textIndex += 1;
-                        if($data.textIndex >= $data.textArray.length)
-                        {
-                            $data.textIndex = 0;
-                        }
-                        typingInterval = setInterval(startTyping, $data.typeSpeed);
-                    }, $data.pauseStart);
-                }
-                $data.charIndex -= 1;
-            }
-        }
-                    
-        setInterval(function(){
-            if($refs.cursor.classList.contains('hidden'))
-            {
-                $refs.cursor.classList.remove('hidden');
-            } 
-            else 
-            {
-                $refs.cursor.classList.add('hidden');
-            }
-        }, $data.cursorSpeed);
+                            x-data="{
+                                text: '',
+                                textArray : ['made alone', 'possible without unity', 'done without teamwork'],
+                                textIndex: 0,
+                                charIndex: 0,
+                                typeSpeed: 110,
+                                cursorSpeed: 550,
+                                pauseEnd: 1500,
+                                pauseStart: 20,
+                                direction: 'forward',
+                            }" 
+                            x-init="$nextTick(() => {
+                                let typingInterval = setInterval(startTyping, $data.typeSpeed);
+                                
+                                function startTyping(){
+                                    let current = $data.textArray[ $data.textIndex ];
+                                    
+                                    if($data.charIndex > current.length){
+                                            $data.direction = 'backward';
+                                            clearInterval(typingInterval);
+                                            
+                                            setTimeout(function(){
+                                                typingInterval = setInterval(startTyping, $data.typeSpeed);
+                                            }, $data.pauseEnd);
+                                    }   
+                                        
+                                    $data.text = current.substring(0, $data.charIndex);
+                                    
+                                    if($data.direction == 'forward')
+                                    {
+                                        $data.charIndex += 1;
+                                    } 
+                                    else 
+                                    {
+                                        if($data.charIndex == 0)
+                                        {
+                                            $data.direction = 'forward';
+                                            clearInterval(typingInterval);
+                                            setTimeout(function(){
+                                                $data.textIndex += 1;
+                                                if($data.textIndex >= $data.textArray.length)
+                                                {
+                                                    $data.textIndex = 0;
+                                                }
+                                                typingInterval = setInterval(startTyping, $data.typeSpeed);
+                                            }, $data.pauseStart);
+                                        }
+                                        $data.charIndex -= 1;
+                                    }
+                                }
+                                            
+                                setInterval(function(){
+                                    if($refs.cursor.classList.contains('hidden'))
+                                    {
+                                        $refs.cursor.classList.remove('hidden');
+                                    } 
+                                    else 
+                                    {
+                                        $refs.cursor.classList.add('hidden');
+                                    }
+                                }, $data.cursorSpeed);
 
-    })"
-    class="class=flex items-center justify-center mx-auto text-center max-w-7xl h-24 overflow-hidden">
-    <div class="relative flex items-center justify-center h-auto min-h-[1.5em]">
-        <p class="text-7xl font-white leading-tight" x-text="text"></p>
-        <span class="absolute right-0 w-2 -mr-2 bg-black h-3/4" x-ref="cursor"></span>
-    </div>
-</div>
-                        
-                    
-                        </span>
-                    </h1>
-                    <p
-                        class="mx-auto mt-6 text-sm text-left text-gray-200 md:text-center md:mt-12 sm:text-base md:max-w-xl md:text-lg xl:text-xl">
-                        Connecting Organizers and Volunteers Seamlessly.</p>
+                            })"
+                            class="flex items-center justify-center mx-auto text-center max-w-7xl h-24 overflow-hidden">
+                            <div class="relative flex items-center justify-center h-auto min-h-[1.5em]">
+                                <p class="text-7xl font-white leading-tight" x-text="text"></p>
+                                <span class="absolute right-0 w-2 -mr-2 bg-white h-3/4" x-ref="cursor"></span>
+                            </div>
+                        </div>
+                    </span>
+                </h1>
+                <p class="mx-auto mt-6 text-sm text-left text-gray-200 md:text-center md:mt-12 sm:text-base md:max-w-xl md:text-lg xl:text-xl">
+                    Connecting Organizers and Volunteers Seamlessly.
+                </p>
                     <div
                         class="relative flex items-center mx-auto mt-12 overflow-hidden text-left border border-gray-700 rounded-md md:max-w-md md:text-center">
                         <input type="text" name="email" placeholder="Email Address"

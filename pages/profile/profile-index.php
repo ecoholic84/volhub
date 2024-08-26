@@ -108,7 +108,50 @@
 <div class="container">
 
     <div class="landing-page">
-        <h1>Welcome to VolunteerConnect</h1>
+        <h1>Welcome to VolHub!<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VolHub</title>
+    <style>
+        [x-cloak] {
+            display: none
+        }
+
+        .moving-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(to right, rgba(200, 220, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(200, 220, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 15s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head></h1>
         <p>Let's create your personal profile</p>
 
         <a href="profile-about.php" class="Btn-Container">

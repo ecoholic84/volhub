@@ -2,172 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VolunteerConnect</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 10px 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-left .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #000;
-            text-decoration: none;
-        }
-
-        .navbar-left .logo img {
-            height: 30px;
-            margin-right: 10px;
-        }
-
-        .navbar-left .nav-links {
-            list-style: none;
-            display: flex;
-            margin-left: 20px;
-        }
-
-        .navbar-left .nav-links li {
-            margin-left: 20px;
-        }
-
-        .navbar-left .nav-links li a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bold;
-            padding: 8px 12px;
-        }
-
-        .navbar-left .nav-links li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
-        .navbar-right {
-            position: relative;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .profile-btn {
-            background-color: transparent;
-            border: none;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .profile-btn .username {
-            margin-right: 10px;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .profile-btn img {
-            width: 30px;
-            border-radius: 50%;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: #fff;
-            min-width: 180px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .dropdown-content a {
-            color: #000;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .volunteer-icon {
-            display: inline-block;
-            width: 1em;
-            height: 1em;
-            --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M13.375 21.825q.275.075.638.063t.612-.113L22 19q0-.85-.6-1.425T20 17h-6.85q-.075 0-.175-.012t-.15-.038l-1.475-.525q-.2-.075-.275-.25t-.025-.375q.05-.175.25-.275t.4-.025l1.125.425q.1.05.163.063t.187.012H15.8q.475 0 .837-.325t.363-.85q0-.35-.213-.675t-.562-.45L9.3 11.125q-.175-.05-.35-.088T8.6 11H7v9.025zM1 20q0 .825.588 1.413T3 22t1.413-.587T5 20v-7q0-.825-.587-1.412T3 11t-1.412.588T1 13zm15-7.8q-.375 0-.737-.137t-.663-.413l-2.75-2.7q-.775-.75-1.312-1.662T10 5.3q0-1.375.963-2.337T13.3 2q.8 0 1.5.338t1.2.912q.5-.575 1.2-.913T18.7 2q1.375 0 2.338.963T22 5.3q0 1.075-.525 1.988t-1.3 1.662l-2.775 2.7q-.3.275-.662.413T16 12.2'/%3E%3C/svg%3E");
-            background-color: currentColor;
-            -webkit-mask-image: var(--svg);
-            mask-image: var(--svg);
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-size: 100% 100%;
-            mask-size: 100% 100%;
-        }
-</style>
+    <title>VolHub</title>
+    <style>[x-cloak]{display:none}</style>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <nav class="navbar">
-            <div class="navbar-left">
-                <a href="#" class="logo"> 
-                    <!-- <img src="logo.png" alt="Logo"> -->
-                    <span class="volunteer-icon"></span>
-                    VolunteerConnect
-                </a>
-                <ul class="nav-links">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-            
-            <div class="navbar-right">
-                <div class="dropdown">
-                    <button class="profile-btn">
-                        <span class="username">ecoholic</span>
-                        <img src="profile-icon.png" alt="Profile Icon">
+<body class="bg-gradient-to-br from-gray-900 via-black to-gray-800">
+    <nav class="w-full"
+         x-data="{
+             tabSelected: 1,
+             tabId: $id('tabs'),
+             mobileMenuOpen: false,
+             tabButtonClicked(tabButton){
+                 this.tabSelected = tabButton.id.replace(this.tabId + '-', '');
+                 this.tabRepositionMarker(tabButton);
+             },
+             tabRepositionMarker(tabButton){
+                 this.$refs.tabMarker.style.width=tabButton.offsetWidth + 'px';
+                 this.$refs.tabMarker.style.height=tabButton.offsetHeight + 'px';
+                 this.$refs.tabMarker.style.left=tabButton.offsetLeft + 'px';
+             }
+         }"
+         x-init="tabRepositionMarker($refs.tabButtons.firstElementChild);">
+        <div class="px-2 sm:px-6 lg:px-8">
+            <div class="relative flex h-24 items-center justify-between">
+                <!-- Left side (logo and mobile menu button) -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="#_" class="flex items-center space-x-2 font-extrabold text-white">
+                            <span class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-900 rounded-full bg-gradient-to-br from-white via-gray-200 to-white">
+                                <svg class="w-auto h-5 -translate-y-px" viewBox="0 0 69 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m31.2 12.2-3.9 12.3-13.4.5-13.4.5 10.7 7.7L21.8 41l-3.9 12.1c-2.2 6.7-3.8 12.4-3.6 12.5.2.2 5-3 10.6-7.1 5.7-4.1 10.9-7.2 11.5-6.8.6.4 5.3 3.8 10.5 7.5 5.2 3.8 9.6 6.6 9.8 6.4.2-.2-1.4-5.8-3.6-12.5l-3.9-12.2 8.5-6.2c14.7-10.6 14.8-9.6-.4-9.7H44.2L40 12.5C37.7 5.6 35.7 0 35.5 0c-.3 0-2.2 5.5-4.3 12.2Z" fill="currentColor" />
+                                </svg>
+                            </span>
+                            <span>VOLHUB</span>
+                        </a>
+                    </div>
+                    <div class="sm:hidden ml-2">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="absolute -inset-0.5"></span>
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Center (slider) -->
+                <div class="flex-1 flex justify-center">
+                    <div x-ref="tabButtons" class="relative inline-grid items-center justify-center h-10 grid-cols-2 p-1 bg-gray-800 rounded-lg select-none">
+                        <button :id="$id(tabId)" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-24 sm:w-32 h-8 px-3 text-sm font-medium text-gray-300 transition-all rounded-md cursor-pointer whitespace-nowrap">Dashboard</button>
+                        <button :id="$id(tabId)" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-24 sm:w-32 h-8 px-3 text-sm font-medium text-gray-300 transition-all rounded-md cursor-pointer whitespace-nowrap">Organize</button>
+                        <div x-ref="tabMarker" class="absolute left-0 z-10 w-1/2 h-full duration-300 ease-out" x-cloak>
+                            <div class="w-full h-full bg-gray-700 rounded-md shadow-sm"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right side (notification and profile) -->
+                <div class="flex items-center">
+                    <!-- Notification button -->
+                    <button type="button" class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+                        <span class="absolute -inset-1.5"></span>
+                        <span class="sr-only">View notifications</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
                     </button>
-                    <div class="dropdown-content">
-                        <a href="#">My Dashboard</a>
-                        <a href="#">Edit Profile</a>
-                        <a href="#">My Events</a>
-                        <a href="#">Organizer Dashboard</a>
-                        <a href="#">Account Settings</a>
-                        <a href="#">Log Out</a>
+
+                    <!-- Profile dropdown -->
+                    <div class="relative ml-3" x-data="{ open: false }">
+                        <div>
+                            <button @click="open = !open" type="button" class="relative flex rounded-full bg-gray-800 text-sm" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                <span class="absolute -inset-1.5"></span>
+                                <span class="sr-only">Open user menu</span>
+                                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                            </button>
+                        </div>
+
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </nav>
-    </header>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div x-show="mobileMenuOpen" class="sm:hidden" id="mobile-menu">
+            <div class="space-y-1 px-2 pb-3 pt-2">
+                <!-- Mobile content here if needed -->
+            </div>
+        </div>
+    </nav>
 </body>
 </html>
