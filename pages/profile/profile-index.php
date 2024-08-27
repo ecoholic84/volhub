@@ -1,183 +1,68 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Profile Page</title>
-    <!-- Link to Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
-
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0; /* Ensure no margin */
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f2f2f2;
-            margin: 0; /* Ensure there is no default margin */
-            font-family: 'Google Sans', sans-serif; /* Apply Google Sans to the entire page */
-        }
-
-        .landing-page {
-            display: flex; /* Enable Flexbox */
-            flex-direction: column; /* Stack children vertically */
-            justify-content: center; /* Center content horizontally */
-            align-items: center; /* Center content vertically */
-            min-height: 100vh; /* Full viewport height */
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .Btn-Container {
-            display: flex;
-            width: 170px;
-            height: fit-content;
-            background-color: #1d2129;
-            border-radius: 40px;
-            box-shadow: 0px 5px 10px #bebebe;
-            justify-content: space-between;
-            align-items: center;
-            border: none;
-            cursor: pointer;
-            text-decoration: none; /* Remove underline from the link */
-            margin: 20px auto; /* Center the button horizontally */
-        }
-        
-        .icon-Container {
-            width: 45px;
-            height: 45px;
-            background-color: #f59aff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            border: 3px solid #1d2129;
-        }
-
-        .text {
-            width: calc(170px - 45px);
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.9em;
-            letter-spacing: 1.0px;
-            font-family: 'Google Sans', sans-serif; /* Apply Google Sans to button text */
-        }
-
-
-        .icon-Container svg {
-            transition-duration: 1.5s;
-        }
-
-        .Btn-Container:hover .icon-Container svg {
-            transition-duration: 1.5s;
-            animation: arrow 1s linear infinite;
-        }
-
-        @keyframes arrow {
-            0% {
-                opacity: 0;
-                margin-left: 0px;
-            }
-            100% {
-                opacity: 1;
-                margin-left: 10px;
-            }
-        }
-
-        /* Background Pattern */
-        .container {
-            width: 100%;
-            height: 100vh;
-            background-color: #ffffff;
-            background-image: radial-gradient(rgba(12, 12, 12, 0.171) 2px, transparent 0);
-            background-size: 30px 30px;
-            background-position: -5px -5px;
-        }
-
-    </style>
-</head>
-<body>
- 
-<div class="container">
-
-    <div class="landing-page">
-        <h1>Welcome to VolHub!<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VolHub</title>
+    <title>Welcome</title>
     <style>
-        [x-cloak] {
-            display: none
-        }
-
-        .moving-grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(to right, rgba(200, 220, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(200, 220, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: moveGrid 15s linear infinite;
-        }
-
-        @keyframes moveGrid {
-            0% {
-                transform: translate(0, 0);
-            }
-            100% {
-                transform: translate(50px, 50px);
-            }
-        }
-
-        .content-wrapper {
-            position: relative;
-            z-index: 10;
-        }
+    [x-cloak] {
+        display: none
+    }
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Include the Alpine library on your page -->
     <script src="https://unpkg.com/alpinejs" defer></script>
+    <!-- Include the TailwindCSS library on your page -->
     <script src="https://cdn.tailwindcss.com"></script>
-</head></h1>
-        <p>Let's create your personal profile</p>
+</head>
 
-        <a href="profile-about.php" class="Btn-Container">
-            <span class="text">Create Profile</span>
-            <span class="icon-Container">
-                <svg
-                    width="16"
-                    height="19"
-                    viewBox="0 0 16 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                <circle cx="1.61321" cy="1.61321" r="1.5" fill="black"></circle>
-                <circle cx="5.73583" cy="1.61321" r="1.5" fill="black"></circle>
-                <circle cx="5.73583" cy="5.5566" r="1.5" fill="black"></circle>
-                <circle cx="9.85851" cy="5.5566" r="1.5" fill="black"></circle>
-                <circle cx="9.85851" cy="9.5" r="1.5" fill="black"></circle>
-                <circle cx="13.9811" cy="9.5" r="1.5" fill="black"></circle>
-                <circle cx="5.73583" cy="13.4434" r="1.5" fill="black"></circle>
-                <circle cx="9.85851" cy="13.4434" r="1.5" fill="black"></circle>
-                <circle cx="1.61321" cy="17.3868" r="1.5" fill="black"></circle>
-                <circle cx="5.73583" cy="17.3868" r="1.5" fill="black"></circle>
-                </svg>
-            </span>
-        </a>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 overflow-x-hidden">
+    <div class="flex flex-col items-center justify-center w-full max-w-full">
+        <h1 x-data="{
+startingAnimation: { opacity: 0, scale: 4 },
+endingAnimation: { opacity: 1, scale: 1, stagger: 0.07, duration: 1, ease: 'expo.out' },
+addCNDScript: true,
+animateText() {
+$el.classList.remove('invisible');
+gsap.fromTo($el.children, this.startingAnimation, this.endingAnimation);
+},
+splitCharactersIntoSpans(element) {
+text = element.innerHTML;
+modifiedHTML = [];
+for (var i = 0; i < text.length; i++) {
+attributes = '';
+if(text[i].trim()){ attributes = 'class=\'inline-block\''; }
+modifiedHTML.push('<span ' + attributes + '>' + text[i] + '</span>');
+}
+element.innerHTML = modifiedHTML.join('');
+},
+addScriptToHead(url) {
+script = document.createElement('script');
+script.src = url;
+document.head.appendChild(script);
+}
+}" x-init="
+splitCharactersIntoSpans($el);
+if(addCNDScript){
+addScriptToHead('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js');
+}
+gsapInterval = setInterval(function(){
+if(typeof gsap !== 'undefined'){
+animateText();
+clearInterval(gsapInterval);
+}
+}, 5);
+" class="invisible block text-6xl font-bold custom-font text-white mb-4">
+            Welcome
+        </h1>
+        <div class="text-2xl text-white">
+            Happy Volunteering
+        </div>
     </div>
-</div>
+    <button type="button" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-200 bg-white border rounded-md text-neutral-500 hover:text-neutral-700 border-neutral-200/70 hover:bg-neutral-100 active:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-200/60 focus:shadow-outline">
+    Create Profile
+</button>
 </body>
+
 </html>

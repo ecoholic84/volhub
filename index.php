@@ -101,8 +101,8 @@
                             <div
                                 class="flex flex-col items-center justify-end w-full h-full pt-2 md:w-full md:flex-row md:py-0">
                                 
-                                <?php include "pages/login/login-form.php"; ?>
-                                <?php include "pages/signup/signup-form.php"; ?>
+                                <?php include "pages/login/login.php"; ?>
+                                <?php include "pages/signup/signup.php"; ?>
                             </div>
                         </div>
                     </div>

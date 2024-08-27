@@ -46,7 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     // echo "<br>";
     // echo $pwd;
 
-    // header("Location: ../profile-creation/profile-creation.php");
     header("Location: login.php");
 }
 else
