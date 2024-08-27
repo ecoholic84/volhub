@@ -34,21 +34,29 @@
 
                             <div class="flex flex-col mb-6 space-y-2">
                                 <h1 class="text-white text-2xl font-semibold tracking-tight">Create an account</h1>
-                                <p class="text-sm text-neutral-400">Enter your email below to create your account
+                                <p class="text-sm text-neutral-400">Enter your details below to create your account
                                 </p>
                             </div>
                             <form onsubmit="event.preventDefault();" class="space-y-2">
-                                <input type="text" placeholder="name@example.com"
-                                    class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
-                                <button type="button"
-                                    class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium tracking-wide text-black transition-colors duration-200 rounded-md bg-white focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 focus:shadow-outline focus:outline-none hover:bg-neutral-100">
-                                    Sign Up
-                                </button>
-                                <div class="relative py-6">
-                                    <div class="absolute inset-0 flex items-center"><span
-                                            class="w-full border-t border-neutral-600"></span></div>
-                                </div>
-                            </form>
+    <input type="text" name="fullname" id="fullname" placeholder="Richard Hendricks"
+        class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+    <input type="text" name="username" id="username" placeholder="ecoholic"
+        class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+    <input type="text" name="email" id="email" placeholder="name@example.com"
+        class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+    <input type="password" name="pwd" id="pwd" placeholder="50uR6O2rJMA64fF%r49Kze&I*@!oY66*"
+        class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+    <input type="password" name="pwdrepeat" id="pwdrepeat" placeholder="Repeat the password"
+        class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+    <button type="button"
+        class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium tracking-wide text-black transition-colors duration-200 rounded-md bg-white focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 focus:shadow-outline focus:outline-none hover:bg-neutral-100">
+        Sign Up
+    </button>
+    <div class="relative py-6">
+        <div class="absolute inset-0 flex items-center"><span
+                class="w-full border-t border-neutral-600"></span></div>
+    </div>
+</form>
                         </div>
                         <p class="mt-6 text-sm text-center text-neutral-500">Already have an account? <a href="#_"
                                 class="relative font-medium text-yellow-500 group"><span>Login here</span><span
