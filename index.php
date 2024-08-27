@@ -100,7 +100,7 @@
                             class="flex-col items-center w-full h-full p-3 overflow-hidden bg-black bg-opacity-50 rounded-lg select-none md:p-0 backdrop-blur-lg md:h-auto md:bg-transparent md:rounded-none md:relative md:flex md:flex-row md:overflow-auto">
                             <div
                                 class="flex flex-col items-center justify-end w-full h-full pt-2 md:w-full md:flex-row md:py-0">
-                                
+
                                 <?php include "pages/login/login.php"; ?>
                                 <?php include "pages/signup/signup.php"; ?>
                             </div>
@@ -189,7 +189,8 @@
                                 }, $data.cursorSpeed);
 
                             })"
-                            class="flex items-center justify-center mx-auto text-center max-w-7xl h-24 overflow-hidden">
+                            class="class=flex items-center justify-center mx-auto text-center max-w-7xl h-24 overflow-hidden">
+
                             <div class="relative flex items-center justify-center h-auto min-h-[1.5em]">
                                 <p class="text-7xl font-white leading-tight" x-text="text"></p>
                                 <span class="absolute right-0 w-2 -mr-2 bg-white h-3/4" x-ref="cursor"></span>
