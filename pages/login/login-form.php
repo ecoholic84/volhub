@@ -32,8 +32,8 @@
                         <div class="relative text-center">
 
                             <div class="flex flex-col mb-6 space-y-2">
-                                <h1 class="text-2xl font-semibold tracking-tight text-white">Create an account</h1>
-                                <p class="text-sm text-neutral-400">Enter your email below to create your account
+                                <h1 class="text-2xl font-semibold tracking-tight text-white">Login to your account</h1>
+                                <p class="text-sm text-neutral-400">Enter your credentials to log in to your account
                                 </p>
                             </div>
                             <form onsubmit="event.preventDefault();" class="space-y-2">
