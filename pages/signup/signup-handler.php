@@ -1,14 +1,11 @@
 <?php
-
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
+header('Content-Type: application/json');
 include_once "../../includes/dbh.inc.php";
+include_once '../../includes/functions.inc.php';
 
-// Posting data from form to variables.
-if ($_SERVER["REQUEST_METHOD"] == "POST")
-{
+$response = ['success' => false, 'error' => ''];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fullname = htmlspecialchars($_POST['fullname']);
     $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
@@ -16,65 +13,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $pwdRepeat = htmlspecialchars($_POST['pwdrepeat']);
     $created_at = date('Y-m-d H:i:s');
 
-    require_once '../../includes/functions.inc.php';
-
-    /*.......................ERROR HANDLERS.......................*/
-
-    // Function to exit, if no value is inputted by user.
-    if (emptyInputSignup($fullname, $username, $email, $pwd, $pwdRepeat) !== false)
-    {
-        header("Location: signup.php?error=emptyInput");
-        exit();
+    if (emptyInputSignup($fullname, $username, $email, $pwd, $pwdRepeat)) {
+        $response['error'] = "Fill in all fields!";
+    } elseif (!invalidId($username)) {
+        $response['error'] = "Choose a proper username!";
+    } elseif (idExists($con, $username)) {
+        $response['error'] = "Sorry, username is taken. Try again!";
+    } elseif (invalidEmail($email)) {
+        $response['error'] = "Choose a proper email!";
+    } elseif (emailExists($con, $email)) {
+        $response['error'] = "Sorry, this email is already registered. Use another email!";
+    } elseif (strlen($pwd) < 8) {
+        $response['error'] = "Password should be at least 8 characters!";
+    } elseif (pwdMatch($pwd, $pwdRepeat)) {
+        $response['error'] = "Passwords don't match!";
+    } else {
+        if (createUser($con, $fullname, $username, $email, $pwd, $created_at)) {
+            $response['success'] = true;
+        } else {
+            $response['error'] = "Something went wrong, try again!";
+        }
     }
-
-    // Function to check if the username is valid.
-    if (!invalidId($username))
-    {
-        header("Location: signup.php?error=invalidUsername");
-        exit();
-    }
-    
-    // Function to check if username is taken.
-    if (idExists($con, $username) !== false)
-    {
-        header("Location: signup.php?error=usernameTaken");
-        exit();
-    }
-
-    // Function to validate email id.
-    if (invalidEmail($email) !== false)
-    {
-        header("Location: signup.php?error=invalidEmail");
-        exit();
-    }
-
-    // Function to check if email is already registered.
-    if (emailExists($con, $email) !== false)
-    {
-        header("Location: signup.php?error=emailTaken");
-        exit();
-    }
-
-    // Function to check if the password is less than 8.
-    if (strlen($pwd) < 8)
-    {
-        header("Location: signup.php?error=passwordTooShort");
-        exit();
-    }
-
-    // Function to check if the password repeat matches.
-    if (pwdMatch($pwd, $pwdRepeat) !== false)
-    {
-        header("Location: signup.php?error=passwordsDontMatch");
-        exit();
-    }
-
-    /*........................................................*/
-
-    createUser($con, $fullname, $username, $email, $pwd, $created_at);
 }
-else
-{
-    // Redirects illegal users to signup page.
-    header("Location: signup.php");
-}
+
+echo json_encode($response);
