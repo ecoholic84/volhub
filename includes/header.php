@@ -79,7 +79,7 @@
     </nav>
 
     <!-- Subheader content will be included here -->
-    <?php include 'subheader.php'; ?>
+    <?php // include 'subheader.php'; ?>
 
 </body>
 </html>
