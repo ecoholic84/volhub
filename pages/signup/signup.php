@@ -1,30 +1,5 @@
 <div class="flex items-center justify-center w-full max-w-full">
-    <div x-data="{ 
-        fullscreenModal: false,
-        errorMessage: '',
-        submitForm(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = '../profile/profile-index.php';
-                } else {
-                    this.errorMessage = data.error;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                this.errorMessage = 'An unexpected error occurred. Please try again.';
-            });
-        }
-    }" x-init="
+    <div x-data="{ fullscreenModal: false }" x-init="
     $watch('fullscreenModal', function(value){
             if(value === true){
                 document.body.classList.add('overflow-hidden');
@@ -53,6 +28,7 @@
                 </button>
 
                 <div class="relative flex flex-wrap items-center w-full h-full px-8">
+
                     <div class="relative w-full max-w-sm mx-auto lg:mb-0">
                         <div class="relative text-center">
 
@@ -61,7 +37,7 @@
                                 <p class="text-sm text-neutral-400">Enter your details below to create your account
                                 </p>
                             </div>
-                            <form @submit="submitForm" action="pages\signup\signup-handler.php" method="POST" class="space-y-2">
+                            <form action="pages/profile/profile-index.php" method="POST" class="space-y-2">
                                 <label for="fullname" class="sr-only">Full Name</label>
                                 <input type="text" name="fullname" id="fullname" placeholder="Richard Hendricks" required
                                     class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
@@ -82,13 +58,10 @@
                                 <input type="password" name="pwdrepeat" id="pwdrepeat" placeholder="Repeat the password" required
                                     class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
 
-                                    <button type="submit"
+                                <button type="submit"
                                     class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium tracking-wide text-black transition-colors duration-200 rounded-md bg-white focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 focus:shadow-outline focus:outline-none hover:bg-neutral-100">
                                     Sign Up
                                 </button>
-
-                                <div x-show="errorMessage" x-text="errorMessage" class="mt-2 text-red-500 text-sm"></div>
-                            </form>
 
                                 <div class="relative py-6">
                                     <div class="absolute inset-0 flex items-center">
@@ -97,6 +70,31 @@
                                 </div>
                             </form>
                         </div>
+
+                        <?php
+                        // Error Handler Functions
+                        if (isset($_GET["error"])) {
+                            if ($_GET["error"] == "emptyInput") {
+                                echo "<p>Fill in all fields!</p>";
+                            } else if ($_GET["error"] == "invalidUsername") {
+                                echo "<p>Choose a proper username!</p>";
+                            } else if ($_GET["error"] == "usernameTaken") {
+                                echo "<p>Sorry,username is taken. Try again!</p>";
+                            } else if ($_GET["error"] == "emailTaken") {
+                                echo "<p>Sorry, this email is already registered. Use another email!</p>";
+                            } else if ($_GET["error"] == "invalidEmail") {
+                                echo "<p>Choose a proper email!</p>";
+                            } else if ($_GET["error"] == "passwordTooShort") {
+                                echo "<p>Password should be atleast 8 characters!</p>";
+                            } else if ($_GET["error"] == "passwordsDontqMatch") {
+                                echo "<p>Passwords Doesn't Match!</p>";
+                            } else if ($_GET["error"] == "stmtFailed") {
+                                echo "<p>Something went wrong, try again!</p>";
+                            } else if ($_GET["error"] == "none") {
+                                echo "<p>You have signed up!</p>";
+                            }
+                        }
+                        ?>
                         <!-- <p class="mt-6 text-sm text-center text-neutral-500">Already have an account? <a href="#_"
                                 class="relative font-medium text-yellow-500 group"><span>Login here</span><span
                                     class="absolute bottom-0 left-0 w-0 group-hover:w-full ease-out duration-300 h-0.5 bg-yellow-500"></span></a>
