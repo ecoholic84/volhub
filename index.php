@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.ico" type="image/ico">
     <title>VolHub</title>
     <style>
         [x-cloak] {
@@ -101,8 +102,15 @@
                             <div
                                 class="flex flex-col items-center justify-end w-full h-full pt-2 md:w-full md:flex-row md:py-0">
 
-                                <?php include "pages/login/login.php"; ?>
-                                <?php include "pages/signup/signup.php"; ?>
+                                <a href="pages/login/login.php"
+                                    class="w-full py-5 mr-0 text-center text-gray-200 md:py-3 md:w-auto hover:text-white md:pl-0 md:mr-3 lg:mr-5">
+                                    Sign In
+                                </a>
+                                <a href="pages/signup/signup.php"
+                                    class="inline-flex items-center justify-center w-full px-4 py-3 md:py-1.5 font-medium leading-6 text-center whitespace-no-wrap transition duration-150 ease-in-out border border-transparent md:mr-1 text-gray-600 md:w-auto bg-white rounded-lg md:rounded-full hover:bg-white focus:outline-none focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700">
+                                    Sign Up
+                                </a>
+
                             </div>
                         </div>
                     </div>

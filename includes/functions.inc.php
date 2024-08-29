@@ -165,7 +165,7 @@ function loginUser($con, $username, $pwd)
         $_SESSION["usersid"] = $idExists["usersId"];
         $_SESSION["usersusername"] = $idExists["usersUsername"];
 
-        header("Location: ../../index.php");
+        header("Location: dashboard.php");
         exit();
     }
 }
