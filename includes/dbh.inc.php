@@ -17,19 +17,12 @@ if(!$con)
 {
     die("Connection Failed: " . mysqli_connect_error() . "<br>Error Code: " . mysqli_connect_errno());
 }
-else
-{
-    echo "Connection Success!<br>";
-}
+
 
 // Database Creation
 $dbCreate = "CREATE DATABASE IF NOT EXISTS $dbName";
 
-if(mysqli_query($con, $dbCreate))
-{
-    echo "Database Created Successfully";
-}
-else
+if(!mysqli_query($con, $dbCreate))
 {
     die("Error Creating Database: " . mysqli_error($con));
 }
@@ -47,11 +40,7 @@ $table_create = "CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 )";
 
-if(mysqli_query($con, $table_create))
-{
-    echo "<br>Table Created Successfully";
-}
-else
-{
-    echo "Error Creating Table: " . mysqli_error($con);
+if(!mysqli_query($con, $table_create)) {
+
+    die("Error Creating Table: " . mysqli_error($con));
 }

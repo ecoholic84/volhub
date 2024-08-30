@@ -1,79 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <link rel="stylesheet" href="https://matcha.mizu.sh/matcha.css">
+    <style>
+        [x-cloak] {
+            display: none
+        }
+    </style>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="signup-container">
-        <div class="avatar"></div>
 
-        <section class="signup-form">
-            <form action="signup-handler.php" method="POST">
+<body class="flex items-center justify-center min-h-screen bg-black text-white">
+    <div class="w-full max-w-md p-6">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-semibold mb-2">Create an account</h1>
+            <p class="text-neutral-400 text-sm">Enter your details below to create your account</p>
+        </div>
+        <form action="signup-handler.php" method="POST" class="space-y-2">
+            <label for="fullname" class="sr-only">Full Name</label>
+            <input type="text" name="fullname" id="fullname" placeholder="Richard Hendricks" required
+                class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
 
-                <label for="fullname">Full Name</label>
-                <input type="text" id="fullname"name="fullname" placeholder="Full Name" required>
-                <br>
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <br>
-                <label for="email">Email Address</label> 
-                <input type="text" id="email"name="email" placeholder="Email Address" required>
-                <br>
-                <label for="pwd">Password</label>
-                <input type="password" id="pwd"name="pwd" placeholder="Password" required>
-                <br>
-                <label for="pwd">Repeat Password</label>
-                <input type="password" id="pwdrepeat"name="pwdrepeat" placeholder="Repeat Password" required>
-                <br>
-                <button type="submit">Create Account</button>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" name="username" id="username" placeholder="ecoholic" required
+                class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+
+            <label for="email" class="sr-only">Email</label>
+            <input type="email" name="email" id="email" placeholder="name@example.com" required
+                class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+
+            <label for="pwd" class="sr-only">Password</label>
+            <input type="password" name="pwd" id="pwd" placeholder="Enter a strong password" required
+                class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+
+            <label for="pwdrepeat" class="sr-only">Repeat Password</label>
+            <input type="password" name="pwdrepeat" id="pwdrepeat" placeholder="Repeat the password" required
+                class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
+
+            <button type="submit"
+                class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium tracking-wide text-black transition-colors duration-200 rounded-md bg-white focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 focus:shadow-outline focus:outline-none hover:bg-neutral-100">
+                Sign Up
+            </button>
+
+            <!-- Error Handlers -->
+            <?php
+            if (isset($_GET["error"])) {
+                $errorMessages = [
+                    "emptyInput" => "Fill in all fields!",
+                    "invalidUsername" => "Choose a proper username!",
+                    "usernameTaken" => "Sorry, username is taken. Try again!",
+                    "emailTaken" => "Sorry, this email is already registered. Use another email!",
+                    "invalidEmail" => "Choose a proper email!",
+                    "passwordTooShort" => "Password should be at least 8 characters!",
+                    "passwordsDontMatch" => "Passwords don't match!",
+                    "stmtFailed" => "Something went wrong, try again!",
+                    "none" => "You have signed up!",
+                ];
+
+                $errorKey = $_GET["error"];
+                if (array_key_exists($errorKey, $errorMessages)) {
+                    echo "<div class='mt-2 pt-2 text-red-500 text-center text-sm'>{$errorMessages[$errorKey]}</div>";
+                }
+            }
+            ?>
         </form>
+        <div class="relative py-6">
+            <div class="absolute inset-0 flex items-center">
+                <span class="w-full border-t border-neutral-600"></span>
+            </div>
+        </div>
+        <p class="text-center text-neutral-500 text-sm">
+            By continuing, you agree to our Terms and Policy.
+        </p>
     </div>
-
-    <?php
-    // Error Handler Functions
-    if (isset($_GET["error"]))
-    {
-        if ($_GET["error"] == "emptyInput")
-        {
-            echo "<p>Fill in all fields!</p>";
-        }
-        else if ($_GET["error"] == "invalidUsername")
-        {
-            echo "<p>Choose a proper username!</p>";
-        }
-        else if ($_GET["error"] == "usernameTaken")
-        {
-            echo "<p>Sorry,username is taken. Try again!</p>";
-        }
-        else if ($_GET["error"] == "emailTaken")
-        {
-            echo "<p>Sorry, this email is already registered. Use another email!</p>";
-        }
-        else if ($_GET["error"] == "invalidEmail")
-        {
-            echo "<p>Choose a proper email!</p>";
-        }
-        else if ($_GET["error"] == "passwordTooShort")
-        {
-            echo "<p>Password should be atleast 8 characters!</p>";
-        }
-        else if ($_GET["error"] == "passwordsDontqMatch")
-        {
-            echo "<p>Passwords Doesn't Match!</p>";
-        }
-        else if ($_GET["error"] == "stmtFailed")
-        {
-            echo "<p>Something went wrong, try again!</p>";
-        }
-        else if ($_GET["error"] == "none")
-        {
-            echo "<p>You have signed up!</p>";
-        }
-    }
-        ?>
-
 </body>
+
 </html>
