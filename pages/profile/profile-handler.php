@@ -20,18 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emergency_phone = htmlspecialchars($_POST['emergency-phone']);
     $links = isset($_POST['links']) ? json_encode($_POST['links']) : '';
 
-    $sql = "INSERT INTO UserProfiles (profile_usersId, full_name, username, identity, bio, degree_type, institution, field_of_study, graduation_month, graduation_year, phone, city, emergency_name, emergency_phone, links) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_stmt_init($con);
-    if (!mysqli_stmt_prepare($stmt, $sql)) {
-        echo "SQL error";
-    } else {
-        mysqli_stmt_bind_param($stmt, "issssssssisssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $emergency_name, $emergency_phone, $links);
-        mysqli_stmt_execute($stmt);
-        echo "Profile created successfully!";
-    }
-    mysqli_stmt_close($stmt);
-}
     /*.......................ERROR HANDLERS.......................*/
 
     // Function to check if the username is valid.
@@ -41,43 +29,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
     
-    // Function to check if username is taken.
-    // if (idExists($con, $username)) {
-    //     header("Location: profile-creation.php?error=usernameTaken");
-    //     exit();
-    // }
-
-    function idExists($con, $username) {
-        // SQL query to check if the username already exists in the database
-        $sql = "SELECT * FROM UserProfiles WHERE username = ?;";
-        $stmt = mysqli_stmt_init($con);
-    
-        // Prepare the SQL statement
-        if (!mysqli_stmt_prepare($stmt, $sql)) {
-            // Handle any errors in statement preparation
-            header("Location: profile-creation.php?error=stmtfailed");
-            exit();
-        }
-    
-        // Bind the username parameter to the statement
-        mysqli_stmt_bind_param($stmt, "s", $username);
-    
-        // Execute the statement
-        mysqli_stmt_execute($stmt);
-    
-        // Fetch the result from the query
-        $resultData = mysqli_stmt_get_result($stmt);
-    
-        // Check if any row was returned
-        if ($row = mysqli_fetch_assoc($resultData)) {
-            // Username exists in the database
-            return true;
-        } else {
-            // Username does not exist
-            return false;
-        }
-    
-        // Close the statement
-        mysqli_stmt_close($stmt);
+    // function to check if username is taken.
+    if (idExists($con, $username)) {
+        header("Location: profile-creation.php?error=usernameTaken");
+        exit();
     }
-    
+
+    createProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $emergency_name, $emergency_phone, $links);
+    }
+    else
+    {
+        // Redirects illegal users to signup page.
+        header("Location: ../login/login.php");
+    }

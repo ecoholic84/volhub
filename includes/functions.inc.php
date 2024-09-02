@@ -84,16 +84,16 @@ function createUser($con, $email, $pwd, $created_at)
     $_SESSION["usersid"] = $user_id;
 
     // Redirect the user to the profile page or wherever you want
-    header("Location: ../profile/profile-index.php");
+    header("Location: ../../includes/dashboard.php");
     exit();
 }
 
 /*.......................LOGIN FUNCTIONS.......................*/
 
-function emptyInputLogin($username, $pwd)
+function emptyInputLogin($email, $pwd)
 {
     $result;
-    if (empty($username) || empty($pwd)) {
+    if (empty($email) || empty($pwd)) {
         $result = true;
     } else {
         $result = false;
@@ -101,30 +101,46 @@ function emptyInputLogin($username, $pwd)
     return $result;
 }
 
-function loginUser($con, $username, $pwd)
+function loginUser($con, $email, $pwd)
 {
-    $idExists = idExists($con, $username, $username);
-
-    if ($idExists == false) {
-        header("Location: login.php?error=wrongLogin");
+    // Check if the email exists in the users table
+    $sql = "SELECT * FROM users WHERE usersEmail = ?;";
+    $stmt = mysqli_stmt_init($con);
+    
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header("Location: login.php?error=stmtfailed");
         exit();
     }
 
-    $pwdHashed = $idExists["usersPwd"];
-    $checkPwd = password_verify($pwd, $pwdHashed);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $resultData = mysqli_stmt_get_result($stmt);
 
-    if ($checkPwd == false) {
+    if ($row = mysqli_fetch_assoc($resultData)) {
+        // Verify the password
+        $pwdHashed = $row["usersPwd"];
+        $checkPwd = password_verify($pwd, $pwdHashed);
+
+        if ($checkPwd === false) {
+            header("Location: login.php?error=wrongLogin");
+            exit();
+        } else {
+            // Start the session and set session variables
+            session_start();
+            $_SESSION["users_id"] = $row["id"];
+            $_SESSION["users_email"] = $row["usersEmail"];
+
+            // Redirect to the dashboard
+            header("Location: ../../includes/dashboard.php");
+            exit();
+        }
+    } else {
+        // If the email doesn't exist
         header("Location: login.php?error=wrongLogin");
-        exit();
-    } else if ($checkPwd == true) {
-        session_start();
-        $_SESSION["users_id"] = $idExists["usersId"];
-        $_SESSION["users_username"] = $idExists["usersUsername"];
-
-        header("Location: dashboard.php");
         exit();
     }
 }
+
 
 /*.......................PROFILE FUNCTIONS.......................*/
 
@@ -133,24 +149,43 @@ function invalidId($username)
     return preg_match("/^[a-zA-Z0-9]*$/", $username);
 }
 
-// function idExists($con, $username)
-// {
-//     $sql = "SELECT * FROM UserProfiles WHERE username = ?;";
-//     $stmt = mysqli_stmt_init($con);
+function idExists($con, $username)
+{
+    $sql = "SELECT * FROM UserProfiles WHERE username = ?;";
+    $stmt = mysqli_stmt_init($con);
 
-//     if (!mysqli_stmt_prepare($stmt, $sql)) {
-//         header("Location: profile-creation.php?error=stmtfailed");
-//         exit();
-//     }
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header("Location: profile-creation.php?error=stmtfailed");
+        exit();
+    }
 
-//     mysqli_stmt_bind_param($stmt, "s", $username);
-//     mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
 
-//     $resultData = mysqli_stmt_get_result($stmt);
+    $resultData = mysqli_stmt_get_result($stmt);
 
-//     $exists = mysqli_fetch_assoc($resultData) !== null;
+    $exists = mysqli_fetch_assoc($resultData) !== null;
 
-//     mysqli_stmt_close($stmt);
+    mysqli_stmt_close($stmt);
     
-//     return $exists;
-// }
+    return $exists;
+}
+
+function createProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $emergency_name, $emergency_phone, $links)
+{
+    $sql = "INSERT INTO UserProfiles (profile_usersId, full_name, username, identity, bio, degree_type, institution, field_of_study, graduation_month, graduation_year, phone, city, emergency_name, emergency_phone, links) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_stmt_init($con);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        echo "SQL error";
+    } else {
+        mysqli_stmt_bind_param($stmt, "issssssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $emergency_name, $emergency_phone, $links);
+        mysqli_stmt_execute($stmt);
+        echo "Profile created successfully!";
+    }
+    mysqli_stmt_close($stmt);
+
+    // Redirect the user to the profile page or wherever you want
+    header("Location: ../profile/profile-index.php");
+    exit();
+}

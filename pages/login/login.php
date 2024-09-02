@@ -22,7 +22,7 @@
             <p class="text-sm text-neutral-400">Enter your credentials to log in to your account</p>
         </div>
         <form action="login-handler.php" method="POST" class="space-y-2">
-            <input type="text" name="username" id="username" placeholder="Username or Email"
+            <input type="email" name="email" id="email" placeholder="Email address"
                 class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
             <input type="password" name="pwd" id="pwd" placeholder="Enter your password"
                 class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-900 border rounded-md border-neutral-700 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-white">
@@ -36,7 +36,7 @@
             if (isset($_GET["error"])) {
                 $errorMessages = [
                     "emptyInput" => "Fill in all fields!",
-                    "wrongLogin" => "Incorrect username/password!",
+                    "wrongLogin" => "Incorrect email/password!",
                     "none" => "Welcome!",
                 ];
 
