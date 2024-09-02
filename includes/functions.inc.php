@@ -2,20 +2,15 @@
 
 /*.......................SIGNUP FUNCTIONS.......................*/
 
-function emptyInputSignup($fullname, $username, $email, $pwd, $pwdRepeat)
+function emptyInputSignup($email, $pwd, $pwdRepeat)
 {
     $result;
-    if (empty($fullname) || empty($username) || empty($email) || empty($pwd) || empty($pwdRepeat)) {
+    if (empty($email) || empty($pwd) || empty($pwdRepeat)) {
         $result = true;
     } else {
         $result = false;
     }
     return $result;
-}
-
-function invalidId($username)
-{
-    return preg_match("/^[a-zA-Z0-9]*$/", $username);
 }
 
 function invalidEmail($email)
@@ -38,30 +33,6 @@ function pwdMatch($pwd, $pwdRepeat)
         $result = false;
     }
     return $result;
-}
-
-function idExists($con, $username)
-{
-    $sql = "SELECT * FROM users WHERE usersUsername = ?;";
-    $stmt = mysqli_stmt_init($con);
-
-    if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("Location: signup.php?error=stmtfailed");
-        exit();
-    }
-
-    mysqli_stmt_bind_param($stmt, "s", $username);
-    mysqli_stmt_execute($stmt);
-
-    $resultData = mysqli_stmt_get_result($stmt);
-
-    if ($row = mysqli_fetch_assoc($resultData)) {
-        return $row;
-    } else {
-        $result = false;
-        return $result;
-    }
-    mysqli_stmt_close($stmt);
 }
 
 function emailExists($con, $email)
@@ -88,9 +59,9 @@ function emailExists($con, $email)
     mysqli_stmt_close($stmt);
 }
 
-function createUser($con, $fullname, $username, $email, $pwd, $created_at)
+function createUser($con, $email, $pwd, $created_at)
 {
-    $sql = "INSERT INTO users (usersFullname, usersUsername, usersEmail, usersPwd, created_at) VALUES (?, ?, ?, ?, ?);";
+    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at) VALUES (?, ?, ?);";
     $stmt = mysqli_stmt_init($con);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -100,16 +71,17 @@ function createUser($con, $fullname, $username, $email, $pwd, $created_at)
 
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "sssss", $fullname, $username, $email, $hashedPwd, $created_at);
+    mysqli_stmt_bind_param($stmt, "sss", $email, $hashedPwd, $created_at);
     mysqli_stmt_execute($stmt);
     // Get the last inserted user's ID
     $user_id = mysqli_insert_id($con);
     mysqli_stmt_close($stmt);
     // Start the session and set session variables
 
-    session_start();
-    $_SESSION["usersid"] = $user_id;  // Store the user's ID in the session
-    $_SESSION["usersusername"] = $username;  // Store the user's username in the session
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $_SESSION["usersid"] = $user_id;
 
     // Redirect the user to the profile page or wherever you want
     header("Location: ../profile/profile-index.php");
@@ -153,3 +125,32 @@ function loginUser($con, $username, $pwd)
         exit();
     }
 }
+
+/*.......................PROFILE FUNCTIONS.......................*/
+
+function invalidId($username)
+{
+    return preg_match("/^[a-zA-Z0-9]*$/", $username);
+}
+
+// function idExists($con, $username)
+// {
+//     $sql = "SELECT * FROM UserProfiles WHERE username = ?;";
+//     $stmt = mysqli_stmt_init($con);
+
+//     if (!mysqli_stmt_prepare($stmt, $sql)) {
+//         header("Location: profile-creation.php?error=stmtfailed");
+//         exit();
+//     }
+
+//     mysqli_stmt_bind_param($stmt, "s", $username);
+//     mysqli_stmt_execute($stmt);
+
+//     $resultData = mysqli_stmt_get_result($stmt);
+
+//     $exists = mysqli_fetch_assoc($resultData) !== null;
+
+//     mysqli_stmt_close($stmt);
+    
+//     return $exists;
+// }

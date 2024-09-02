@@ -1,6 +1,5 @@
 <?php
 session_start(); // Start the session at the very beginning
-include_once "profile-handler.php";
 include_once "../../includes/dbh.inc.php"; // Ensure the database connection is included
 
 if (!isset($_SESSION["usersid"])) {
@@ -8,19 +7,33 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
-// Retrieve user data for autofill
-$user_id = $_SESSION["usersid"];
-$sql = "SELECT usersFullname, usersUsername FROM users WHERE usersId=?";
-$stmt = mysqli_stmt_init($con);
-if (!mysqli_stmt_prepare($stmt, $sql)) {
-    echo "SQL error";
-} else {
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $full_name, $username);
-    mysqli_stmt_fetch($stmt);
+// // Retrieve user data for autofill
+// $user_id = $_SESSION["usersid"];
+// $sql = "SELECT usersFullname, usersUsername FROM users WHERE usersId=?";
+// $stmt = mysqli_stmt_init($con);
+// if (!mysqli_stmt_prepare($stmt, $sql)) {
+//     echo "SQL error";
+// } else {
+//     mysqli_stmt_bind_param($stmt, "i", $user_id);
+//     mysqli_stmt_execute($stmt);
+//     mysqli_stmt_bind_result($stmt, $full_name, $username);
+//     mysqli_stmt_fetch($stmt);
+// }
+// mysqli_stmt_close($stmt);
+
+
+if (isset($_GET["error"])) {
+    $errorMessages = [
+        "invalidUsername" => "Choose a proper username!",
+        "usernameTaken" => "Sorry, username is taken. Try again!",
+        "emailTaken" => "Sorry, this email is already registered. Use another email!",
+    ];
+
+    $errorKey = $_GET["error"];
+    if (array_key_exists($errorKey, $errorMessages)) {
+        echo "<div class='mt-2 pt-2 text-red-500 text-center text-sm'>{$errorMessages[$errorKey]}</div>";
+    }
 }
-mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +60,7 @@ mysqli_stmt_close($stmt);
   <div class="flex items-start justify-center h-full bg-gradient-to-br from-gray-900 via-black to-gray-800">
     <div class="flex items-center justify-center w-full max-w-full">
 
-      <form>
+    <form action="profile-handler.php" method="POST" class="space-y-2">
         <div class="space-y-12">
           <div class="border-b border-gray-900/10 pb-12 pt-12">
             <h2 class="text-3xl font-semibold leading-7 text-white">Basic Details</h2>
@@ -57,7 +70,7 @@ mysqli_stmt_close($stmt);
               <div class="sm:col-span-4">
                 <label for="full-name" class="block text-sm font-medium leading-6 text-white">Full Name</label>
                 <div class="mt-2">
-                  <input type="text" name="full-name" id="full-name" value="<?php echo htmlspecialchars($full_name); ?>" placeholder="Richard Hendrics" autocomplete="name" class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                  <input type="text" name="full-name" id="full-name" placeholder="Richard Hendrics" autocomplete="name" class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                 </div>
               </div>
 
@@ -66,7 +79,7 @@ mysqli_stmt_close($stmt);
                 <div class="mt-2">
                   <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                     <span class="flex select-none items-center pl-3 text-gray-500 sm:text-sm">volhub.com/</span>
-                    <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($username); ?>" placeholder="Richard Hendrics" autocomplete="username" class="block flex-1 border-0 bg-transparent py-2 px-2 pl-1 text-white placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith">
+                    <input type="text" name="username" id="username" placeholder="Richard Hendrics" autocomplete="username" class="block flex-1 border-0 bg-transparent py-2 px-2 pl-1 text-white placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith">
                   </div>
                 </div>
               </div>
@@ -227,6 +240,24 @@ mysqli_stmt_close($stmt);
           <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
           <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
         </div>
+
+        <!-- Error Handlers -->
+        <?php
+        if (isset($_GET["error"])) {
+            $errorMessages = [
+                "invalidUsername" => "Choose a proper username!",
+                "usernameTaken" => "Sorry, username is taken. Try again!",
+                "none" => "You have signed up!",
+            ];
+
+            $errorKey = $_GET["error"];
+            if (array_key_exists($errorKey, $errorMessages)) {
+                echo "<div class='mt-2 pt-2 text-red-500 text-center text-sm'>{$errorMessages[$errorKey]}</div>";
+
+            }
+        }
+        ?>
+
       </form>
 
     </div>

@@ -54,9 +54,10 @@
             <a href="#" class="text-sm text-neutral-400 hover:text-white">Forgot your password?</a>
         </div> -->
         <div class="mt-0 text-center">
-            <p class="text-sm text-neutral-400">
-                Don't have an account? <a href="../signup/signup.php" class="text-white hover:underline">Sign up</a>
-            </p>
+        <p class="mt-0 text-sm text-center text-neutral-500">Don't have an account? <a href="../signup/signup.php"
+                class="relative font-medium text-white group"><span>Sign Up</span><span
+                    class="absolute bottom-0 left-0 w-0 group-hover:w-full ease-out duration-300 h-0.5 bg-white"></span></a>
+        </p>
         </div>
     </div>
 </body>

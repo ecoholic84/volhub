@@ -79,7 +79,15 @@
     </nav>
 
     <!-- Subheader content will be included here -->
-    <?php // include 'subheader.php'; ?>
+    <?php 
+    function showSubheader($show) {
+        if ($show === true) {
+            include 'subheader.php';
+        }
+    }
+    showSubheader(false);
+    ?>
+
 
 </body>
 </html>

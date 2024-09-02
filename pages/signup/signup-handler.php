@@ -9,8 +9,6 @@ include_once "../../includes/dbh.inc.php";
 // Posting data from form to variables.
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    $fullname = htmlspecialchars($_POST['fullname']);
-    $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
     $pwd = htmlspecialchars($_POST['pwd']);
     $pwdRepeat = htmlspecialchars($_POST['pwdrepeat']);
@@ -21,23 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     /*.......................ERROR HANDLERS.......................*/
 
     // Function to exit, if no value is inputted by user.
-    if (emptyInputSignup($fullname, $username, $email, $pwd, $pwdRepeat) !== false)
+    if (emptyInputSignup($email, $pwd, $pwdRepeat) !== false)
     {
         header("Location: signup.php?error=emptyInput");
-        exit();
-    }
-
-    // Function to check if the username is valid.
-    if (!invalidId($username))
-    {
-        header("Location: signup.php?error=invalidUsername");
-        exit();
-    }
-    
-    // Function to check if username is taken.
-    if (idExists($con, $username) !== false)
-    {
-        header("Location: signup.php?error=usernameTaken");
         exit();
     }
 
@@ -71,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     /*........................................................*/
 
-    createUser($con, $fullname, $username, $email, $pwd, $created_at);
+    createUser($con, $email, $pwd, $created_at);
 }
 else
 {
