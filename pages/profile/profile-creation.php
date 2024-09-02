@@ -1,6 +1,5 @@
 <?php
 session_start(); // Start the session at the very beginning
-include_once "../../includes/dbh.inc.php"; // Ensure the database connection is included
 
 if (!isset($_SESSION["usersid"])) {
     header("Location: ../login/login.php");

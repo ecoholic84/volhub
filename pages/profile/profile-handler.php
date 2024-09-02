@@ -1,6 +1,6 @@
 <?php
-include_once "../../includes/dbh.inc.php";
-include_once "../../includes/functions.inc.php";
+include "../../includes/dbh.inc.php";
+include "../../includes/functions.inc.php";
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -32,8 +32,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     mysqli_stmt_close($stmt);
 }
-    require_once '../../includes/functions.inc.php';
-
     /*.......................ERROR HANDLERS.......................*/
 
     // Function to check if the username is valid.
@@ -49,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //     exit();
     // }
 
-    function usernameExists($con, $username) {
+    function idExists($con, $username) {
         // SQL query to check if the username already exists in the database
         $sql = "SELECT * FROM UserProfiles WHERE username = ?;";
         $stmt = mysqli_stmt_init($con);
