@@ -127,7 +127,7 @@ function loginUser($con, $email, $pwd)
         } else {
             // Start the session and set session variables
             session_start();
-            $_SESSION["users_id"] = $row["id"];
+            $_SESSION["usersid"] = $row["usersId"];
             $_SESSION["users_email"] = $row["usersEmail"];
 
             // Redirect to the dashboard
