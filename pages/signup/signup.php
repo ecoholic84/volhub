@@ -15,10 +15,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="flex items-center justify-center min-h-screen bg-black text-white">
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
     <div class="w-full max-w-md p-6">
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-semibold mb-2">Create an account</h1>
+            <h1 class="text-2xl font-semibold text-white mb-2">Create an account</h1>
             <p class="text-neutral-400 text-sm">Enter your details below to create your account</p>
         </div>
 

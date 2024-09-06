@@ -19,8 +19,8 @@
             right: 0;
             bottom: 0;
             background-image:
-                linear-gradient(to right, rgba(75, 85, 99, 0.2) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(75, 85, 99, 0.2) 1px, transparent 1px);
+                linear-gradient(to right, rgba(75, 85, 99, 0.2) 1px, transparent 4px),
+                linear-gradient(to bottom, rgba(75, 85, 99, 0.2) 1px, transparent 4px);
             background-size: 50px 50px;
             animation: moveGrid 15s linear infinite;
             z-index: -1;
@@ -48,7 +48,7 @@
 </head>
 
 <body
-    class="flex items-start justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 overflow-x-hidden">
+    class="flex items-start justify-center min-h-screen bg-gradient-to-br from-black via-black to-gray-800 overflow-x-hidden">
     <div class="moving-grid"></div>
     <div class="content-wrapper w-full">
         <div class="mx-auto max-w-7xl px-3 lg:px-6">
@@ -107,7 +107,7 @@
                                     Sign In
                                 </a>
                                 <a href="pages/signup/signup.php"
-                                    class="inline-flex items-center justify-center w-full px-4 py-3 md:py-1.5 font-medium leading-6 text-center whitespace-no-wrap transition duration-150 ease-in-out border border-transparent md:mr-1 text-gray-600 md:w-auto bg-white rounded-lg md:rounded-full hover:bg-white focus:outline-none focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700">
+                                    class="inline-flex items-center justify-center w-full px-4 py-3 md:py-1.5 font-medium leading-6 text-center whitespace-no-wrap transition duration-150 ease-in-out border border-transparent md:mr-1 text-black md:w-auto bg-white rounded-lg md:rounded-full hover:bg-white focus:outline-none focus:border-gray-700 focus:shadow-outline-gray active:bg-gray-700">
                                     Sign Up
                                 </a>
 
@@ -131,7 +131,7 @@
             </nav>
             <div class="container px-6 py-32 mx-auto md:text-center md:px-4">
                 <h1
-                    class="text-4xl font-extrabold leading-none leading-10 tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
+                    class="text-4xl font-extrabold leading-10 tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
                     <span class="block">Nothing great is</span>
                     <span class="relative inline-block mt-3 text-white">
                         <!-- Typing Effect -->
@@ -201,7 +201,7 @@
 
                             <div class="relative flex items-center justify-center h-auto min-h-[1.5em]">
                                 <p class="text-7xl font-white leading-tight" x-text="text"></p>
-                                <span class="absolute right-0 w-2 -mr-2 bg-white h-3/4" x-ref="cursor"></span>
+                                <span class="absolute right-0 w-1 -mr-2 bg-white h-3/4" x-ref="cursor"></span>
                             </div>
                         </div>
                     </span>

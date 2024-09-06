@@ -36,7 +36,8 @@ $table_create = "CREATE TABLE IF NOT EXISTS users (
     usersId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usersEmail VARCHAR(255) NOT NULL, 
     usersPwd VARCHAR(255) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    role ENUM('admin', 'user') NOT NULL DEFAULT 'user'
 )";
 
 $table2_create = "CREATE TABLE IF NOT EXISTS UserProfiles (

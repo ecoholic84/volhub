@@ -1,10 +1,61 @@
+<?php
+include_once "dbh.inc.php";
+session_start();
+$user_id = $_SESSION["usersid"];
+$roleAdmin = $_SESSION["role"];
+
+if (!isset($_SESSION["usersid"]) && !isset($_SESSION["role"])) {
+    header("Location: /miniProject/pages/login/login.php");
+    exit();
+}
+
+// Fetch the user's profile data
+$sql = "SELECT * FROM UserProfiles WHERE profile_usersId=?";
+$stmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($stmt, $sql))
+{
+    echo "SQL error";
+}
+else
+{
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if ($row = mysqli_fetch_assoc($result)) {
+        $full_name = $row['full_name'];
+        $username = $row['username'];
+        $identity = $row['identity'];
+        $bio = $row['bio'];
+        $degree_type = $row['degree_type'];
+        $institution = $row['institution'];
+        $field_of_study = $row['field_of_study'];
+        $graduation_month = $row['graduation_month'];
+        $graduation_year = $row['graduation_year'];
+        $phone = $row['phone'];
+        $city = $row['city'];
+        $emergency_name = $row['emergency_name'];
+        $emergency_phone = $row['emergency_phone'];
+        $links = $row['links'];
+    }
+        // Query to count total users
+        $sql_total_users = "SELECT COUNT(*) AS total_users FROM users";
+        $result_total_users = mysqli_query($con, $sql_total_users);
+
+        if ($result_total_users) {
+            $row_total_users = mysqli_fetch_assoc($result_total_users);
+            $total_users = $row_total_users['total_users'];
+        }
+        mysqli_stmt_close($stmt);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pines UI</title>
+    <title>Admin Panel</title>
     <style>[x-cloak]{display:none}</style>
     <!-- Include the Alpine library on your page -->
     <script src="https://unpkg.com/alpinejs" defer></script>
@@ -27,15 +78,15 @@
 <div class="antialiased bg-black w-full min-h-screen text-slate-300 relative py-4">
     <div class="grid grid-cols-12 mx-auto gap-2 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 max-w-7xl my-10 px-2">
         <div id="menu" class="bg-white/10 col-span-3 rounded-lg p-4 ">
-            <h1 class="font-bold text-lg lg:text-3xl bg-gradient-to-br from-white via-white/50 to-transparent bg-clip-text text-transparent">Dashboard<span class="text-indigo-400">.</span></h1>
+            <h1 class="font-bold text-lg lg:text-3xl bg-gradient-to-br from-white via-white/50 to-transparent bg-clip-text text-transparent">Admin Dashboard<span class="text-indigo-400">.</span></h1>
             <p class="text-slate-400 text-sm mb-2">Welcome back,</p>
             <a href="#" class="flex flex-col space-y-2 md:space-y-0 md:flex-row mb-5 items-center md:space-x-2 hover:bg-white/10 group transition duration-150 ease-linear rounded-lg group w-full py-3 px-2">
                 <div>
                     <img class="rounded-full w-10 h-10 relative object-cover" src="https://img.freepik.com/free-photo/no-problem-concept-bearded-man-makes-okay-gesture-has-everything-control-all-fine-gesture-wears-spectacles-jumper-poses-against-pink-wall-says-i-got-this-guarantees-something_273609-42817.jpg?w=1800&t=st=1669749937~exp=1669750537~hmac=4c5ab249387d44d91df18065e1e33956daab805bee4638c7fdbf83c73d62f125" alt="">
                 </div>
                 <div>
-                    <p class="font-medium group-hover:text-indigo-400 leading-4">Jim Smith</p>
-                    <span class="text-xs text-slate-400">Pantazi LLC</span>
+                    <p class="font-medium group-hover:text-indigo-400 leading-4"><?php echo htmlspecialchars($full_name); ?></p>
+                    <span class="text-xs text-slate-400">@<?php echo htmlspecialchars($username); ?></span>
                 </div>
             </a>
             <hr class="my-2 border-slate-700">
@@ -56,20 +107,6 @@
                     </div>
                 </a>
                 <a href="#" class="hover:bg-white/10 transition duration-150 ease-linear rounded-lg py-3 px-2 group">
-                    <div class="relative flex flex-col space-y-2 md:flex-row md:space-y-0 space-x-2 items-center">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:text-indigo-400">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                              </svg>                              
-                        </div>
-                        <div>
-                            <p class="font-bold text-base lg:text-lg text-slate-200 leading-4 group-hover:text-indigo-400">Invoices</p>
-                        <p class="text-slate-400 text-sm hidden md:block">Manage invoices</p>
-                        </div>
-                        <div class="absolute -top-3 -right-3 md:top-0 md:right-0 px-2 py-1.5 rounded-full bg-indigo-800 text-xs font-mono font-bold">23</div>
-                    </div>
-                </a>
-                <a href="#" class="hover:bg-white/10 transition duration-150 ease-linear rounded-lg py-3 px-2 group">
                     <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 space-x-2 items-center">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:text-indigo-400">
@@ -81,6 +118,20 @@
                         <p class="text-slate-400 text-sm hidden md:block">Manage users</p>
                         </div>
                         
+                    </div>
+                </a>
+                <a href="#" class="hover:bg-white/10 transition duration-150 ease-linear rounded-lg py-3 px-2 group">
+                    <div class="relative flex flex-col space-y-2 md:flex-row md:space-y-0 space-x-2 items-center">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 group-hover:text-indigo-400">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                              </svg>                              
+                        </div>
+                        <div>
+                            <p class="font-bold text-base lg:text-lg text-slate-200 leading-4 group-hover:text-indigo-400">Events</p>
+                        <p class="text-slate-400 text-sm hidden md:block">Manage Events</p>
+                        </div>
+                        <div class="absolute -top-3 -right-3 md:top-0 md:right-0 px-2 py-1.5 rounded-full bg-indigo-800 text-xs font-mono font-bold">23</div>
                     </div>
                 </a>
                 <a href="#" class="hover:bg-white/10 transition duration-150 ease-linear rounded-lg py-3 px-2 group">
@@ -100,11 +151,11 @@
                     </div>
                 </a>
             </div>
-            <p class="text-sm text-center text-gray-600">v2.0.0.3 | &copy; 2022 Pantazi Soft</p>
+            <p class="text-sm text-center text-gray-600">v1.0.0.0 | &copy; 2024 VolHub</p>
         </div>
         <div id="content" class="bg-white/10 col-span-9 rounded-lg p-6">
             <div id="24h">
-                <h1 class="font-bold py-4 uppercase">Last 24h Statistics</h1>
+                <h1 class="font-bold py-4 uppercase">Statistics</h1>
                 <div id="stats" class="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-black/60 to-white/5 p-6 rounded-lg">
                         <div class="flex flex-row space-x-4 items-center">
@@ -116,7 +167,7 @@
                             <div>
                                 <p class="text-indigo-300 text-sm font-medium uppercase leading-4">Users</p>
                                 <p class="text-white font-bold text-2xl inline-flex items-center space-x-2">
-                                    <span>+28</span>
+                                    <span><?php echo htmlspecialchars($total_users); ?></span>
                                     <span>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
@@ -158,9 +209,9 @@
                                   
                             </div>
                             <div>
-                                <p class="text-blue-300 text-sm font-medium uppercase leading-4">Invoices</p>
+                                <p class="text-blue-300 text-sm font-medium uppercase leading-4">Events</p>
                                 <p class="text-white font-bold text-2xl inline-flex items-center space-x-2">
-                                    <span>+79</span>
+                                    <span>79</span>
                                     <span>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />

@@ -59,9 +59,9 @@ function emailExists($con, $email)
     mysqli_stmt_close($stmt);
 }
 
-function createUser($con, $email, $pwd, $created_at)
+function createUser($con, $email, $pwd, $created_at, $role)
 {
-    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at) VALUES (?, ?, ?);";
+    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at, role) VALUES (?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($con);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -71,7 +71,7 @@ function createUser($con, $email, $pwd, $created_at)
 
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "sss", $email, $hashedPwd, $created_at);
+    mysqli_stmt_bind_param($stmt, "ssss", $email, $hashedPwd, $created_at, $role);
     mysqli_stmt_execute($stmt);
     // Get the last inserted user's ID
     $user_id = mysqli_insert_id($con);
@@ -84,7 +84,7 @@ function createUser($con, $email, $pwd, $created_at)
     $_SESSION["usersid"] = $user_id;
 
     // Redirect the user to the profile page or wherever you want
-    header("Location: ../../includes/dashboard.php");
+    header("Location: ../profile/profile-index.php");
     exit();
 }
 
@@ -129,9 +129,14 @@ function loginUser($con, $email, $pwd)
             session_start();
             $_SESSION["usersid"] = $row["usersId"];
             $_SESSION["users_email"] = $row["usersEmail"];
+            $_SESSION["role"] = $row["role"];
 
             // Redirect to the dashboard
-            header("Location: ../../includes/dashboard.php");
+            if ($row["role"] === 'admin') {
+                header("Location: /miniProject/includes/admin-dashboard.php");
+            } else {
+                header("Location: /miniProject/includes/dashboard.php");
+            }
             exit();
         }
     } else {
@@ -186,6 +191,6 @@ function createProfile($con, $user_id, $full_name, $username, $identity, $bio, $
     mysqli_stmt_close($stmt);
 
     // Redirect the user to the profile page or wherever you want
-    header("Location: ../profile/profile-index.php");
+    header("Location: ../../includes/dashboard.php");
     exit();
 }

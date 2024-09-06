@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $pwd = htmlspecialchars($_POST['pwd']);
     $pwdRepeat = htmlspecialchars($_POST['pwdrepeat']);
     $created_at = date('Y-m-d H:i:s');
+    $role = "user";
 
     require_once '../../includes/functions.inc.php';
 
@@ -55,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     /*........................................................*/
 
-    createUser($con, $email, $pwd, $created_at);
+    createUser($con, $email, $pwd, $created_at, $role);
 }
 else
 {
