@@ -25,13 +25,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Function to check if the username is valid.
     if (!invalidId($username))
     {
-        header("Location: profile-creation.php?error=invalidUsername");
+        header("Location: vol-profile-creation.php?error=invalidUsername");
         exit();
     }
     
     // function to check if username is taken.
     if (idExists($con, $username)) {
-        header("Location: profile-creation.php?error=usernameTaken");
+        header("Location: vol-profile-creation.php?error=usernameTaken");
         exit();
     }
 

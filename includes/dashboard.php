@@ -1,3 +1,68 @@
+<?php
+include_once "dbh.inc.php";
+session_start();
+$user_id = $_SESSION["usersid"];
+
+if (!isset($_SESSION["usersid"])) {
+    header("Location: ../pages/login/login.php");
+    exit();
+}
+
+// Fetch the user's profile data
+$sql = "SELECT * FROM Events WHERE organizer_id=? ORDER BY event_datetime DESC";
+$stmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($stmt, $sql)) {
+    echo "SQL error";
+} else {
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $events = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    if ($row = mysqli_fetch_assoc($result)) {
+        $event_id = $row['event_id'];
+        $organizer_id = $row['organizer_id'];
+        $event_name = $row['event_name'];
+        $event_description = $row['event_description'];
+        $event_datetime = $row['event_datetime'];
+        $event_location = $row['event_location'];
+        $event_thumbnail = $row['event_thumbnail'];
+        $created_at = $row['created_at'];
+    }    
+}
+mysqli_stmt_close($stmt);
+?>
+<?php
+// Adjust SQL query to exclude organizer_id
+// $sql = "SELECT * FROM Events ORDER BY event_datetime DESC";
+// $stmt = mysqli_stmt_init($con);
+
+// if (!mysqli_stmt_prepare($stmt, $sql)) {
+//     echo "SQL error";
+// } else {
+//     mysqli_stmt_execute($stmt);
+//     $result = mysqli_stmt_get_result($stmt);
+    
+//     // Fetch all events in descending order of event_datetime
+//     $events = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+//     // Optionally: process or display events here
+//     foreach ($events as $event) {
+//         // Access event properties, e.g.:
+//         echo "Event ID: " . $event['event_id'] . "<br>";
+//         echo "Event Name: " . $event['event_name'] . "<br>";
+//         echo "Event Description: " . $event['event_description'] . "<br>";
+//         echo "Event Date/Time: " . $event['event_datetime'] . "<br>";
+//         echo "Event Location: " . $event['event_location'] . "<br>";
+//         echo "Event Thumbnail: " . $event['event_thumbnail'] . "<br>";
+//         echo "Created At: " . $event['created_at'] . "<br><br>";
+//     }
+// }
+
+// mysqli_stmt_close($stmt);
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,9 +76,8 @@
             display: none
         }
     </style>
-    <!-- Include the Alpine library on your page -->
     <script src="https://unpkg.com/alpinejs" defer></script>
-    <!-- Include the TailwindCSS library on your page -->
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -54,7 +118,30 @@
                 <!-- Tab Content 1 - Two-column grid layout -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Event Card -->
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <?php if (empty($events)): ?>
+                        <p class="col-span-full text-center text-gray-500">No events found. Create your first event!</p>
+                    <?php else: ?>
+                        <?php foreach ($events as $event): ?>
+                            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                                <img class="w-full h-48 object-cover" src="<?php echo htmlspecialchars($event['event_thumbnail'] ?: 'https://via.placeholder.com/1200x500'); ?>" alt="Event Image">
+                                <div class="px-6 py-4">
+                                    <div class="font-bold text-2xl mb-2"><?php echo htmlspecialchars($event['event_name']); ?></div>
+                                    <p class="text-gray-700 text-base">
+                                        <?php echo htmlspecialchars(substr($event['event_description'], 0, 100)) . '...'; ?>
+                                    </p>
+                                </div>
+                                <div class="px-6 py-4 flex items-center justify-between">
+                                    <span class="text-gray-600 text-sm">Date: <?php echo date('F j, Y', strtotime($event['event_datetime'])); ?></span>
+                                    <a href="view_event.php?id=<?php echo $event['event_id']; ?>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Learn More
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                
+                    <!-- <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                         <img class="w-full h-48 object-cover" src="https://via.placeholder.com/1200x500" alt="Event Image">
                         <div class="px-6 py-4">
                             <div class="font-bold text-2xl mb-2">Event Title</div>
@@ -68,10 +155,11 @@
                                 Learn More
                             </button>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Additional Content Card -->
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+
+                    <!-- <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                         <div class="px-6 py-4">
                             <h2 class="font-bold text-2xl mb-2">Additional Information</h2>
                             <p class="text-gray-700 text-base mb-4">
@@ -84,7 +172,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- End Tab Content 1 -->
             </div>
 

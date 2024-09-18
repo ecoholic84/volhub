@@ -160,7 +160,7 @@ function idExists($con, $username)
     $stmt = mysqli_stmt_init($con);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("Location: profile-creation.php?error=stmtfailed");
+        header("Location: vol-profile-creation.php?error=stmtfailed");
         exit();
     }
 

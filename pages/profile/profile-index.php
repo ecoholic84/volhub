@@ -42,12 +42,20 @@
         }
 
         h1 {
-            font-size: 3em; /* Increased size */
+            font-size: 3em;
             margin: 10px 0;
         }
 
         p {
             margin: 10px 0;
+            font-size: 1.5em;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .Btn-Container {
@@ -62,7 +70,6 @@
             border: none;
             cursor: pointer;
             text-decoration: none;
-            margin: 20px auto;
             padding: 0 15px;
         }
 
@@ -132,24 +139,43 @@
     <div class="container">
         <div class="landing-page">
             <h1>Welcome to VolHub</h1>
-            <p>Let's create your personal profile</p>
-            <a href="profile-creation.php" class="Btn-Container">
-                <span class="text">Create Profile</span>
-                <span class="icon-Container">
-                    <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="1.61321" cy="1.61321" r="1.5" fill="black"></circle>
-                        <circle cx="5.73583" cy="1.61321" r="1.5" fill="black"></circle>
-                        <circle cx="5.73583" cy="5.5566" r="1.5" fill="black"></circle>
-                        <circle cx="9.85851" cy="5.5566" r="1.5" fill="black"></circle>
-                        <circle cx="9.85851" cy="9.5" r="1.5" fill="black"></circle>
-                        <circle cx="13.9811" cy="9.5" r="1.5" fill="black"></circle>
-                        <circle cx="5.73583" cy="13.4434" r="1.5" fill="black"></circle>
-                        <circle cx="9.85851" cy="13.4434" r="1.5" fill="black"></circle>
-                        <circle cx="1.61321" cy="17.3868" r="1.5" fill="black"></circle>
-                        <circle cx="5.73583" cy="17.3868" r="1.5" fill="black"></circle>
-                    </svg>
-                </span>
-            </a>
+            <p>What defines you?</p>
+            <div class="button-container">
+                <a href="vol-profile-creation.php" class="Btn-Container">
+                    <span class="text">Volunteer</span>
+                    <span class="icon-Container">
+                        <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="1.61321" cy="1.61321" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="1.61321" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="5.5566" r="1.5" fill="black"></circle>
+                            <circle cx="9.85851" cy="5.5566" r="1.5" fill="black"></circle>
+                            <circle cx="9.85851" cy="9.5" r="1.5" fill="black"></circle>
+                            <circle cx="13.9811" cy="9.5" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="13.4434" r="1.5" fill="black"></circle>
+                            <circle cx="9.85851" cy="13.4434" r="1.5" fill="black"></circle>
+                            <circle cx="1.61321" cy="17.3868" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="17.3868" r="1.5" fill="black"></circle>
+                        </svg>
+                    </span>
+                </a>
+                <a href="org-profile-creation.php" class="Btn-Container">
+                    <span class="text">Organizer</span>
+                    <span class="icon-Container">
+                        <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="1.61321" cy="1.61321" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="1.61321" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="5.5566" r="1.5" fill="black"></circle>
+                            <circle cx="9.85851" cy="5.5566" r="1.5" fill="black"></circle>
+                            <circle cx="9.85851" cy="9.5" r="1.5" fill="black"></circle>
+                            <circle cx="13.9811" cy="9.5" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="13.4434" r="1.5" fill="black"></circle>
+                            <circle cx="9.85851" cy="13.4434" r="1.5" fill="black"></circle>
+                            <circle cx="1.61321" cy="17.3868" r="1.5" fill="black"></circle>
+                            <circle cx="5.73583" cy="17.3868" r="1.5" fill="black"></circle>
+                        </svg>
+                    </span>
+                </a>
+            </div>
         </div>
     </div>
 </body>

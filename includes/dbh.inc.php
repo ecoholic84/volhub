@@ -34,7 +34,7 @@ mysqli_select_db($con, $dbName);
 // Ensure the data types and unsigned attribute match for both tables
 $table_create = "CREATE TABLE IF NOT EXISTS users (
     usersId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    usersEmail VARCHAR(255) NOT NULL, 
+    usersEmail VARCHAR(255) NOT NULL UNIQUE, 
     usersPwd VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     role ENUM('admin', 'user') NOT NULL DEFAULT 'user'
@@ -60,6 +60,18 @@ $table2_create = "CREATE TABLE IF NOT EXISTS UserProfiles (
     FOREIGN KEY (profile_usersId) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 
+$table3_create = "CREATE TABLE IF NOT EXISTS Events (
+    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    organizer_id INT(11) UNSIGNED NOT NULL,
+    event_name VARCHAR(255) NOT NULL,
+    event_description TEXT,
+    event_datetime DATETIME NOT NULL,
+    event_location VARCHAR(255) NOT NULL,
+    event_thumbnail VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (organizer_id) REFERENCES users(usersId) ON DELETE CASCADE
+);";
+
 
 if(!mysqli_query($con, $table_create)) {
 
@@ -67,6 +79,11 @@ if(!mysqli_query($con, $table_create)) {
 }
 
 if(!mysqli_query($con, $table2_create)) {
+
+    die("Error Creating Table: " . mysqli_error($con));
+}
+
+if(!mysqli_query($con, $table3_create)) {
 
     die("Error Creating Table: " . mysqli_error($con));
 }
