@@ -13,7 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $pwd = htmlspecialchars($_POST['pwd']);
     $pwdRepeat = htmlspecialchars($_POST['pwdrepeat']);
     $created_at = date('Y-m-d H:i:s');
-    $role = "user";
+    $role = "user"; // Default role
+    $user_type = isset($_POST['user_type']) ? htmlspecialchars($_POST['user_type']) : 'volunteer'; // Default to 'volunteer'
+    
 
     require_once '../../includes/functions.inc.php';
 
@@ -56,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     /*........................................................*/
 
-    createUser($con, $email, $pwd, $created_at, $role);
+    createUser($con, $email, $pwd, $created_at, $role, $user_type);
 }
 else
 {

@@ -59,9 +59,9 @@ function emailExists($con, $email)
     mysqli_stmt_close($stmt);
 }
 
-function createUser($con, $email, $pwd, $created_at, $role)
+function createUser($con, $email, $pwd, $created_at, $role, $user_type)
 {
-    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at, role) VALUES (?, ?, ?, ?);";
+    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at, role, user_type) VALUES (?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($con);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -71,13 +71,13 @@ function createUser($con, $email, $pwd, $created_at, $role)
 
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "ssss", $email, $hashedPwd, $created_at, $role);
+    mysqli_stmt_bind_param($stmt, "sssss", $email, $hashedPwd, $created_at, $role, $user_type);
     mysqli_stmt_execute($stmt);
     // Get the last inserted user's ID
     $user_id = mysqli_insert_id($con);
     mysqli_stmt_close($stmt);
-    // Start the session and set session variables
 
+    // Start the session and set session variables
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -156,7 +156,7 @@ function invalidId($username)
 
 function idExists($con, $username)
 {
-    $sql = "SELECT * FROM UserProfiles WHERE username = ?;";
+    $sql = "SELECT * FROM user_profiles WHERE username = ?;";
     $stmt = mysqli_stmt_init($con);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -176,21 +176,51 @@ function idExists($con, $username)
     return $exists;
 }
 
-function createProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $emergency_name, $emergency_phone, $links)
-{
-    $sql = "INSERT INTO UserProfiles (profile_usersId, full_name, username, identity, bio, degree_type, institution, field_of_study, graduation_month, graduation_year, phone, city, emergency_name, emergency_phone, links) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+function createSharedProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links) {
+    $sql = "INSERT INTO user_profiles (profile_usersId, full_name, username, identity, bio, degree_type, institution, field_of_study, graduation_month, graduation_year, phone, city, links) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_stmt_init($con);
+    
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         echo "SQL error";
     } else {
-        mysqli_stmt_bind_param($stmt, "issssssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $emergency_name, $emergency_phone, $links);
+        mysqli_stmt_bind_param($stmt, "issssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
         mysqli_stmt_execute($stmt);
-        echo "Profile created successfully!";
     }
+    
     mysqli_stmt_close($stmt);
 
-    // Redirect the user to the profile page or wherever you want
-    header("Location: ../../includes/dashboard.php");
-    exit();
 }
+
+function createVolunteerProfile($con, $user_id, $emergency_name, $emergency_phone) {
+    $sql = "INSERT INTO user_profiles_vol (userid, emergency_name, emergency_phone) 
+            VALUES (?, ?, ?)";
+    $stmt = mysqli_stmt_init($con);
+    
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        echo "SQL error";
+    } else {
+        mysqli_stmt_bind_param($stmt, "iss", $user_id, $emergency_name, $emergency_phone);
+        mysqli_stmt_execute($stmt);
+    }
+    
+    mysqli_stmt_close($stmt);
+
+}
+
+function createOrganizerProfile($con, $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number) {
+    $sql = "INSERT INTO user_profiles_org (userid, organization_name, job_title, industry, location, official_address, official_contact_number) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_stmt_init($con);
+    
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        echo "SQL error";
+    } else {
+        mysqli_stmt_bind_param($stmt, "issssss", $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
+        mysqli_stmt_execute($stmt);
+    }
+    
+    mysqli_stmt_close($stmt);
+    
+}
+

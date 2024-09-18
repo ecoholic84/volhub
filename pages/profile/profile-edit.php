@@ -9,7 +9,7 @@ if (!isset($_SESSION["usersid"])) {
 }
 
 // Fetch the user's profile data
-$sql = "SELECT * FROM UserProfiles WHERE profile_usersId=?";
+$sql = "SELECT * FROM user_profiles WHERE profile_usersId=?";
 $stmt = mysqli_stmt_init($con);
 if (!mysqli_stmt_prepare($stmt, $sql)) {
     echo "SQL error";

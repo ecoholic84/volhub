@@ -34,33 +34,53 @@ mysqli_select_db($con, $dbName);
 // Ensure the data types and unsigned attribute match for both tables
 $table_create = "CREATE TABLE IF NOT EXISTS users (
     usersId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    usersEmail VARCHAR(255) NOT NULL UNIQUE, 
+    usersEmail VARCHAR(255) NOT NULL UNIQUE,
     usersPwd VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    role ENUM('admin', 'user') NOT NULL DEFAULT 'user'
+    role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
+    user_type SET('volunteer', 'organizer') NOT NULL DEFAULT 'volunteer'
 )";
 
-$table2_create = "CREATE TABLE IF NOT EXISTS UserProfiles (
+$table2_create = "CREATE TABLE IF NOT EXISTS user_profiles (
     profile_id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     profile_usersId INT(11) UNSIGNED NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     username VARCHAR(50) NOT NULL,
     identity VARCHAR(20),
+    phone VARCHAR(20),
+    city VARCHAR(50),
     bio TEXT,
     degree_type VARCHAR(50),
     institution VARCHAR(100),
     field_of_study VARCHAR(100),
     graduation_month VARCHAR(20),
     graduation_year INT,
-    phone VARCHAR(20),
-    city VARCHAR(50),
-    emergency_name VARCHAR(100),
-    emergency_phone VARCHAR(20),
     links TEXT,
     FOREIGN KEY (profile_usersId) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 
-$table3_create = "CREATE TABLE IF NOT EXISTS Events (
+$table3_create = "CREATE TABLE IF NOT EXISTS  user_profiles_vol (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    emergency_name VARCHAR(100) NOT NULL,
+    emergency_phone VARCHAR(20) NOT NULL,
+    userid INT(11) UNSIGNED NOT NULL,
+    FOREIGN KEY (userid) REFERENCES users(usersId) ON DELETE CASCADE
+)";
+
+
+$table4_create = "CREATE TABLE IF NOT EXISTS user_profiles_org (
+    id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    organization_name VARCHAR(255) NOT NULL,
+    job_title VARCHAR(100) NOT NULL,
+    industry VARCHAR(50),
+    location VARCHAR(255),
+    official_address TEXT,
+    official_contact_number VARCHAR(20),
+    userid INT(11) UNSIGNED NOT NULL,
+    FOREIGN KEY (userid) REFERENCES users(usersId) ON DELETE CASCADE
+)";
+
+$table5_create = "CREATE TABLE IF NOT EXISTS Events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
     organizer_id INT(11) UNSIGNED NOT NULL,
     event_name VARCHAR(255) NOT NULL,
@@ -84,6 +104,16 @@ if(!mysqli_query($con, $table2_create)) {
 }
 
 if(!mysqli_query($con, $table3_create)) {
+
+    die("Error Creating Table: " . mysqli_error($con));
+}
+
+if(!mysqli_query($con, $table4_create)) {
+
+    die("Error Creating Table: " . mysqli_error($con));
+}
+
+if(!mysqli_query($con, $table5_create)) {
 
     die("Error Creating Table: " . mysqli_error($con));
 }

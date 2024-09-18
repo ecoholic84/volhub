@@ -1,3 +1,41 @@
+<?php
+session_start();
+include_once '../../includes/dbh.inc.php'; // Include your database connection file
+
+if (!isset($_SESSION['usersid'])) {
+    // Redirect to login page if user is not logged in
+    header("Location: ../login/login.php");
+    exit();
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $user_id = $_SESSION["usersid"];
+    $userType = $_POST['user_type'];
+
+    // Prepare SQL statement
+    $sql = "UPDATE users SET user_type = ? WHERE usersId = ?";
+    $stmt = mysqli_prepare($con, $sql);
+
+    // Bind parameters and execute
+    mysqli_stmt_bind_param($stmt, "si", $userType, $user_id);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        // Redirect based on user type
+        if ($userType == 'volunteer') {
+            header("Location: vol-profile-creation.php");
+        } elseif ($userType == 'organizer') {
+            header("Location: org-profile-creation.php");
+        }
+        exit();
+    } else {
+        echo "Error updating record: " . mysqli_error($con);
+    }
+
+    mysqli_stmt_close($stmt);
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -140,9 +178,10 @@
         <div class="landing-page">
             <h1>Welcome to VolHub</h1>
             <p>What defines you?</p>
+            <form method="POST" action="">
             <div class="button-container">
-                <a href="vol-profile-creation.php" class="Btn-Container">
-                    <span class="text">Volunteer</span>
+            <button type="submit" name="user_type" value="volunteer" class="Btn-Container">
+            <span class="text">Volunteer</span>
                     <span class="icon-Container">
                         <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="1.61321" cy="1.61321" r="1.5" fill="black"></circle>
@@ -157,9 +196,9 @@
                             <circle cx="5.73583" cy="17.3868" r="1.5" fill="black"></circle>
                         </svg>
                     </span>
-                </a>
-                <a href="org-profile-creation.php" class="Btn-Container">
-                    <span class="text">Organizer</span>
+            </button>
+            <button type="submit" name="user_type" value="organizer" class="Btn-Container">
+            <span class="text">Organizer</span>
                     <span class="icon-Container">
                         <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="1.61321" cy="1.61321" r="1.5" fill="black"></circle>
@@ -174,8 +213,9 @@
                             <circle cx="5.73583" cy="17.3868" r="1.5" fill="black"></circle>
                         </svg>
                     </span>
-                </a>
+                </button>
             </div>
+            </form>
         </div>
     </div>
 </body>
