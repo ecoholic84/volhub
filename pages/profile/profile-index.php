@@ -22,9 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_stmt_execute($stmt)) {
         // Redirect based on user type
         if ($userType == 'volunteer') {
-            header("Location: vol-profile-creation.php");
+            header("Location: profile-creation.php");
         } elseif ($userType == 'organizer') {
-            header("Location: org-profile-creation.php");
+            header("Location: profile-creation.php");
         }
         exit();
     } else {

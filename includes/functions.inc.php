@@ -182,14 +182,14 @@ function createSharedProfile($con, $user_id, $full_name, $username, $identity, $
     $stmt = mysqli_stmt_init($con);
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        echo "SQL error";
-    } else {
-        mysqli_stmt_bind_param($stmt, "issssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
-        mysqli_stmt_execute($stmt);
+        return false;
     }
     
+    mysqli_stmt_bind_param($stmt, "issssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
+    $result = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-
+    
+    return $result;
 }
 
 function createVolunteerProfile($con, $user_id, $emergency_name, $emergency_phone) {
@@ -198,14 +198,14 @@ function createVolunteerProfile($con, $user_id, $emergency_name, $emergency_phon
     $stmt = mysqli_stmt_init($con);
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        echo "SQL error";
-    } else {
-        mysqli_stmt_bind_param($stmt, "iss", $user_id, $emergency_name, $emergency_phone);
-        mysqli_stmt_execute($stmt);
+        return false;
     }
     
+    mysqli_stmt_bind_param($stmt, "iss", $user_id, $emergency_name, $emergency_phone);
+    $result = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-
+    
+    return $result;
 }
 
 function createOrganizerProfile($con, $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number) {
@@ -214,13 +214,12 @@ function createOrganizerProfile($con, $user_id, $organization_name, $job_title, 
     $stmt = mysqli_stmt_init($con);
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        echo "SQL error";
-    } else {
-        mysqli_stmt_bind_param($stmt, "issssss", $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
-        mysqli_stmt_execute($stmt);
+        return false;
     }
     
+    mysqli_stmt_bind_param($stmt, "issssss", $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
+    $result = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     
+    return $result;
 }
-
