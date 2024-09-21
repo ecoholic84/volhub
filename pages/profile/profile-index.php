@@ -9,8 +9,11 @@ if (!isset($_SESSION['usersid'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user_id = $_SESSION["usersid"];
-    $userType = $_POST['user_type'];
+    $user_id = $_SESSION["usersid"]; // Get the user ID from session
+    $userType = $_POST['user_type']; // Get the user's choice
+
+    // Store the user's choice (user_type) in the session for future redirection
+    $_SESSION['user_type'] = $userType;
 
     // Prepare SQL statement
     $sql = "UPDATE users SET user_type = ? WHERE usersId = ?";
@@ -18,23 +21,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Bind parameters and execute
     mysqli_stmt_bind_param($stmt, "si", $userType, $user_id);
-    
-    if (mysqli_stmt_execute($stmt)) {
-        // Redirect based on user type
-        if ($userType == 'volunteer') {
-            header("Location: profile-creation.php");
-        } elseif ($userType == 'organizer') {
-            header("Location: profile-creation.php");
-        }
-        exit();
-    } else {
-        echo "Error updating record: " . mysqli_error($con);
-    }
+    mysqli_stmt_execute($stmt);
 
+    // Close the statement
     mysqli_stmt_close($stmt);
-}
 
+    // Redirect to the common page after updating user type
+    header('Location: common.php');
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html>

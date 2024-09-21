@@ -3,15 +3,20 @@ include "../../includes/dbh.inc.php";
 include "../../includes/functions.inc.php";
 session_start();
 
-if (!isset($_POST['user_type'])) {
-    header("Location: profile-index.php");
-    exit();
-}
-
-$user_type = $_POST['user_type'];
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['usersid'];
+    $user_type = $_SESSION['user_type']; // Assuming user_type is stored in session
+
+    // Check user_type and redirect accordingly
+    if (strpos($user_type, 'volunteer') !== false) {
+        header("Location: vol-profile-creation.php");
+        exit();
+    } elseif (strpos($user_type, 'organizer') !== false) {
+        header("Location: org-profile-creation.php");
+        exit();
+    }
+    
+    // If no redirection occurred, proceed with the rest of the script
     
     // Shared fields
     if (isset($_POST['basic_profile'])) {
@@ -41,19 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insert shared profile fields into `user_profiles`
         createSharedProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
-        
-        // Redirect to specific profile creation page based on user type
-        if ($_SESSION['user_type'] == 'volunteer') {
-            header("Location: vol-profile-creation.php");
-            exit();
-        } elseif ($_SESSION['user_type'] == 'organizer') {
-            header("Location: org-profile-creation.php");
-            exit();
-        }
     }
 
     // Volunteer-specific fields
-    if (isset($_POST['volunteer-profile'])) {
+    if (isset($_POST['volunteer'])) {
         $emergency_name = htmlspecialchars($_POST['emergency-name']);
         $emergency_phone = htmlspecialchars($_POST['emergency-phone']);
         
@@ -65,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Organizer-specific fields
-    if (isset($_POST['organizer-profile'])) {
+    if (isset($_POST['organizer'])) {
         $organization_name = htmlspecialchars($_POST['organization']);
         $job_title = htmlspecialchars($_POST['job-title']);
         $industry = htmlspecialchars($_POST['industry']);

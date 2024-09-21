@@ -6,6 +6,14 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
+if (!isset($_SESSION['user_type'])) {
+    header('Location: profile-index.php'); // Redirect back if no choice made
+    exit;
+}
+
+// Store user choice
+$user_choice = $_SESSION['user_type'];
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION["usersid"];
     $userType = $_POST['user_type'];
@@ -54,6 +62,20 @@ if (isset($_GET["error"])) {
     </style>
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        // Redirect based on the user's previous decision
+        setTimeout(function() {
+            // Redirect logic based on user choice (fetched via PHP session variable)
+            var userChoice = "<?php echo $user_type; ?>";
+            if (userChoice === "volunteer") {
+                window.location.href = "vol-profile-creation.php";  // Redirect to Page 1
+            } else if (userChoice === "organizer") {
+                window.location.href = "org-profile-creation.php";  // Redirect to Page 2
+            }
+        }, 1000); // Delay of 1 seconds before redirecting
+    </script>
+
 </head>
 
 <body>
@@ -242,60 +264,24 @@ if (isset($_GET["error"])) {
 
                 </div>
 
-                <!-- <div class="mt-4 pb-10 flex py-items-center justify-end gap-x-6">
-                    <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-                    <button type="submit" name="user_type" value="<?php echo htmlspecialchars($userType); ?>"
-                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Next</button>
-                </div> -->
-
                 <div class="mt-4 pb-10 flex py-items-center justify-end gap-x-6">
                     <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-                    <button type="submit" id="submit-button"
-                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                        Next
-                    </button>
+                    <button type="submit" name="basic_profile" value="<?php echo htmlspecialchars($userType); ?>"
+                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Next</button>
                 </div>
 
-                <!-- Error Handlers -->
-                <?php
-        if (isset($_GET["error"])) {
-            $errorMessages = [
-                "invalidUsername" => "Choose a proper username!",
-                "usernameTaken" => "Sorry, username is taken. Try again!",
-                "none" => "You have signed up!",
-            ];
-
-            $errorKey = $_GET["error"];
-            if (array_key_exists($errorKey, $errorMessages)) {
-                echo "<div class='mt-2 pt-2 text-red-500 text-center text-sm'>{$errorMessages[$errorKey]}</div>";
-
-            }
-        }
-        ?>
+                <!-- <div class="mt-4 pb-10 flex py-items-center justify-end gap-x-6">
+                    <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
+                    <button type="submit" id="submit-button" name="basic_profile" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Next
+                    </button>
+                </div> -->
 
             </form>
 
         </div>
     </div>
 
-    <script>
-        document.getElementById('profile-form').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Get selected user type
-            const userType = document.getElementById('user_type').value;
-
-            // Redirect based on user type
-            if (userType === 'volunteer') {
-                window.location.href = 'vol-profile-creation.php';
-            } else if (userType === 'organizer') {
-                window.location.href = 'org-profile-creation.php';
-            } else {
-                alert('Please select a valid user type.');
-            }
-        });
-    </script>
-    
 </body>
 
 </html>
