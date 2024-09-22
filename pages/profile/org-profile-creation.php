@@ -30,7 +30,7 @@ if (!isset($_SESSION["usersid"])) {
     <div class="flex items-center justify-center w-full max-w-full py-12">
         <form action="profile-handler.php" method="POST" class="space-y-2 w-full max-w-3xl">
             <input type="hidden" name="form_type" value="organizer">
-            <input type="hidden" name="organizers-profile" value="1">
+            <input type="hidden" name="organizer-profile" value="1">
             <div class="space-y-12">
                 <div class="border-b border-gray-900/10 pb-12">
                     <h2 class="text-3xl font-semibold leading-7 text-white">Professional Details*</h2>
@@ -106,7 +106,7 @@ if (!isset($_SESSION["usersid"])) {
             </div>
             <div class="mt-4 pb-10 flex items-center justify-end gap-x-6">
                 <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-                <button type="submit"
+                <button type="submit" name="organizer_profile"
                     class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
             </div>
         </form>

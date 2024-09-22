@@ -17,20 +17,6 @@ $user_choice = $_SESSION['user_type'];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION["usersid"];
     $userType = $_POST['user_type'];
-
-    if (mysqli_stmt_execute($stmt)) {
-        // Redirect based on user type
-        if ($userType == 'volunteer') {
-            header("Location: vol.profile-creation.php");
-        } elseif ($userType == 'organizer') {
-            header("Location: org.profile-creation.php");
-        }
-        exit();
-    } else {
-        echo "Error updating record: " . mysqli_error($con);
-    }
-
-    mysqli_stmt_close($stmt);
 }
 
 if (isset($_GET["error"])) {
@@ -62,19 +48,6 @@ if (isset($_GET["error"])) {
     </style>
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        // Redirect based on the user's previous decision
-        setTimeout(function() {
-            // Redirect logic based on user choice (fetched via PHP session variable)
-            var userChoice = "<?php echo $user_type; ?>";
-            if (userChoice === "volunteer") {
-                window.location.href = "vol-profile-creation.php";  // Redirect to Page 1
-            } else if (userChoice === "organizer") {
-                window.location.href = "org-profile-creation.php";  // Redirect to Page 2
-            }
-        }, 1000); // Delay of 1 seconds before redirecting
-    </script>
 
 </head>
 
@@ -261,12 +234,11 @@ if (isset($_GET["error"])) {
                             </template>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="mt-4 pb-10 flex py-items-center justify-end gap-x-6">
                     <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-                    <button type="submit" name="basic_profile" value="<?php echo htmlspecialchars($userType); ?>"
+                    <button type="submit" name="basic_profile"
                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Next</button>
                 </div>
 

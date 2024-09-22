@@ -5,7 +5,8 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['usersid'];
-    $user_type = $_SESSION['user_type']; // Assuming user_type is stored in session
+    $userType = $_SESSION['user_type']; // Assuming user_type is stored in session
+    $user_type = $_SESSION['user_type'];
 
     // Check user_type and redirect accordingly
     if (strpos($user_type, 'volunteer') !== false) {
@@ -49,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Volunteer-specific fields
-    if (isset($_POST['volunteer'])) {
+    if (isset($_POST['volunteer_profile'])) {
         $emergency_name = htmlspecialchars($_POST['emergency-name']);
         $emergency_phone = htmlspecialchars($_POST['emergency-phone']);
         
@@ -61,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Organizer-specific fields
-    if (isset($_POST['organizer'])) {
+    if (isset($_POST['organizer_profile'])) {
         $organization_name = htmlspecialchars($_POST['organization']);
         $job_title = htmlspecialchars($_POST['job-title']);
         $industry = htmlspecialchars($_POST['industry']);

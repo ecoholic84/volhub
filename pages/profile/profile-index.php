@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_stmt_close($stmt);
 
     // Redirect to the common page after updating user type
-    header('Location: common.php');
+    header('Location: profile-creation.php');
     exit;
 }
 ?>

@@ -21,9 +21,7 @@ if (!isset($_SESSION["usersid"])) {
         display: none
     }
     </style>
-    <!-- Include the Alpine library on your page -->
     <script src="https://unpkg.com/alpinejs" defer></script>
-    <!-- Include the TailwindCSS library on your page -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -66,7 +64,7 @@ if (!isset($_SESSION["usersid"])) {
 
                 <div class="mt-4 pb-10 flex items-center justify-end gap-x-6">
                     <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-                    <button type="submit"
+                    <button type="submit" name="volunteer_profile"
                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
                 </div>
             </div>

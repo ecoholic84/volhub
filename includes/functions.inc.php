@@ -214,8 +214,9 @@ function createOrganizerProfile($con, $user_id, $organization_name, $job_title, 
     $stmt = mysqli_stmt_init($con);
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
+        error_log("SQL Prepare Failed: " . mysqli_stmt_error($stmt));
         return false;
-    }
+    }    
     
     mysqli_stmt_bind_param($stmt, "issssss", $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
     $result = mysqli_stmt_execute($stmt);
