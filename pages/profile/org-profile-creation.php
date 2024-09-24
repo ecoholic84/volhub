@@ -28,7 +28,7 @@ if (!isset($_SESSION["usersid"])) {
 <body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 min-h-screen">
     <?php include "../../includes/header.php" ?>
     <div class="flex items-center justify-center w-full max-w-full py-12">
-        <form action="profile-handler.php" method="POST" class="space-y-2 w-full max-w-3xl">
+        <form action="org-profile-handler.php" method="POST" class="space-y-2 w-full max-w-3xl">
             <input type="hidden" name="form_type" value="organizer">
             <input type="hidden" name="organizer-profile" value="1">
             <div class="space-y-12">

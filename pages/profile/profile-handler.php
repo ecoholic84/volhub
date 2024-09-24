@@ -3,6 +3,14 @@ include "../../includes/dbh.inc.php";
 include "../../includes/functions.inc.php";
 session_start();
 
+if (isset($_SESSION['usersid'])) {
+    $user_id = $_SESSION['usersid'];
+} else {
+    // Handle error or redirect to login
+    header("Location: ../login/login.php");
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['usersid'];
     $userType = $_SESSION['user_type']; // Assuming user_type is stored in session
