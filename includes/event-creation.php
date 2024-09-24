@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pines UI</title>
+    <title>Organizer Dashboard</title>
     <style>
     [x-cloak] {
         display: none
@@ -55,8 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body class="flex items-start justify-center h-full bg-gray-50">
     <div class="flex items-center justify-center w-full max-w-full">
-        <div x-data="{ modalOpen: false }" @keydown.escape.window="modalOpen = false" :class="{ 'z-40': modalOpen }"
-            class="relative w-auto h-auto">
+    <div x-data="{ modalOpen: false, datePickerOpen: false }" @keydown.escape.window="modalOpen = false; datePickerOpen = false" :class="{ 'z-40': modalOpen || datePickerOpen }" class="relative w-auto h-auto">
             <button @click="modalOpen=true"
                 class="inline-flex items-center justify-center h-10 px-4 py-2 text-sm font-medium transition-colors bg-neutral-800 text-white border rounded-md hover:bg-neutral-700 active:bg-neutral-800 focus:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-600/60 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none">Create
                 Event</button>
@@ -193,17 +192,15 @@ datePickerDay = currentDate.getDay();
 datePickerValue = datePickerFormatDate( currentDate );
 datePickerCalculateDays();
 " x-cloak>
-                                    <div class="container px-4 py-2 mx-auto md:py-10">
-                                        <div class="w-full mb-5">
+                                    
                                             <label for="event_datetime"
-                                                class="block mb-1 text-sm font-medium text-neutral-500">Event Date &
-                                                Time</label>
+                                                class="block mb-2 text-sm font-medium text-neutral-100">Event Date</label>
                                             <div class="relative w-[17rem]">
                                                 <input x-ref="datePickerInput" type="text" id="event_datetime"
                                                     name="event_datetime" placeholderr="" required
                                                     @click="datePickerOpen=!datePickerOpen" x-model="datePickerValue"
                                                     x-on:keydown.escape="datePickerOpen=false"
-                                                    class="flex w-full h-10 px-3 py-2 text-sm bg-white border rounded-md text-neutral-600 border-neutral-300 ring-offset-background placeholder:text-neutral-400 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-800 border rounded-md text-neutral-200 border-neutral-700 placeholder:text-neutral-400 focus:ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                                     placeholder="Select date" readonly />
                                                 <div @click="datePickerOpen=!datePickerOpen; if(datePickerOpen){ $refs.datePickerInput.focus() }"
                                                     class="absolute top-0 right-0 px-3 py-2 cursor-pointer text-neutral-400 hover:text-neutral-500">
@@ -216,7 +213,7 @@ datePickerCalculateDays();
                                                 </div>
                                                 <div x-show="datePickerOpen" x-transition
                                                     @click.away="datePickerOpen = false"
-                                                    class="absolute top-0 left-0 max-w-lg p-4 mt-12 antialiased bg-white border rounded-lg shadow w-[17rem] border-neutral-200/70">
+                                                    class="absolute top-0 left-0 max-w-lg p-4 mt-12 antialiased bg-white border rounded-lg shadow w-[17rem] border-neutral-200/70 z-50">
                                                     <div class="flex items-center justify-between mb-2">
                                                         <div>
                                                             <span x-text="datePickerMonthNames[datePickerMonth]"
@@ -273,21 +270,93 @@ datePickerCalculateDays();
                                                         </template>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <label for="event_location"
-                                    class="block mb-2 text-sm font-medium text-neutral-100">Event Location</label>
+                                    class="block mb-2 pt-5 text-sm font-medium text-neutral-100">Event Location</label>
                                 <input type="text" id="event_location" name="event_location"
                                     class="w-full px-4 py-2 mb-4 border border-neutral-700 bg-neutral-800 rounded-md focus:ring focus:outline-none text-neutral-100"
                                     required>
 
-                                <label for="event_thumbnail"
-                                    class="block mb-2 text-sm font-medium text-neutral-100">Event Thumbnail</label>
-                                <input type="file" id="event_thumbnail" name="event_thumbnail"
-                                    class="w-full px-4 py-2 mb-4 border border-neutral-700 bg-neutral-800 rounded-md focus:ring focus:outline-none text-neutral-100"
-                                    accept="image/*">
+
+                                <div id="drop-area" class="col-span-full pb-3">
+                                    <label for="event_thumbnail"
+                                        class="block text-sm font-medium leading-6 text-neutral-100">Event
+                                        Thumbnail</label>
+                                    <div class="mt-2 flex flex-col justify-center items-center rounded-lg border border-dashed border-neutral-700 px-6 py-10 bg-neutral-800">
+                                        
+                                        <div id="file-preview" class="text-center">
+                                            <svg class="mx-auto h-12 w-12 text-gray-100" viewBox="0 0 24 24"
+                                                fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd"
+                                                    d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <div class="mt-4 flex text-sm leading-6 text-gray-200">
+                                                <label for="event_thumbnail"
+                                                    class="relative cursor-pointer rounded-md bg-gray-200 px-2 font-semibold text-black focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                                    <span>Upload a file</span>
+                                                    <input id="event_thumbnail" name="event_thumbnail" type="file"
+                                                        accept="image/*" class="sr-only"
+                                                        onchange="handleFileUpload(this)">
+                                                </label>
+                                                <p class="pl-1">or drag and drop</p>
+                                            </div>
+                                            <p class="text-xs leading-5 text-gray-400 pt-1">PNG, JPG, GIF up to 10MB</p>
+                                        </div>
+                                        <!-- Preview Container -->
+                                        <div id="preview-container" class="mt-4">
+                                            <img id="imagePreview" class="max-w-full h-48 w-48 object-cover rounded-lg"
+                                                style="display: none;" alt="Image Preview">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <script>
+                                function handleFileUpload(input) {
+                                    const file = input.files[0];
+                                    const preview = document.getElementById('imagePreview');
+
+                                    // Check if file exists and is an image
+                                    if (file && file.type.startsWith('image/')) {
+                                        const reader = new FileReader();
+
+                                        reader.onload = function(e) {
+                                            // Restrict image size with object-cover to prevent layout breaking
+                                            preview.src = e.target.result;
+                                            preview.style.display = 'block'; // Show preview
+                                        };
+
+                                        reader.readAsDataURL(file); // Read file as data URL
+                                    }
+                                }
+
+                                // Drag and drop functionality
+                                const dropZone = document.getElementById('drop-zone');
+
+                                dropZone.addEventListener('dragover', (e) => {
+                                    e.preventDefault();
+                                    dropZone.classList.add('border-indigo-500'); // Change border on hover
+                                });
+
+                                dropZone.addEventListener('dragleave', (e) => {
+                                    dropZone.classList.remove('border-indigo-500');
+                                });
+
+                                dropZone.addEventListener('drop', (e) => {
+                                    e.preventDefault();
+                                    dropZone.classList.remove('border-indigo-500');
+
+                                    const files = e.dataTransfer.files;
+                                    if (files.length > 0) {
+                                        document.getElementById('event_thumbnail').files =
+                                        files; // Update input with dropped file
+                                        handleFileUpload(document.getElementById(
+                                        'event_thumbnail')); // Handle file upload
+                                    }
+                                });
+                                </script>
 
                                 <div class="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
                                     <button @click="modalOpen=false" type="button"
