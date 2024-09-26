@@ -57,33 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         createSharedProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
     }
 
-    // Volunteer-specific fields
-    if (isset($_POST['volunteer_profile'])) {
-        $emergency_name = htmlspecialchars($_POST['emergency-name']);
-        $emergency_phone = htmlspecialchars($_POST['emergency-phone']);
-        
-        // Insert into `user_profiles_vol`
-        createVolunteerProfile($con, $user_id, $emergency_name, $emergency_phone);
-
-        header("Location: vol-dashboard.php?profile=created");
-        exit();
-    }
-
-    // Organizer-specific fields
-    if (isset($_POST['organizer_profile'])) {
-        $organization_name = htmlspecialchars($_POST['organization']);
-        $job_title = htmlspecialchars($_POST['job-title']);
-        $industry = htmlspecialchars($_POST['industry']);
-        $location = htmlspecialchars($_POST['location']);
-        $official_address = htmlspecialchars($_POST['official-address']);
-        $official_contact_number = htmlspecialchars($_POST['official-contact']);
-
-        // Insert into `user_profiles_org`
-        createOrganizerProfile($con, $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
-
-        header("Location: org-dashboard.php?profile=created");
-        exit();
-    }
 } else {
     header("Location: ../login/login.php");
     exit();

@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insert into `user_profiles_org`
         createOrganizerProfile($con, $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
 
-        header("Location: org-dashboard.php?profile=created");
+        header("Location: ../../includes/org-dashboard.php?profile=created");
         exit();
     }
 } else {
