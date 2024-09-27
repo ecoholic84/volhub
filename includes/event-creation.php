@@ -197,10 +197,10 @@ datePickerCalculateDays();
                                                 class="block mb-2 text-sm font-medium text-neutral-100">Event Date</label>
                                             <div class="relative w-[17rem]">
                                                 <input x-ref="datePickerInput" type="text" id="event_datetime"
-                                                    name="event_datetime" placeholderr="" required
+                                                    name="event_datetime" placeholder="" required
                                                     @click="datePickerOpen=!datePickerOpen" x-model="datePickerValue"
                                                     x-on:keydown.escape="datePickerOpen=false"
-                                                    class="flex w-full h-10 px-3 py-2 text-sm bg-neutral-800 border rounded-md text-neutral-200 border-neutral-700 placeholder:text-neutral-400 focus:ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                                    class="flex w-full h-10 px-3 py-2 text-sm bg-white border rounded-md text-neutral-600 border-neutral-300 ring-offset-background placeholder:text-neutral-600 focus:ring-2 focus:border-neutral-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                                     placeholder="Select date" readonly />
                                                 <div @click="datePickerOpen=!datePickerOpen; if(datePickerOpen){ $refs.datePickerInput.focus() }"
                                                     class="absolute top-0 right-0 px-3 py-2 cursor-pointer text-neutral-400 hover:text-neutral-500">

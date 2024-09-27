@@ -67,7 +67,6 @@ $table3_create = "CREATE TABLE IF NOT EXISTS  user_profiles_vol (
     FOREIGN KEY (userid) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 
-
 $table4_create = "CREATE TABLE IF NOT EXISTS user_profiles_org (
     id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     organization_name VARCHAR(255) NOT NULL,
@@ -91,7 +90,6 @@ $table5_create = "CREATE TABLE IF NOT EXISTS Events (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (organizer_id) REFERENCES users(usersId) ON DELETE CASCADE
 );";
-
 
 if(!mysqli_query($con, $table_create)) {
 

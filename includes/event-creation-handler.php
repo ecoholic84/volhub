@@ -3,10 +3,8 @@ include "dbh.inc.php";
 include "functions.inc.php";
 session_start();
 
-$organizer_id = $_SESSION['usersid'];  // Assuming you're storing the organizer's ID in the session
-
 if (isset($_SESSION['usersid'])) {
-    $user_id = $_SESSION['usersid'];
+    $organizer_id = $_SESSION['usersid'];
 } else {
     // Handle error or redirect to login
     header("Location: ../login/login.php");
@@ -34,6 +32,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             die("Error uploading file.");
         }
+    }
+
+    // Check if organizer_id exists in the users table
+    $check_user_sql = "SELECT * FROM users WHERE usersId = '$organizer_id'";
+    $check_user_result = mysqli_query($con, $check_user_sql);
+    if (mysqli_num_rows($check_user_result) == 0) {
+        die("Error: Organizer ID does not exist.");
     }
 
     // SQL query to insert the event data into the database
