@@ -79,9 +79,9 @@ $table4_create = "CREATE TABLE IF NOT EXISTS user_profiles_org (
     FOREIGN KEY (userid) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 
-$table5_create = "CREATE TABLE IF NOT EXISTS Events (
+$table5_create = "CREATE TABLE IF NOT EXISTS events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
-    organizer_id INT(11) UNSIGNED NOT NULL,
+    organizer_id INT(11) UNSIGNED NULL DEFAULT NULL,
     event_name VARCHAR(255) NOT NULL,
     event_description TEXT,
     event_datetime DATETIME NOT NULL,

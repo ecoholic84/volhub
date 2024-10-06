@@ -42,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // SQL query to insert the event data into the database
-    $sql = "INSERT INTO events (event_name, event_description, event_datetime, event_location, event_thumbnail) 
-            VALUES ('$event_name', '$event_description', '$event_datetime', '$event_location', '$thumbnail')";
+    $sql = "INSERT INTO events (organizer_id, event_name, event_description, event_datetime, event_location, event_thumbnail) 
+            VALUES ('$organizer_id', '$event_name', '$event_description', '$event_datetime', '$event_location', '$thumbnail')";
 
     if (mysqli_query($con, $sql)) {
         echo "Event created successfully!";

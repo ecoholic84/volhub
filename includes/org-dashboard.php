@@ -25,6 +25,8 @@ $user_id = $_SESSION["usersid"];
             padding: 0;
         }
     </style>
+    <!-- Include the Alpine library on your page -->
+    <script src="https://unpkg.com/alpinejs" defer></script>
 </head>
 
 <body class="h-screen bg-gray-900 text-neutral-100 flex flex-col">
