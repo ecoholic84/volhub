@@ -1,11 +1,12 @@
 <?php include_once "dbh.inc.php";
 session_start();
+// exit(json_encode($_SESSION));
 $user_id = $_SESSION["usersid"];
 
-if (!isset($_SESSION["usersid"])) {
-    header("Location: ../pages/login/login.php");
-    exit();
-}
+// if (!isset($_SESSION["usersid"])) {
+//     header("Location: ../pages/login/login.php");
+//     exit();
+// }
 
 ?>
 
