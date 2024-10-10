@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-black to-gray-800">
+<body class="bg-transparent">
     <nav class="w-full border-b border-gray-700"
          x-data="{
              mobileMenuOpen: false
