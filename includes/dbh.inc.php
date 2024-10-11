@@ -38,7 +38,7 @@ $table_create = "CREATE TABLE IF NOT EXISTS users (
     usersPwd VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
-    user_type SET('volunteer', 'organizer') NOT NULL DEFAULT 'volunteer'
+    user_type SET('volunteer', 'organizer', 'both') NOT NULL DEFAULT 'volunteer'
 )";
 
 $table2_create = "CREATE TABLE IF NOT EXISTS user_profiles (

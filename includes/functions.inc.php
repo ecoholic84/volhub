@@ -130,6 +130,7 @@ function loginUser($con, $email, $pwd)
             $_SESSION["usersid"] = $row["usersId"];
             $_SESSION["users_email"] = $row["usersEmail"];
             $_SESSION["role"] = $row["role"];
+            $_SESSION["user_type"] = $row["user_type"];
 
             // Redirect to the dashboard
             if ($row["role"] === 'admin') {
