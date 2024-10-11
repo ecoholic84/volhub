@@ -15,12 +15,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Store the user's choice (user_type) in the session for future redirection
     $_SESSION['user_type'] = $userType;
 
-    // Prepare SQL statement
-    $sql = "UPDATE users SET user_type = ? WHERE usersId = ?";
+    // Determine values for volunteer and organizer fields based on userType
+    $isVolunteer = ($userType === 'volunteer' || $userType === 'both') ? 1 : 0;
+    $isOrganizer = ($userType === 'organizer' || $userType === 'both') ? 1 : 0;
+
+    // Prepare SQL statement to update user_type
+    $sql = "UPDATE users SET user_type = ?, volunteer = ?, organizer = ? WHERE usersId = ?";
     $stmt = mysqli_prepare($con, $sql);
 
-    // Bind parameters and execute
-    mysqli_stmt_bind_param($stmt, "si", $userType, $user_id);
+    // Bind parameters (user_type, volunteer, organizer, userId) and execute
+    mysqli_stmt_bind_param($stmt, "siii", $userType, $isVolunteer, $isOrganizer, $user_id);
     mysqli_stmt_execute($stmt);
 
     // Close the statement
@@ -30,6 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header('Location: profile-creation.php');
     exit;
 }
+
 ?>
 
 

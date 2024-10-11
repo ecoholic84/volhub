@@ -4,7 +4,7 @@ session_start();
 $user_id = $_SESSION["usersid"];
 
 if (!isset($_SESSION["usersid"])) {
-    header("Location: ../pages/login/login.php");
+    header("Location: ../pages/login/login.php?error=notLoggedIn");
     exit();
 }
 

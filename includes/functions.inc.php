@@ -59,9 +59,9 @@ function emailExists($con, $email)
     mysqli_stmt_close($stmt);
 }
 
-function createUser($con, $email, $pwd, $created_at, $role, $user_type)
+function createUser($con, $email, $pwd, $created_at, $role, $user_type, $volunteer, $organizer)
 {
-    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at, role, user_type) VALUES (?, ?, ?, ?, ?);";
+    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at, role, user_type, volunteer, organizer) VALUES (?, ?, ?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($con);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -71,7 +71,7 @@ function createUser($con, $email, $pwd, $created_at, $role, $user_type)
 
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
 
-    mysqli_stmt_bind_param($stmt, "sssss", $email, $hashedPwd, $created_at, $role, $user_type);
+    mysqli_stmt_bind_param($stmt, "sssssii", $email, $hashedPwd, $created_at, $role, $user_type, $volunteer, $organizer);
     mysqli_stmt_execute($stmt);
     // Get the last inserted user's ID
     $user_id = mysqli_insert_id($con);
@@ -136,7 +136,26 @@ function loginUser($con, $email, $pwd)
             if ($row["role"] === 'admin') {
                 header("Location: /miniProject/includes/admin-dashboard.php");
             } else {
-                header("Location: /miniProject/includes/dashboard.php");
+                // Assuming we already have the user's information in $row
+                // and it includes a 'user_type' field that can be 'volunteer', 'organizer', or 'both'
+                
+                switch($row['user_type']) {
+                    case 'both':
+                    case 'volunteer':
+                        // If user is both or volunteer, redirect to volunteer dashboard
+                        header("Location: /miniProject/includes/dashboard.php");
+                        break;
+                    
+                    case 'organizer':
+                        // If user is organizer only, redirect to organizer dashboard
+                        header("Location: /miniProject/includes/org-dashboard.php");
+                        break;
+                    
+                    default:
+                        // If user_type is not set or is something else, 
+                        // redirect to create volunteer profile
+                        header("Location: /miniProject/pages/profile/vol-profile-creation.php");
+                }
             }
             exit();
         }

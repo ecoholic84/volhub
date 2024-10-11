@@ -7,7 +7,7 @@ if (isset($_SESSION['usersid'])) {
     $organizer_id = $_SESSION['usersid'];
 } else {
     // Handle error or redirect to login
-    header("Location: ../login/login.php");
+    header("Location: ../login/login.php?error=notLoggedIn");
     exit();
 }
 

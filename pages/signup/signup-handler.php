@@ -15,6 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $created_at = date('Y-m-d H:i:s');
     $role = "user"; // Default role
     $user_type = isset($_POST['user_type']) ? htmlspecialchars($_POST['user_type']) : 'volunteer'; // Default to 'volunteer'
+    $volunteer = 0;
+    $organizer = 0;
     
 
     require_once '../../includes/functions.inc.php';
@@ -58,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     /*........................................................*/
 
-    createUser($con, $email, $pwd, $created_at, $role, $user_type);
+    createUser($con, $email, $pwd, $created_at, $role, $user_type, $volunteer, $organizer);
 }
 else
 {

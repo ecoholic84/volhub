@@ -1,12 +1,13 @@
 <?php
 session_start();
 include_once "dbh.inc.php";
-if (isset($_SESSION["usersid"]) && isset($_SESSION["role"])) {
-    $user_id = $_SESSION["usersid"];
-    $roleAdmin = $_SESSION["role"];
-} else {
-    // Redirect to login page or handle the error accordingly
-    header("Location: /miniProject/pages/login/login.php");
+
+if (isset($_SESSION['usersid'])) {
+    $user_id = $_SESSION['usersid'];
+} 
+else {
+    // Handle error or redirect to login
+    header("Location: ../login/login.php?error=notLoggedIn");
     exit();
 }
 
