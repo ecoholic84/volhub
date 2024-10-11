@@ -1,5 +1,6 @@
 <?php
 $user_type = $_SESSION['user_type']; // Fetch current role from session
+ob_start();
 ?>
 
 <!DOCTYPE html>
@@ -93,17 +94,88 @@ $user_type = $_SESSION['user_type']; // Fetch current role from session
                             <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
                                 tabindex="-1" id="user-menu-item-1">Settings</a>
 
-                            <!-- Switch Dashboard link based on the user's role -->
-                            <?php if ($user_type === 'volunteer' || $user_type === 'both') : ?>
-                            <a href="/miniProject/includes/org-dashboard.php"
-                                class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
-                                tabindex="-1">Switch to Organizer Dashboard</a>
+                            <?php
+                            // Assume you have a $user_id variable for the logged-in user
+
+                            // Database connection
+                            include 'dbh.inc.php'; // Adjust this path to your actual database connection script
+
+                            // Query to check if the user has a volunteer profile
+                            $volunteer_query = "SELECT COUNT(*) FROM users WHERE usersId = ?";
+                            $stmt = $con->prepare($volunteer_query);
+                            $stmt->bind_param('i', $user_id);
+                            $stmt->execute();
+                            $stmt->bind_result($volunteer_count);
+                            $stmt->fetch();
+                            $has_volunteer_profile = $volunteer_count > 0;
+                            $stmt->close();
+
+                            // Query to check if the user has an organizer profile
+                            $organizer_query = "SELECT COUNT(*) FROM users WHERE usersId = ?";
+                            $stmt = $con->prepare($organizer_query);
+                            $stmt->bind_param('i', $user_id);
+                            $stmt->execute();
+                            $stmt->bind_result($organizer_count);
+                            $stmt->fetch();
+                            $has_organizer_profile = $organizer_count > 0;
+                            $stmt->close();
+
+                            $current_dashboard = basename($_SERVER['PHP_SELF']); // Get current page
+
+                            function redirectToDashboardOrProfile($user_type, $current_dashboard, $has_volunteer_profile, $has_organizer_profile) {
+                                // Determine which dashboard we're currently on
+                                $on_volunteer_dashboard = strpos($current_dashboard, 'dashboard.php') !== false;
+                                $on_organizer_dashboard = strpos($current_dashboard, 'org-dashboard.php') !== false;
                                 
-                            <?php elseif ($user_type === 'organizer' || $user_type === 'both') : ?>
-                            <a href="/miniProject/includes/dashboard.php"
-                                class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
-                                tabindex="-1">Switch to Volunteer Dashboard</a>
-                            <?php endif; ?>
+                                switch($user_type) {
+                                    case 'volunteer':
+                                        if (!$has_volunteer_profile) {
+                                            header('Location: /miniProject/pages/create-volunteer-profile.php');
+                                            exit;
+                                        }
+                                        if (!$on_volunteer_dashboard) {
+                                            header('Location: /miniProject/includes/dashboard.php');
+                                            exit;
+                                        }
+                                        break;
+                                        
+                                    case 'organizer':
+                                        if (!$has_organizer_profile) {
+                                            header('Location: /miniProject/pages/create-org-profile.php');
+                                            exit;
+                                        }
+                                        if (!$on_organizer_dashboard) {
+                                            header('Location: /miniProject/includes/org-dashboard.php');
+                                            exit;
+                                        }
+                                        break;
+                                        
+                                    case 'both':
+                                        if ($on_volunteer_dashboard && $has_organizer_profile) {
+                                            header('Location: /miniProject/includes/org-dashboard.php');
+                                            exit;
+                                        } elseif ($on_organizer_dashboard && $has_volunteer_profile) {
+                                            header('Location: /miniProject/includes/dashboard.php');
+                                            exit;
+                                        } elseif (!$has_volunteer_profile && !$has_organizer_profile) {
+                                            // If user has neither profile, redirect to create volunteer profile
+                                            header('Location: /miniProject/pages/create-volunteer-profile.php');
+                                            exit;
+                                        } elseif (!$has_volunteer_profile) {
+                                            header('Location: /miniProject/pages/create-volunteer-profile.php');
+                                            exit;
+                                        } elseif (!$has_organizer_profile) {
+                                            header('Location: /miniProject/pages/create-org-profile.php');
+                                            exit;
+                                        }
+                                        break;
+                                }
+                            }
+
+                            // Usage example
+                            redirectToDashboardOrProfile($user_type, $current_dashboard, $has_volunteer_profile, $has_organizer_profile);
+                            ?>
+
 
                             <a href="/miniProject/includes/signout.php"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
@@ -130,6 +202,8 @@ $user_type = $_SESSION['user_type']; // Fetch current role from session
         }
     }
     showSubheader(false);
+    ob_end_flush();
+
     ?>
 
 
