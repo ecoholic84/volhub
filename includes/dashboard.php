@@ -8,17 +8,17 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
-// Fetch the user's profile data
-$sql = "SELECT * FROM Events WHERE organizer_id=? ORDER BY event_datetime DESC";
+$sql = "SELECT * FROM events WHERE event_datetime >= CURDATE() AND reg_status = '1' AND admin_approve = '1'";
 $stmt = mysqli_stmt_init($con);
 if (!mysqli_stmt_prepare($stmt, $sql)) {
     echo "SQL error";
 } else {
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $events = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    if ($row = mysqli_fetch_assoc($result)) {
+    
+    // You can loop through the events if you expect multiple rows
+    while ($row = mysqli_fetch_assoc($result)) {
         $event_id = $row['event_id'];
         $organizer_id = $row['organizer_id'];
         $event_name = $row['event_name'];
@@ -27,9 +27,15 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
         $event_location = $row['event_location'];
         $event_thumbnail = $row['event_thumbnail'];
         $created_at = $row['created_at'];
+        $reg_status = $row['reg_status'];
+        $admin_approve = $row['admin_approve'];
+
+        // Process each event as needed
     }    
 }
 mysqli_stmt_close($stmt);
+
+
 ?>
 
 <!DOCTYPE html>

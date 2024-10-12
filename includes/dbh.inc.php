@@ -90,8 +90,10 @@ $table5_create = "CREATE TABLE IF NOT EXISTS events (
     event_location VARCHAR(255) NOT NULL,
     event_thumbnail VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reg_status BOOLEAN DEFAULT 1,
+    admin_approve BOOLEAN DEFAULT 0,
     FOREIGN KEY (organizer_id) REFERENCES users(usersId) ON DELETE CASCADE
-);";
+)";
 
 if(!mysqli_query($con, $table_create)) {
 

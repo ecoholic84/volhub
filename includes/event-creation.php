@@ -44,10 +44,17 @@
 
             <!-- Modal Footer -->
             <div class="flex justify-end space-x-2">
+              <!-- Success Message -->
+
+                <div id="successMessage" class="fixed top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg hidden">Event created successfully!</div>
                 <button id="closeModal" type="reset" class="px-4 py-2 bg-gray-600 text-gray-300 rounded-lg">Cancel</button>
                 <button id="submitEvent" type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg">Create</button>
+
+                 
+
             </div>
 
+           
         </form>
     </div>
   </div>
@@ -55,6 +62,7 @@
 
 <!-- Trigger button -->
 <button id="openModal" class="px-4 py-2 bg-indigo-500 text-white rounded-lg">Create Event</button>
+
 
 <!-- JavaScript -->
 <script>
@@ -64,6 +72,8 @@
   const thumbnailDropArea = document.getElementById('thumbnailDropArea');
   const thumbnailInput = document.getElementById('thumbnailInput');
   const thumbnailText = document.getElementById('thumbnailText');
+  const form = document.querySelector('form');
+  const successMessage = document.getElementById('successMessage');
 
   openModalBtn.addEventListener('click', () => {
     modal.classList.remove('hidden');
@@ -99,6 +109,41 @@
     if (file) {
       thumbnailInput.files = event.dataTransfer.files;
       thumbnailText.textContent = file.name;
+    }
+  });
+
+  // Handle form submission with AJAX
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch('event-creation-handler.php', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        // Show success message
+        successMessage.classList.remove('hidden');
+
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          successMessage.classList.add('hidden');
+          modal.classList.add('hidden');
+        }, 1000);
+
+        // Reset the form
+        form.reset();
+        thumbnailText.textContent = 'No file chosen';
+      } else {
+        // Handle server-side validation errors if needed
+        alert('Failed to create event. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while creating the event.');
     }
   });
 </script>
