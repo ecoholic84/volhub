@@ -95,6 +95,16 @@ $table5_create = "CREATE TABLE IF NOT EXISTS events (
     FOREIGN KEY (organizer_id) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 
+$table6_create = "CREATE TABLE IF NOT EXISTS requests (
+    request_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    requests_usersId INT UNSIGNED NOT NULL,
+    submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    request_status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (requests_usersId) REFERENCES users(usersId) ON DELETE CASCADE
+)";
+
 if(!mysqli_query($con, $table_create)) {
 
     die("Error Creating Table: " . mysqli_error($con));
@@ -116,6 +126,11 @@ if(!mysqli_query($con, $table4_create)) {
 }
 
 if(!mysqli_query($con, $table5_create)) {
+
+    die("Error Creating Table: " . mysqli_error($con));
+}
+
+if(!mysqli_query($con, $table6_create)) {
 
     die("Error Creating Table: " . mysqli_error($con));
 }

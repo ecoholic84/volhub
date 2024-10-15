@@ -4,7 +4,7 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION["usersid"])) {
-    header("Location: ../pages/login/login.php?error=notLoggedIn");
+    header("Location: miniProject/pages/login/login.php?error=notLoggedIn");
     exit();
 }
 
@@ -45,6 +45,31 @@ if ($eventDetails = mysqli_fetch_assoc($eventResult)) {
 } else {
     die("Error: Event not found.");
 }
+
+if(isset($_POST['register-btn']))
+{
+    $insetQuery = "INSERT INTO requests (event_id, requests_usersId) VALUES ($eventId, $_SESSION[usersid])";
+    $resul=mysqli_query($con, $insetQuery);
+    if($resul)
+    { 
+        ?>
+        <script>
+            const registerBtn = document.getElementById('register-btn');
+            const registrationMessage = document.getElementById('registration-message');
+
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Registering...';
+
+            setTimeout(() => {
+                registerBtn.classList.add('hidden');
+                registrationMessage.textContent = \"Thank you for registering! We'll be in touch soon with more details.\";
+                registrationMessage.classList.add('text-green-400');
+            }, 1500);
+        </script>
+        <?php
+    }
+}
+
 
 mysqli_stmt_close($eventStmt);
 mysqli_close($con);
@@ -125,19 +150,22 @@ mysqli_close($con);
     </main>
 
     <div class="container mx-auto px-4 py-8 text-center">
-        <button id="register-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out text-lg">
-            Register for the Event
-        </button>
+    <form method="POST">
+    <button id="register-btn" name="register-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out text-lg">
+        Register for the Event
+    </button>
+</form>
+
         <div id="registration-message" class="mt-4 text-lg"></div>
     </div>
 
     <footer class="bg-gray-800 py-4 mt-8">
         <div class="container mx-auto px-4 text-center text-gray-400">
-            <p>&copy; 2023 Tech Conference. All rights reserved.</p>
+            <p>&copy; Volhub. All rights reserved.</p>
         </div>
     </footer>
 
-    <script>
+    <!-- <script>
         // Handle registration
         const registerBtn = document.getElementById('register-btn');
         const registrationMessage = document.getElementById('registration-message');
@@ -154,6 +182,6 @@ mysqli_close($con);
                 registrationMessage.classList.add('text-green-400');
             }, 1500);
         });
-    </script>
+    </script> -->
 </body>
 </html>

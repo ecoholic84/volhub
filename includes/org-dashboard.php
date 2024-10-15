@@ -66,6 +66,8 @@ else
         }
         mysqli_stmt_close($stmt);
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -111,14 +113,22 @@ else
             <h3 class="text-2xl font-semibold mb-4">Your Listed Events</h3>
             <div class="bg-gray-800 p-4 rounded-lg">
                 <!-- Example Event -->
-                <div class="border-b border-gray-700 py-4">
-                    <h4 class="text-xl font-semibold">Event Title 1</h4>
-                    <p class="text-sm text-gray-400">Event Date: 2024-09-25 | Location: Online</p>
-                </div>
-                <div class="border-b border-gray-700 py-4">
-                    <h4 class="text-xl font-semibold">Event Title 2</h4>
-                    <p class="text-sm text-gray-400">Event Date: 2024-10-05 | Location: Seminar Hall</p>
-                </div>
+                 <?php
+                 $sql = "SELECT * FROM events WHERE organizer_id = '".$_SESSION['usersid']."'";
+                 $result = mysqli_query($con, $sql);
+                 while ($row = mysqli_fetch_assoc($result)) {
+
+                ?>
+<div class="border-b border-gray-700 py-4">
+    <a href="event-tab.php?id=<?php echo $row['event_id']; ?>">
+        <h4 class="text-xl font-semibold"><?php echo $row['event_name']; ?></h4>
+        <p class="text-sm text-gray-400"><?php echo $row['event_datetime']; ?> | <?php echo $row['event_location']; ?></p>
+    </a>
+</div>
+
+                <?php
+                }
+                ?>
             </div>
         </section>
 
