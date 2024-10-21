@@ -1,9 +1,5 @@
 <?php
 
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
 // Database Connection
 $serverName = "localhost";
 $dBUserName = "root";
@@ -17,7 +13,6 @@ if(!$con)
 {
     die("Connection Failed: " . mysqli_connect_error() . "<br>Error Code: " . mysqli_connect_errno());
 }
-
 
 // Database Creation
 $dbCreate = "CREATE DATABASE IF NOT EXISTS $dbName";

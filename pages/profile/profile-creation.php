@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_type'])) {
 }
 
 // Store user choice
-$user_choice = $_SESSION['user_type'];
+// $user_choice = $_SESSION['user_type'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION["usersid"];
@@ -45,6 +45,10 @@ if (isset($_GET["error"])) {
     [x-cloak] {
         display: none
     }
+    body {
+        background: linear-gradient(to bottom right, #111827, #000000, #1f2937);
+        min-height: 100vh;
+    }
     </style>
     <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -53,8 +57,8 @@ if (isset($_GET["error"])) {
 
 <body>
     <?php include "../../includes/header.php" ?>
-    <div class="flex items-start justify-center h-full bg-gradient-to-br from-gray-900 via-black to-gray-800">
-        <div class="flex items-center justify-center w-full max-w-full">
+    <div class="flex items-start justify-center h-full">
+    <div class="flex items-center justify-center w-full max-w-full">
 
             <form id="profile-form" action="profile-handler.php" method="POST" class="space-y-2">
                 <div class="space-y-12">

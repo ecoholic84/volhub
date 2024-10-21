@@ -3,31 +3,17 @@ include "../../includes/dbh.inc.php";
 include "../../includes/functions.inc.php";
 session_start();
 
-if (isset($_SESSION['usersid'])) {
-    $user_id = $_SESSION['usersid'];
-} else {
+if (!isset($_SESSION['usersid'])) {
     // Handle error or redirect to login
     header("Location: ../login/login.php");
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user_id = $_SESSION['usersid'];
-    $userType = $_SESSION['user_type']; // Assuming user_type is stored in session
-    $user_type = $_SESSION['user_type'];
+$user_id = $_SESSION['usersid'];
+$userType = $_SESSION['user_type']; // Assuming user_type is stored in session
 
-    // Check user_type and redirect accordingly
-    if (strpos($user_type, 'volunteer') !== false) {
-        header("Location: vol-profile-creation.php");
-        exit();
-    } elseif (strpos($user_type, 'organizer') !== false) {
-        header("Location: org-profile-creation.php");
-        exit();
-    }
-    
-    // If no redirection occurred, proceed with the rest of the script
-    
-    // Shared fields
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Process form submission
     if (isset($_POST['basic_profile'])) {
         $full_name = htmlspecialchars($_POST['full-name']);
         $username = htmlspecialchars($_POST['username']);
@@ -55,10 +41,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insert shared profile fields into `user_profiles`
         createSharedProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
-    }
 
+        // Redirect based on user type after successful submission
+        if (strpos($userType, 'volunteer') !== false) {
+            header("Location: vol-profile-creation.php?success=1");
+            exit();
+        } elseif (strpos($userType, 'organizer') !== false) {
+            header("Location: org-profile-creation.php?success=1");
+            exit();
+        }
+    }
 } else {
-    header("Location: ../login/login.php");
-    exit();
+    // Display the form
+    // You can include your HTML form here or in a separate file
+    include "profile-creation-form.php";
 }
 ?>
