@@ -8,55 +8,107 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
-// Get the event ID from the URL or POST (after form submission)
-if (isset($_GET['id'])) {
-    $eventId = $_GET['id'];
-} else if (isset($_POST['event_id'])) {
-    $eventId = $_POST['event_id'];
-} else {
-    header("Location: whereareyou?error=noEventId");
+// Get the event ID
+$eventId = $_GET['id'] ?? $_POST['event_id'] ?? null;
+if (!$eventId) {
+    header("Location: index.php?error=noEventId");
     exit();
 }
 
-// Handle form submission to update event details
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $newDescription = $_POST['event_description'];
-    $newDate = $_POST['event_date'];
-    $newLocation = $_POST['event_location'];
-    $newOrganizer = $_POST['event_organizer'];
+// Handle event updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    switch ($_POST['action']) {
+        case 'update_event':
+            $newDescription = $_POST['event_description'];
+            $newDate = $_POST['event_date'];
+            $newLocation = $_POST['event_location'];
+            $newOrganizer = $_POST['event_organizer'];
 
-    // Prepare the update query
-    $updateQuery = "UPDATE events SET event_description = ?, event_datetime = ?, event_location = ?, organizer_id = ? WHERE event_id = ?";
-    $updateStmt = mysqli_prepare($con, $updateQuery);
-    mysqli_stmt_bind_param($updateStmt, "sssii", $newDescription, $newDate, $newLocation, $newOrganizer, $eventId);
-    
-    if (mysqli_stmt_execute($updateStmt)) {
-        header("Location: event-tab.php?id=$eventId&success=eventUpdated");
-        exit();
-    } else {
-        echo "Error updating event: " . mysqli_error($con);
+            $updateQuery = "UPDATE events SET event_description = ?, event_datetime = ?, event_location = ?, organizer_id = ? WHERE event_id = ?";
+            $updateStmt = mysqli_prepare($con, $updateQuery);
+            mysqli_stmt_bind_param($updateStmt, "sssii", $newDescription, $newDate, $newLocation, $newOrganizer, $eventId);
+            
+            if (mysqli_stmt_execute($updateStmt)) {
+                header("Location: event-tab.php?id=$eventId&success=updated");
+            } else {
+                header("Location: event-tab.php?id=$eventId&error=updateFailed");
+            }
+            exit();
+
+        case 'approve_user':
+            $userId = $_POST['user_id'];
+            $updateQuery = "UPDATE requests SET request_status = 'accepted' WHERE requests_usersId = ? AND event_id = ?";
+            $stmt = mysqli_prepare($con, $updateQuery);
+            mysqli_stmt_bind_param($stmt, "ii", $userId, $eventId);
+            mysqli_stmt_execute($stmt);
+            header("Location: event-tab.php?id=$eventId&tab=applied-users");
+            exit();
+
+        case 'reject_user':
+            $userId = $_POST['user_id'];
+            $updateQuery = "UPDATE requests SET request_status = 'rejected' WHERE requests_usersId = ? AND event_id = ?";
+            $stmt = mysqli_prepare($con, $updateQuery);
+            mysqli_stmt_bind_param($stmt, "ii", $userId, $eventId);
+            mysqli_stmt_execute($stmt);
+            header("Location: event-tab.php?id=$eventId&tab=applied-users");
+            exit();
     }
 }
 
-// Fetch event details from the database
+// Fetch event details
 $query = "SELECT * FROM events WHERE event_id = ?";
 $stmt = mysqli_prepare($con, $query);
 mysqli_stmt_bind_param($stmt, "i", $eventId);
 mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+$event = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
-if ($event = mysqli_fetch_assoc($result)) {
-    // Event found
-} else {
-    header("Location: whereareyou?error=eventNotFound");
+if (!$event) {
+    header("Location: index.php?error=eventNotFound");
     exit();
 }
-?>
 
+// Fetch users based on status
+function fetchUsersByStatus($con, $eventId, $status) {
+    $query = "SELECT 
+                u.usersId,
+                u.usersEmail,
+                u.user_type,
+                p.full_name,
+                p.username,
+                p.phone,
+                p.city,
+                p.institution,
+                p.field_of_study,
+                upo.organization_name,
+                upo.job_title,
+                upo.industry,
+                upv.emergency_name,
+                upv.emergency_phone,
+                r.submission_date,
+                r.request_status
+              FROM users u 
+              INNER JOIN requests r ON u.usersId = r.requests_usersId 
+              LEFT JOIN user_profiles p ON u.usersId = p.profile_usersId
+              LEFT JOIN user_profiles_org upo ON u.usersId = upo.userid
+              LEFT JOIN user_profiles_vol upv ON u.usersId = upv.userid
+              WHERE r.event_id = ? AND r.request_status = ?
+              ORDER BY r.submission_date DESC";
+    
+    $stmt = mysqli_prepare($con, $query);
+    mysqli_stmt_bind_param($stmt, "is", $eventId, $status);
+    mysqli_stmt_execute($stmt);
+    return mysqli_stmt_get_result($stmt);
+}
+$appliedUsers = fetchUsersByStatus($con, $eventId, 'pending');
+$approvedUsers = fetchUsersByStatus($con, $eventId, 'accepted');
+$declinedUsers = fetchUsersByStatus($con, $eventId, 'rejected');
+
+// Get active tab from URL parameter
+$activeTab = $_GET['tab'] ?? 'event-details';
+?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,180 +136,190 @@ if ($event = mysqli_fetch_assoc($result)) {
     <main class="flex-grow container mx-auto px-4 py-3">
         <div class="mb-4 overflow-x-auto">
             <div class="flex space-x-2 md:space-x-4">
-                <button
-                    class="tab-button py-2 px-3 md:px-4 text-sm font-medium text-center whitespace-nowrap text-gray-400 hover:text-gray-200"
-                    data-tab="event-details">Event Details</button>
-                <button
-                    class="tab-button py-2 px-3 md:px-4 text-sm font-medium text-center whitespace-nowrap text-gray-400 hover:text-gray-200"
-                    data-tab="applied-users">Applied Users</button>
-                <button
-                    class="tab-button py-2 px-3 md:px-4 text-sm font-medium text-center whitespace-nowrap text-gray-400 hover:text-gray-200"
-                    data-tab="approved-users">Approved Users</button>
-                <button
-                    class="tab-button py-2 px-3 md:px-4 text-sm font-medium text-center whitespace-nowrap text-gray-400 hover:text-gray-200"
-                    data-tab="declined-users">Declined Users</button>
+                <?php
+                $tabs = [
+                    'event-details' => 'Event Details',
+                    'applied-users' => 'Applied Users',
+                    'approved-users' => 'Approved Users',
+                    'declined-users' => 'Declined Users'
+                ];
+
+                foreach ($tabs as $id => $name) {
+                    $activeClass = ($activeTab === $id) ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-gray-200';
+                    echo "<a href='?id=$eventId&tab=$id' class='tab-button py-2 px-3 md:px-4 text-sm font-medium text-center whitespace-nowrap $activeClass'>$name</a>";
+                }
+                ?>
             </div>
         </div>
 
         <div class="mt-6 bg-dark-light p-6 rounded-lg">
-            <div id="event-details" class="tab-content">
-                <form id="event-form" method="POST" action="">
+            <?php if ($activeTab === 'event-details'): ?>
+                <form method="POST" action="">
+                    <input type="hidden" name="action" value="update_event">
                     <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($event['event_id']); ?>">
                     <div class="space-y-6">
-                        <div
-                            class="aspect-video bg-dark-lighter rounded-lg flex items-center justify-center mx-auto w-full md:w-3/4 lg:w-1/2">
+                        <div class="aspect-video bg-dark-lighter rounded-lg flex items-center justify-center mx-auto w-full md:w-3/4 lg:w-1/2">
                             <i class="lucide-calendar h-16 w-16 md:h-14 md:w-14 lg:h-12 lg:w-12 text-gray-600"></i>
                         </div>
                         <div class="space-y-4">
                             <h2 class="text-xl font-semibold">About the Event</h2>
-                            <textarea id="event-description" name="event_description" class="w-full bg-transparent border-none resize-none"
-                                rows="3" disabled><?php echo htmlspecialchars($event['event_description']); ?></textarea>
+                            <textarea name="event_description" class="w-full bg-transparent border border-gray-700 rounded p-2" rows="3"><?php echo htmlspecialchars($event['event_description']); ?></textarea>
                         </div>
                         <div class="space-y-4">
                             <h2 class="text-xl font-semibold">Event Details</h2>
                             <div class="space-y-2">
                                 <div class="flex items-center space-x-2 text-gray-400">
                                     <i class="lucide-calendar h-5 w-5"></i>
-                                    <input id="event-date" name="event_date" type="text"
-                                        value="<?php echo htmlspecialchars($event['event_datetime']); ?>" disabled
-                                        class="bg-transparent border-none">
+                                    <input name="event_date" type="datetime-local" value="<?php echo htmlspecialchars($event['event_datetime']); ?>" class="bg-transparent border border-gray-700 rounded p-2">
                                 </div>
                                 <div class="flex items-center space-x-2 text-gray-400">
                                     <i class="lucide-map-pin h-5 w-5"></i>
-                                    <input id="event-location" name="event_location" type="text"
-                                        value="<?php echo htmlspecialchars($event['event_location']); ?>" disabled
-                                        class="bg-transparent border-none">
+                                    <input name="event_location" type="text" value="<?php echo htmlspecialchars($event['event_location']); ?>" class="bg-transparent border border-gray-700 rounded p-2">
                                 </div>
                                 <div class="flex items-center space-x-2 text-gray-400">
                                     <i class="lucide-user h-5 w-5"></i>
-                                    <input id="event-organizer" name="event_organizer" type="text"
-                                        value="<?php echo htmlspecialchars($event['organizer_id']); ?>" disabled
-                                        class="bg-transparent border-none">
+                                    <input name="event_organizer" type="text" value="<?php echo htmlspecialchars($event['organizer_id']); ?>" class="bg-transparent border border-gray-700 rounded p-2">
                                 </div>
                             </div>
                         </div>
                         <div class="text-center">
-                            <button id="edit-btn"
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Edit Event
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Update Event
                             </button>
-                            <div id="save-cancel-btns" class="hidden space-x-2 mt-2">
-                                <button id="save-btn" type="submit"
-                                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    Save
-                                </button>
-                                <button id="cancel-btn" type="button"
-                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                    Cancel
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </form>
-            </div>
-
-            <div id="applied-users" class="tab-content hidden">
+            <?php elseif ($activeTab === 'applied-users'): ?>
                 <h2 class="text-xl font-semibold mb-4">Applied Users</h2>
-                <p class="text-gray-400">List of users who have applied for this event will be displayed here.</p>
-            </div>
+                <div class="space-y-4">
+                    <?php while ($user = mysqli_fetch_assoc($appliedUsers)): ?>
+                        <div class="bg-dark-lighter p-4 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-grow">
+                                    <h3 class="text-lg font-semibold">
+                                        <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
+                                        <?php if ($user['username']): ?>
+                                            <span class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
+                                        <?php endif; ?>
+                                    </h3>
+                                    <p class="text-gray-400"><?php echo htmlspecialchars($user['usersEmail']); ?></p>
+                                    
+                                    <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
+                                        <div class="mt-2 text-sm">
+                                            <p>Institution: <?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></p>
+                                            <p>Field of Study: <?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></p>
+                                            <p>Emergency Contact: <?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?> 
+                                               (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</p>
+                                        </div>
+                                    <?php endif; ?>
 
-            <div id="approved-users" class="tab-content hidden">
-                <h2 class="text-xl font-semibold mb-4">Approved Users</h2>
-                <p class="text-gray-400">List of users approved for this event will be displayed here.</p>
-            </div>
+                                    <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
+                                        <div class="mt-2 text-sm">
+                                            <p>Organization: <?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></p>
+                                            <p>Position: <?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></p>
+                                            <p>Industry: <?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></p>
+                                        </div>
+                                    <?php endif; ?>
 
-            <div id="declined-users" class="tab-content hidden">
-                <h2 class="text-xl font-semibold mb-4">Declined Users</h2>
-                <?php
-                $select = "SELECT * FROM user_profiles up 
-                        INNER JOIN requests re 
-                        ON up.profile_usersId = re.requests_usersId 
-                        AND up.profile_usersId = '$_SESSION[usersid]' 
-                        WHERE re.request_status = 'rejected'";
-                
-                $res = mysqli_query($con, $select);
-
-                if(mysqli_num_rows($res) > 0) {
-                    while ($row = mysqli_fetch_assoc($res)) {
-                ?>
-                <div class="mb-4 bg-dark-lighter p-4 rounded-lg">
-                    <h3 class="text-lg font-semibold"><?php echo htmlspecialchars($row['username']); ?></h3>
-                    <p class="text-gray-400">User ID: <?php echo htmlspecialchars($row['profile_usersId']); ?></p>
+                                    <p class="text-sm text-gray-500 mt-2">Applied on: <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                                </div>
+                                <div class="space-x-2 ml-4">
+                                    <form method="POST" action="" class="inline">
+                                        <input type="hidden" name="action" value="approve_user">
+                                        <input type="hidden" name="user_id" value="<?php echo $user['usersId']; ?>">
+                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                                            Approve
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="" class="inline">
+                                        <input type="hidden" name="action" value="reject_user">
+                                        <input type="hidden" name="user_id" value="<?php echo $user['usersId']; ?>">
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                                            Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
                 </div>
-                <?php
-                    }
-                } else {
-                    echo "<p class='text-gray-400'>No declined users found for this event.</p>";
-                }
-                ?>
-            </div>
-            </div>
+            <?php elseif ($activeTab === 'approved-users'): ?>
+                <h2 class="text-xl font-semibold mb-4">Approved Users</h2>
+                <div class="space-y-4">
+                    <?php while ($user = mysqli_fetch_assoc($approvedUsers)): ?>
+                        <div class="bg-dark-lighter p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold">
+                                <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
+                                <?php if ($user['username']): ?>
+                                    <span class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
+                                <?php endif; ?>
+                            </h3>
+                            <p class="text-gray-400"><?php echo htmlspecialchars($user['usersEmail']); ?></p>
+                            
+                            <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
+                                <div class="mt-2 text-sm">
+                                    <p>Institution: <?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></p>
+                                    <p>Field of Study: <?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></p>
+                                    <p>Phone: <?php echo htmlspecialchars($user['phone'] ?? 'N/A'); ?></p>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
+                                <div class="mt-2 text-sm">
+                                    <p>Organization: <?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></p>
+                                    <p>Position: <?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></p>
+                                </div>
+                            <?php endif; ?>
+
+                            <p class="text-sm text-gray-500 mt-2">Approved on: <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            <?php elseif ($activeTab === 'declined-users'): ?>
+                <h2 class="text-xl font-semibold mb-4">Declined Users</h2>
+                <div class="space-y-4">
+                    <?php while ($user = mysqli_fetch_assoc($declinedUsers)): ?>
+                        <div class="bg-dark-lighter p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold">
+                                <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
+                                <?php if ($user['username']): ?>
+                                    <span class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
+                                <?php endif; ?>
+                            </h3>
+                            <p class="text-gray-400"><?php echo htmlspecialchars($user['usersEmail']); ?></p>
+                            
+                            <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
+                                <div class="mt-2 text-sm">
+                                    <p>Institution: <?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></p>
+                                    <p>Field of Study: <?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></p>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
+                                <div class="mt-2 text-sm">
+                                    <p>Organization: <?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></p>
+                                    <p>Position: <?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></p>
+                                </div>
+                            <?php endif; ?>
+
+                            <p class="text-sm text-gray-500 mt-2">Declined on: <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </main>
 
     <footer class="bg-dark-light py-4 mt-8">
         <div class="container mx-auto px-4 text-center text-gray-400">
-            <p>&copy; <span id="current-year"></span> Volhub. All rights reserved.</p>
+            <p>&copy; <?php echo date('Y'); ?> Volhub. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Tab switching functionality
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.getAttribute('data-tab');
-
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('text-blue-500', 'border-b-2', 'border-blue-500');
-                    btn.classList.add('text-gray-400', 'hover:text-gray-200');
-                });
-
-                tabContents.forEach(content => {
-                    content.classList.add('hidden');
-                });
-
-                button.classList.add('text-blue-500', 'border-b-2', 'border-blue-500');
-                button.classList.remove('text-gray-400', 'hover:text-gray-200');
-
-                const selectedTab = document.getElementById(tabId);
-                if (selectedTab) {
-                    selectedTab.classList.remove('hidden');
-                } else {
-                    console.error(`Tab content with id "${tabId}" not found`);
-                }
-            });
-        });
-
-        // Set the first tab as active by default
-        if (tabButtons.length > 0 && tabContents.length > 0) {
-            tabButtons[0].classList.add('text-blue-500', 'border-b-2', 'border-blue-500');
-            tabContents[0].classList.remove('hidden');
-        }
-
-        // Edit button functionality
-        const editBtn = document.getElementById('edit-btn');
-        const saveCancelBtns = document.getElementById('save-cancel-btns');
-        const inputs = document.querySelectorAll('input, textarea');
-
-        editBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            inputs.forEach(input => input.disabled = false);
-            editBtn.classList.add('hidden');
-            saveCancelBtns.classList.remove('hidden');
-        });
-
-        // Cancel button functionality
-        const cancelBtn = document.getElementById('cancel-btn');
-        cancelBtn.addEventListener('click', () => {
-            inputs.forEach(input => input.disabled = true);
-            editBtn.classList.remove('hidden');
-            saveCancelBtns.classList.add('hidden');
-        });
+        // Add any additional JavaScript functionality here if needed
     });
     </script>
 </body>
-
 </html>
