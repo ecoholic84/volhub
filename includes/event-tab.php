@@ -299,37 +299,67 @@ $activeTab = $_GET['tab'] ?? 'event-details';
                 <?php while ($user = mysqli_fetch_assoc($appliedUsers)): ?>
                 <div class="bg-dark-lighter p-4 rounded-lg">
                     <div class="flex items-center justify-between">
-                        <div class="flex-grow">
-                            <h3 class="text-lg font-semibold">
-                                <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
-                                <?php if ($user['username']): ?>
-                                <span
-                                    class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
-                                <?php endif; ?>
-                            </h3>
-                            <p class="text-gray-400"><?php echo htmlspecialchars($user['usersEmail']); ?></p>
 
-                            <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
-                            <div class="mt-2 text-sm">
-                                <p>Institution: <?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></p>
-                                <p>Field of Study: <?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></p>
-                                <p>Emergency Contact: <?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?>
-                                    (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</p>
-                            </div>
-                            <?php endif; ?>
 
-                            <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
-                            <div class="mt-2 text-sm">
-                                <p>Organization: <?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?>
-                                </p>
-                                <p>Position: <?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></p>
-                                <p>Industry: <?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></p>
-                            </div>
-                            <?php endif; ?>
+                        <div class="group transition-all duration-300 rounded-xl">
+                            <a href="applicant-info.php?userId=<?php echo htmlspecialchars($user['usersId']); ?>"
+                                class="block p-4 rounded-xl transition-all duration-300 hover:bg-dark-lighter border border-transparent hover:border-gray-700 hover:shadow-lg">
+                                <div>
+                                    <h3
+                                        class="text-lg font-semibold group-hover:text-blue-400 transition-colors duration-300">
+                                        <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
+                                        <?php if ($user['username']): ?>
+                                        <span
+                                            class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
+                                        <?php endif; ?>
+                                    </h3>
+                                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <?php echo htmlspecialchars($user['usersEmail']); ?>
+                                    </p>
 
-                            <p class="text-sm text-gray-500 mt-2">Applied on:
-                                <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                                    <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
+                                    <div
+                                        class="mt-2 text-sm space-y-1 text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Institution:</span>
+                                            <span><?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Field:</span>
+                                            <span><?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Emergency:</span>
+                                            <span><?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?>
+                                                (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</span>
+                                        </p>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
+                                    <div
+                                        class="mt-2 text-sm space-y-1 text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Organization:</span>
+                                            <span><?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Position:</span>
+                                            <span><?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Industry:</span>
+                                            <span><?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></span>
+                                        </p>
+                                    </div>
+                                    <?php endif; ?>
+                                    <p class="text-sm text-gray-500 mt-2">Applied on:
+                                        <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                                </div>
+                            </a>
                         </div>
+
+
                         <div class="space-x-2 ml-4">
                             <form method="POST" action="" class="inline">
                                 <!-- <input type="hidden" name="action" value="approve_user">
@@ -364,121 +394,170 @@ $activeTab = $_GET['tab'] ?? 'event-details';
                 <?php endwhile; ?>
             </div>
             <?php elseif ($activeTab === 'approved-users'): ?>
-<h2 class="text-xl font-semibold mb-4">Approved Users</h2>
-<div class="space-y-4">
-    <?php while ($user = mysqli_fetch_assoc($approvedUsers)): ?>
-    <div class="bg-dark-lighter p-4 rounded-lg">
-        <div class="flex justify-between items-start">
-            <div class="flex-grow">
-                <h3 class="text-lg font-semibold">
-                    <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
-                    <?php if ($user['username']): ?>
-                    <span class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
-                    <?php endif; ?>
-                </h3>
-                <p class="text-gray-400"><?php echo htmlspecialchars($user['usersEmail']); ?></p>
+            <h2 class="text-xl font-semibold mb-4">Approved Users</h2>
+            <div class="space-y-4">
+                <?php while ($user = mysqli_fetch_assoc($approvedUsers)): ?>
+                <div class="bg-dark-lighter p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-grow group transition-all duration-300 rounded-xl"> <a href="applicant-info.php?userId=<?php echo htmlspecialchars($user['usersId']); ?>"
+                                class="block p-4 rounded-xl transition-all duration-300 hover:bg-dark-lighter border border-transparent hover:border-gray-700 hover:shadow-lg">
+                                <div>
+                                    <h3 class="text-lg font-semibold group-hover:text-blue-400 transition-colors duration-300">
+                                        <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
+                                        <?php if ($user['username']): ?>
+                                        <span
+                                            class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
+                                        <?php endif; ?>
+                                    </h3>
+                                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <?php echo htmlspecialchars($user['usersEmail']); ?>
+                                    </p>
 
-                <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
-                <div class="mt-2 text-sm">
-                    <p>Institution: <?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></p>
-                    <p>Field of Study: <?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></p>
-                    <p>Phone: <?php echo htmlspecialchars($user['phone'] ?? 'N/A'); ?></p>
-                    <p>Emergency Contact: <?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?>
-                        (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</p>
-                    <p>City: <?php echo htmlspecialchars($user['city'] ?? 'N/A'); ?></p>
+                                    <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
+                                    <div
+                                        class="mt-2 text-sm space-y-1 text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Institution:</span>
+                                            <span><?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Field:</span>
+                                            <span><?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Emergency:</span>
+                                            <span><?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?>
+                                                (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</span>
+                                        </p>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
+                                    <div
+                                        class="mt-2 text-sm space-y-1 text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Organization:</span>
+                                            <span><?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Position:</span>
+                                            <span><?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Industry:</span>
+                                            <span><?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></span>
+                                        </p>
+                                    </div>
+                                    <?php endif; ?>
+                                    <p class="text-sm text-gray-500 mt-2">Approved on:
+                                        <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="ml-4">
+                            <form method="POST" action="" class="inline-block">
+                                <input type="hidden" name="user_id" value="<?php echo $user['usersId']; ?>">
+                                <input type="hidden" name="event_id" value="<?php echo $eventId; ?>">
+                                <input type="hidden" name="new_status" value="rejected">
+                                <button type="submit" name="update_status"
+                                    class="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded transition duration-200"
+                                    onclick="return confirm('Are you sure you want to reject this user? They will be notified via email.')">
+                                    Change to Rejected
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <?php endif; ?>
+                <?php endwhile; ?>
+            </div>
 
-                <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
-                <div class="mt-2 text-sm">
-                    <p>Organization: <?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></p>
-                    <p>Position: <?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></p>
-                    <p>Industry: <?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></p>
+            <?php elseif ($activeTab === 'declined-users'): ?>
+            <h2 class="text-xl font-semibold mb-4">Declined Users</h2>
+            <div class="space-y-4">
+                <?php while ($user = mysqli_fetch_assoc($declinedUsers)): ?>
+                <div class="bg-dark-lighter p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-grow group transition-all duration-300 rounded-xl">
+                            <a href="applicant-info.php?userId=<?php echo htmlspecialchars($user['usersId']); ?>"
+                                class="block p-4 rounded-xl transition-all duration-300 hover:bg-dark-lighter border border-transparent hover:border-gray-700 hover:shadow-lg">
+                                <div>
+                                    <h3 class="text-lg font-semibold group-hover:text-blue-400 transition-colors duration-300">
+                                        <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
+                                        <?php if ($user['username']): ?>
+                                        <span
+                                            class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
+                                        <?php endif; ?>
+                                    </h3>
+                                    <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <?php echo htmlspecialchars($user['usersEmail']); ?>
+                                    </p>
+
+                                    <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
+                                    <div
+                                        class="mt-2 text-sm space-y-1 text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Institution:</span>
+                                            <span><?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Field:</span>
+                                            <span><?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Emergency:</span>
+                                            <span><?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?>
+                                                (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</span>
+                                        </p>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
+                                    <div
+                                        class="mt-2 text-sm space-y-1 text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Organization:</span>
+                                            <span><?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Position:</span>
+                                            <span><?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></span>
+                                        </p>
+                                        <p class="flex items-center">
+                                            <span class="w-24 inline-block">Industry:</span>
+                                            <span><?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></span>
+                                        </p>
+                                    </div>
+                                    <?php endif; ?>
+                                    <p class="text-sm text-gray-500 mt-2">Declined on:
+                                        <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="ml-4">
+                            <form method="POST" action="" class="inline-block">
+                                <input type="hidden" name="user_id" value="<?php echo $user['usersId']; ?>">
+                                <input type="hidden" name="event_id" value="<?php echo $eventId; ?>">
+                                <input type="hidden" name="new_status" value="approved">
+                                <button type="submit" name="update_status"
+                                    class="bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded transition duration-200"
+                                    onclick="return confirm('Are you sure you want to approve this user? They will be notified via email.')">
+                                    Change to Approved
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <?php endif; ?>
-
-                <p class="text-sm text-gray-500 mt-2">Approved on:
-                    <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
+                <?php endwhile; ?>
             </div>
-            
-            <div class="ml-4">
-                <form method="POST" action="" class="inline-block">
-                    <input type="hidden" name="user_id" value="<?php echo $user['usersId']; ?>">
-                    <input type="hidden" name="event_id" value="<?php echo $eventId; ?>">
-                    <input type="hidden" name="new_status" value="rejected">
-                    <button type="submit" name="update_status" 
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded transition duration-200"
-                            onclick="return confirm('Are you sure you want to reject this user? They will be notified via email.')">
-                        Change to Rejected
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <?php endwhile; ?>
-</div>
-
-<?php elseif ($activeTab === 'declined-users'): ?>
-<h2 class="text-xl font-semibold mb-4">Declined Users</h2>
-<div class="space-y-4">
-    <?php while ($user = mysqli_fetch_assoc($declinedUsers)): ?>
-    <div class="bg-dark-lighter p-4 rounded-lg">
-        <div class="flex justify-between items-start">
-            <div class="flex-grow">
-                <h3 class="text-lg font-semibold">
-                    <?php echo htmlspecialchars($user['full_name'] ?? 'N/A'); ?>
-                    <?php if ($user['username']): ?>
-                    <span class="text-sm text-gray-400">(@<?php echo htmlspecialchars($user['username']); ?>)</span>
-                    <?php endif; ?>
-                </h3>
-                <p class="text-gray-400"><?php echo htmlspecialchars($user['usersEmail']); ?></p>
-
-                <?php if ($user['user_type'] === 'volunteer' || $user['user_type'] === 'both'): ?>
-                <div class="mt-2 text-sm">
-                    <p>Institution: <?php echo htmlspecialchars($user['institution'] ?? 'N/A'); ?></p>
-                    <p>Field of Study: <?php echo htmlspecialchars($user['field_of_study'] ?? 'N/A'); ?></p>
-                    <p>Phone: <?php echo htmlspecialchars($user['phone'] ?? 'N/A'); ?></p>
-                    <p>Emergency Contact: <?php echo htmlspecialchars($user['emergency_name'] ?? 'N/A'); ?>
-                        (<?php echo htmlspecialchars($user['emergency_phone'] ?? 'N/A'); ?>)</p>
-                    <p>City: <?php echo htmlspecialchars($user['city'] ?? 'N/A'); ?></p>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($user['user_type'] === 'organizer' || $user['user_type'] === 'both'): ?>
-                <div class="mt-2 text-sm">
-                    <p>Organization: <?php echo htmlspecialchars($user['organization_name'] ?? 'N/A'); ?></p>
-                    <p>Position: <?php echo htmlspecialchars($user['job_title'] ?? 'N/A'); ?></p>
-                    <p>Industry: <?php echo htmlspecialchars($user['industry'] ?? 'N/A'); ?></p>
-                </div>
-                <?php endif; ?>
-
-                <p class="text-sm text-gray-500 mt-2">Declined on:
-                    <?php echo date('Y-m-d H:i:s', strtotime($user['submission_date'])); ?></p>
-            </div>
-            
-            <div class="ml-4">
-                <form method="POST" action="" class="inline-block">
-                    <input type="hidden" name="user_id" value="<?php echo $user['usersId']; ?>">
-                    <input type="hidden" name="event_id" value="<?php echo $eventId; ?>">
-                    <input type="hidden" name="new_status" value="approved">
-                    <button type="submit" name="update_status" 
-                            class="bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded transition duration-200"
-                            onclick="return confirm('Are you sure you want to approve this user? They will be notified via email.')">
-                        Change to Approved
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <?php endwhile; ?>
-</div>
-<?php endif; ?>
+            <?php endif; ?>
         </div>
     </main>
 
     <footer class="bg-dark-light py-4 mt-8">
         <div class="container mx-auto px-4 text-center text-gray-400">
-            <p>&copy; <?php echo date('Y'); ?> Volhub. All rights reserved.</p>
+            <p>© <?php echo date('Y'); ?> Volhub. All rights reserved.</p>
         </div>
     </footer>
 

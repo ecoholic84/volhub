@@ -29,7 +29,7 @@ ob_start();
                 <!-- Left side (logo and mobile menu button) -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/miniProject/index.php" class="flex items-center space-x-2 font-extrabold text-white">
+                        <a href="/miniProject/includes/dashboard.php" class="flex items-center space-x-2 font-extrabold text-white">
                             <span
                                 class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-900 rounded-full bg-gradient-to-br from-white via-gray-200 to-white">
                                 <svg class="w-auto h-5 -translate-y-px" viewBox="0 0 69 66" fill="none"
