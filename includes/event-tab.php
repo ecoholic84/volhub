@@ -4,7 +4,7 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION["usersid"])) {
-    header("Location: miniProject/pages/login/login.php?error=notLoggedIn");
+    header("Location: /miniProject/pages/login/login.php?error=notLoggedIn");
     exit();
 }
 

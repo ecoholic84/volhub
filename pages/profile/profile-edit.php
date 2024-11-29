@@ -29,13 +29,85 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
         $graduation_year = $row['graduation_year'];
         $phone = $row['phone'];
         $city = $row['city'];
-        $emergency_name = $row['emergency_name'];
-        $emergency_phone = $row['emergency_phone'];
         $links = $row['links'];
+        $profile_picture = $row['profile_picture'];
+    } else {
+        // Set placeholders if no data is found
+        $full_name = 'Your Name';
+        $username = 'Your Username';
+        $identity = 'Select Identity';
+        $bio = 'Tell us about yourself...';
+        $degree_type = 'Select Degree';
+        $institution = 'Your Institution';
+        $field_of_study = 'Your Field of Study';
+        $graduation_month = 'Select Month';
+        $graduation_year = 'Select Year';
+        $phone = 'Your Phone Number';
+        $city = 'Your City';
+        $links = '';
+        $profile_picture = '/miniProject/images/default_profile.webp'; // Path to your default profile picture
     }
 }
+
+// Fetch additional data based on user type
+$userTypeQuery = "SELECT user_type FROM users WHERE usersId = ?";
+$userTypeStmt = mysqli_stmt_init($con);
+if (mysqli_stmt_prepare($userTypeStmt, $userTypeQuery)) {
+    mysqli_stmt_bind_param($userTypeStmt, "i", $user_id);
+    mysqli_stmt_execute($userTypeStmt);
+    $userTypeResult = mysqli_stmt_get_result($userTypeStmt);
+    if ($userTypeRow = mysqli_fetch_assoc($userTypeResult)) {
+        $user_type = $userTypeRow['user_type'];
+
+        if ($user_type === 'volunteer' || $user_type === 'both') {
+            // Fetch volunteer-specific data
+            $volQuery = "SELECT * FROM user_profiles_vol WHERE userid = ?";
+            $volStmt = mysqli_stmt_init($con);
+            if (mysqli_stmt_prepare($volStmt, $volQuery)) {
+                mysqli_stmt_bind_param($volStmt, "i", $user_id);
+                mysqli_stmt_execute($volStmt);
+                $volResult = mysqli_stmt_get_result($volStmt);
+                if ($volRow = mysqli_fetch_assoc($volResult)) {
+                    $emergency_name = $volRow['emergency_name'];
+                    $emergency_phone = $volRow['emergency_phone'];
+                } else {
+                    $emergency_name = 'Emergency Contact Name';
+                    $emergency_phone = 'Emergency Contact Number';
+                }
+            }
+        }
+
+        if ($user_type === 'organizer' || $user_type === 'both') {
+            // Fetch organizer-specific data
+            $orgQuery = "SELECT * FROM user_profiles_org WHERE userid = ?";
+            $orgStmt = mysqli_stmt_init($con);
+            if (mysqli_stmt_prepare($orgStmt, $orgQuery)) {
+                mysqli_stmt_bind_param($orgStmt, "i", $user_id);
+                mysqli_stmt_execute($orgStmt);
+                $orgResult = mysqli_stmt_get_result($orgStmt);
+                if ($orgRow = mysqli_fetch_assoc($orgResult)) {
+                    $organization_name = $orgRow['organization_name'];
+                    $job_title = $orgRow['job_title'];
+                    $industry = $orgRow['industry'];
+                    $location = $orgRow['location'];
+                    $official_address = $orgRow['official_address'];
+                    $official_contact_number = $orgRow['official_contact_number'];
+                } else {
+                    $organization_name = 'Organization Name';
+                    $job_title = 'Job Title';
+                    $industry = 'Industry';
+                    $location = 'Location';
+                    $official_address = 'Official Address';
+                    $official_contact_number = 'Official Contact Number';
+                }
+            }
+        }
+    }
+}
+
 mysqli_stmt_close($stmt);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,267 +117,287 @@ mysqli_stmt_close($stmt);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
-    <style>
-    [x-cloak] {
-        display: none
-    }
-    </style>
-    <script src="https://unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-black text-white min-h-screen flex flex-col">
     <?php include "../../includes/header.php"; ?>
-    <div class="flex items-start justify-center h-full bg-gradient-to-br from-gray-900 via-black to-gray-800">
-        <div class="flex items-center justify-center w-full max-w-full">
 
-            <form action="edit-profile-handler.php" method="POST" class="space-y-2">
-                <div class="space-y-12">
-                    <div class="border-b border-gray-900/10 pb-12 pt-12">
-                        <h2 class="text-3xl font-semibold leading-7 text-white">Edit Profile</h2>
+    <main class="flex-grow container mx-auto px-4 py-12 flex justify-center">
+        <div class="max-w-4xl w-full bg-black rounded-lg shadow-xl overflow-hidden animate-fadeIn">
+            <div class="p-8">
+                <h2 class="text-3xl font-bold text-center text-blue-400 mb-8">Edit Profile</h2>
 
-                        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <div class="sm:col-span-4">
-                                <label for="full-name" class="block text-sm font-medium leading-6 text-white">Full
-                                    Name</label>
-                                <div class="mt-2">
-                                    <input type="text" name="full-name" id="full-name" placeholder=""
+                <form action="/miniProject/pages/profile/profile-edit-handler.php" method="POST" enctype="multipart/form-data">
+                    <!-- Profile Picture -->
+                    <div class="mb-6 text-center">
+                        <label for="profile_picture" class="block text-gray-300 font-semibold mb-2">Profile Picture</label>
+                        <input type="file" name="profile_picture" id="profile_picture" class="hidden">
+                        <label for="profile_picture" class="cursor-pointer">
+                            <img src="uploads/<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture"
+                                class="rounded-full w-32 h-32 mx-auto object-cover border-2 border-gray-700">
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Personal Information -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Personal Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="full-name" class="block text-gray-300">Full Name</label>
+                                    <input type="text" name="full-name" id="full-name" placeholder="Your Name"
                                         value="<?php echo htmlspecialchars($full_name); ?>" autocomplete="name"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-4">
-                                <label for="username"
-                                    class="block text-sm font-medium leading-6 text-white">Username</label>
-                                <div class="mt-2">
-                                    <div
-                                        class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                        <span
-                                            class="flex select-none items-center pl-3 text-gray-500 sm:text-sm">volhub.com/</span>
-                                        <input type="text" name="username" id="username" placeholder=""
-                                            value="<?php echo htmlspecialchars($username); ?>" autocomplete="username"
-                                            class="block flex-1 border-0 bg-transparent py-2 px-2 pl-1 text-white placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                            placeholder="janesmith">
-                                    </div>
+                                <div>
+                                    <label for="username" class="block text-gray-300">Username</label>
+                                    <input type="text" name="username" id="username" placeholder="Your Username"
+                                        value="<?php echo htmlspecialchars($username); ?>" autocomplete="username"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="identity" class="block text-sm font-medium leading-6 text-white">I Identify
-                                    As</label>
-                                <div class="mt-2">
+                                <div>
+                                    <label for="identity" class="block text-gray-300">I Identify As</label>
                                     <select id="identity" name="identity"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                        <option value="" disabled selected hidden>
-                                            <?php echo htmlspecialchars($identity); ?></option>
-                                        <option>Male</option>
-                                        <option>Female</option>
-                                        <option>Prefer not to say</option>
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                        <option value="" disabled
+                                            <?php echo ($identity === '' || $identity === 'Select Identity') ? 'selected' : ''; ?>>
+                                            Select Identity</option>
+                                        <option value="Male" <?php echo ($identity === 'Male') ? 'selected' : ''; ?>>Male
+                                        </option>
+                                        <option value="Female" <?php echo ($identity === 'Female') ? 'selected' : ''; ?>>
+                                            Female</option>
+                                        <option value="Prefer not to say"
+                                            <?php echo ($identity === 'Prefer not to say') ? 'selected' : ''; ?>>Prefer not
+                                            to say</option>
                                     </select>
                                 </div>
-                            </div>
-
-
-                            <div class="col-span-full">
-                                <label for="bio" class="block text-sm font-medium leading-6 text-white">Bio</label>
-                                <div class="mt-2">
-                                    <textarea id="bio" name="bio" rows="3"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"><?php echo htmlspecialchars($bio); ?></textarea>
+                                <div>
+                                    <label for="bio" class="block text-gray-300">Bio</label>
+                                    <textarea name="bio" id="bio" rows="3" placeholder="Tell us about yourself..."
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"><?php echo htmlspecialchars($bio); ?></textarea>
                                 </div>
-                                <p class="mt-3 text-sm leading-6 text-gray-400">Write a few sentences about yourself.
-                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-3xl font-semibold leading-7 text-white">Education</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-400">The information you provide here helps us in
-                            performing analytics.</p>
-
-                        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <div class="sm:col-span-3">
-                                <label for="degree-type" class="block text-sm font-medium leading-6 text-white">Degree
-                                    Type</label>
-                                <div class="mt-2">
+                        <!-- Education and Links -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Education & Links</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="degree-type" class="block text-gray-300">Degree Type</label>
                                     <select id="degree-type" name="degree-type"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                        <option value="" disabled selected hidden>
-                                            <?php echo htmlspecialchars($degree_type); ?></option>
-                                        <option>Associate</option>
-                                        <option>Bachelors</option>
-                                        <option>Masters</option>
-                                        <option>PhD</option>
-                                        <option>High School</option>
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                        <option value="" disabled
+                                            <?php echo ($degree_type === '' || $degree_type === 'Select Degree') ? 'selected' : ''; ?>>
+                                            Select Degree</option>
+                                        <option value="Associate"
+                                            <?php echo ($degree_type === 'Associate') ? 'selected' : ''; ?>>Associate
+                                        </option>
+                                        <option value="Bachelors"
+                                            <?php echo ($degree_type === 'Bachelors') ? 'selected' : ''; ?>>Bachelors
+                                        </option>
+                                        <option value="Masters"
+                                            <?php echo ($degree_type === 'Masters') ? 'selected' : ''; ?>>Masters
+                                        </option>
+                                        <option value="PhD" <?php echo ($degree_type === 'PhD') ? 'selected' : ''; ?>>PhD
+                                        </option>
+                                        <option value="High School"
+                                            <?php echo ($degree_type === 'High School') ? 'selected' : ''; ?>>High School
+                                        </option>
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="institution"
-                                    class="block text-sm font-medium leading-6 text-white">Educational
-                                    Institution</label>
-                                <div class="mt-2">
-                                    <input type="text" name="institution" id="institution"
+                                <div>
+                                    <label for="institution" class="block text-gray-300">Educational Institution</label>
+                                    <input type="text" name="institution" id="institution" placeholder="Your Institution"
                                         value="<?php echo htmlspecialchars($institution); ?>"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="field-of-study" class="block text-sm font-medium leading-6 text-white">Field
-                                    of Study</label>
-                                <div class="mt-2">
+                                <div>
+                                    <label for="field-of-study" class="block text-gray-300">Field of Study</label>
                                     <input type="text" name="field-of-study" id="field-of-study"
+                                        placeholder="Your Field of Study"
                                         value="<?php echo htmlspecialchars($field_of_study); ?>"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="graduation-month"
-                                    class="block text-sm font-medium leading-6 text-white">Month of Graduation</label>
-                                <div class="mt-2">
-                                    <select id="graduation-month" name="graduation-month"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                        <option value="" disabled selected hidden>
-                                            <?php echo htmlspecialchars($graduation_month); ?></option>
-                                        <option>January</option>
-                                        <option>February</option>
-                                        <option>March</option>
-                                        <option>April</option>
-                                        <option>May</option>
-                                        <option>June</option>
-                                        <option>July</option>
-                                        <option>August</option>
-                                        <option>September</option>
-                                        <option>October</option>
-                                        <option>November</option>
-                                        <option>December</option>
-                                    </select>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="graduation-month" class="block text-gray-300">Month of
+                                            Graduation</label>
+                                        <select id="graduation-month" name="graduation-month"
+                                            class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                            <option value="" disabled
+                                                <?php echo ($graduation_month === '' || $graduation_month === 'Select Month') ? 'selected' : ''; ?>>
+                                                Select Month
+                                            </option>
+                                            <?php
+                                            $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                            foreach ($months as $month) {
+                                                $selected = ($graduation_month === $month) ? 'selected' : '';
+                                                echo "<option value='$month' $selected>$month</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="graduation-year" class="block text-gray-300">Year of
+                                            Graduation</label>
+                                        <select id="graduation-year" name="graduation-year"
+                                            class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                            <option value="" disabled
+                                                <?php echo ($graduation_year === '' || $graduation_year === 'Select Year') ? 'selected' : ''; ?>>
+                                                Select Year
+                                            </option>
+                                            <?php
+                                            for ($year = 2030; $year >= 1950; $year--) {
+                                                $selected = ($graduation_year == $year) ? 'selected' : '';
+                                                echo "<option value='$year' $selected>$year</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="graduation-year" class="block text-sm font-medium leading-6 text-white">Year
-                                    of Graduation</label>
-                                <div class="mt-2">
-                                    <select id="graduation-year" name="graduation-year"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                        <option value="" disabled selected hidden>
-                                            <?php echo htmlspecialchars($graduation_year); ?></option>
-                                        <?php
-                                        for ($year = 2030; $year >= 1950; $year--) {
-                                            echo "<option>$year</option>";
-                                        }
-                                        ?>
-                                    </select>
+                                <div>
+                                    <label for="links" class="block text-gray-300">Links (comma-separated)</label>
+                                    <textarea name="links" id="links" rows="3"
+                                        placeholder="Your Website, Blog, Github, etc."
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"><?php echo htmlspecialchars($links); ?></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-3xl font-semibold leading-7 text-white">Links</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-400">Add links to your website, blog, GitHub,
-                            LinkedIn, Stack Overflow, Dribbble, Kaggle or anywhere where your work stands out.</p>
-
-                        <div class="mt-10" x-data="{ links: [] }">
-                            <button type="button" @click="links.push('')"
-                                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                Add new profile
-                            </button>
-                            <template x-for="(link, index) in links" :key="index">
-                                <div class="mt-2">
-                                    <input type="url" x-model="links[index]" :name="'link-' + index"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-3xl font-semibold leading-7 text-white">Contact</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-400">How can we reach you?</p>
-
-                        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <div class="sm:col-span-4">
-                                <label for="phone" class="block text-sm font-medium leading-6 text-white">Phone
-                                    number</label>
-                                <div class="mt-2">
-                                    <input type="tel" name="phone" id="phone"
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- Contact Information -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Contact Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="phone" class="block text-gray-300">Phone Number</label>
+                                    <input type="tel" name="phone" id="phone" placeholder="Your Phone Number"
                                         value="<?php echo htmlspecialchars($phone); ?>" autocomplete="tel"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-3">
-                                <label for="city" class="block text-sm font-medium leading-6 text-white">City</label>
-                                <div class="mt-2">
-                                    <input type="text" name="city" id="city"
+                                <div>
+                                    <label for="city" class="block text-gray-300">City</label>
+                                    <input type="text" name="city" id="city" placeholder="Your City"
                                         value="<?php echo htmlspecialchars($city); ?>" autocomplete="address-level2"
-                                        class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-10">
-                            <h3 class="text-lg font-medium leading-6 text-white">Emergency Contact</h3>
-                            <p class="mt-1 text-sm leading-6 text-gray-400">In case something goes wrong when you're
-                                attending an event organized on VolHub, who'd you like us to reach out to first?</p>
-
-                            <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                <div class="sm:col-span-3">
-                                    <label for="emergency-name"
-                                        class="block text-sm font-medium leading-6 text-white">Emergency Contact
+                        <!-- Emergency Contact (for Volunteers) -->
+                        <?php if ($user_type === 'volunteer' || $user_type === 'both'): ?>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Emergency Contact</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="emergency-name" class="block text-gray-300">Emergency Contact
                                         Name</label>
-                                    <div class="mt-2">
-                                        <input type="text" name="emergency-name" id="emergency-name"
-                                            value="<?php echo htmlspecialchars($emergency_name); ?>"
-                                            class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                    </div>
+                                    <input type="text" name="emergency-name" id="emergency-name"
+                                        placeholder="Emergency Contact Name"
+                                        value="<?php echo htmlspecialchars($emergency_name); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
-
-                                <div class="sm:col-span-3">
-                                    <label for="emergency-phone"
-                                        class="block text-sm font-medium leading-6 text-white">Emergency Contact
+                                <div>
+                                    <label for="emergency-phone" class="block text-gray-300">Emergency Contact
                                         Number</label>
-                                    <div class="mt-2">
-                                        <input type="tel" name="emergency-phone" id="emergency-phone"
-                                            value="<?php echo htmlspecialchars($emergency_phone); ?>"
-                                            class="block w-full rounded-md border-0 py-2 px-2 text-white bg-transparent shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                    </div>
+                                    <input type="tel" name="emergency-phone" id="emergency-phone"
+                                        placeholder="Emergency Contact Number"
+                                        value="<?php echo htmlspecialchars($emergency_phone); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
                             </div>
                         </div>
+                        <?php endif; ?>
+
+                        <!-- Organizer Details (for Organizers) -->
+                        <?php if ($user_type === 'organizer' || $user_type === 'both'): ?>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Organizer Details</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="organization_name" class="block text-gray-300">Organization Name</label>
+                                    <input type="text" name="organization_name" id="organization_name"
+                                        placeholder="Organization Name"
+                                        value="<?php echo htmlspecialchars($organization_name); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                </div>
+                                <div>
+                                    <label for="job_title" class="block text-gray-300">Job Title</label>
+                                    <input type="text" name="job_title" id="job_title" placeholder="Job Title"
+                                        value="<?php echo htmlspecialchars($job_title); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                </div>
+                                <div>
+                                    <label for="industry" class="block text-gray-300">Industry</label>
+                                    <input type="text" name="industry" id="industry" placeholder="Industry"
+                                        value="<?php echo htmlspecialchars($industry); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                </div>
+                                <div>
+                                    <label for="location" class="block text-gray-300">Location</label>
+                                    <input type="text" name="location" id="location" placeholder="Location"
+                                        value="<?php echo htmlspecialchars($location); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                </div>
+                                <div>
+                                    <label for="official_address" class="block text-gray-300">Official Address</label>
+                                    <textarea name="official_address" id="official_address" rows="3"
+                                        placeholder="Official Address"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"><?php echo htmlspecialchars($official_address); ?></textarea>
+                                </div>
+                                <div>
+                                    <label for="official_contact_number" class="block text-gray-300">Official Contact
+                                        Number</label>
+                                    <input type="tel" name="official_contact_number" id="official_contact_number"
+                                        placeholder="Official Contact Number"
+                                        value="<?php echo htmlspecialchars($official_contact_number); ?>"
+                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                </div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                </div>
 
-                <div class="mt-4 pb-10 flex  py-items-center justify-end gap-x-6">
-                    <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
-                    <button type="submit"
-                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
-                </div>
-                <!-- Error Handlers -->
-                <?php
-                if (isset($_GET["error"])) {
-                    $errorMessages = [
-                        "invalidUsername" => "Choose a proper username!",
-                        "usernameTaken" => "Sorry, username is taken. Try again!",
-                        "none" => "You have signed up!",
-                    ];
+                    <!-- Profile Creation Buttons -->
+                    <div class="mt-8 text-center space-y-4">
+                        <?php if ($user_type === 'volunteer'): ?>
+                        <a href="org-profile-creation.php"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                            Create Your Organizer Profile
+                        </a>
+                        <?php endif; ?>
+                        <?php if ($user_type === 'organizer'): ?>
+                        <a href="vol-profile-creation.php"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                            Create Your Volunteer Profile
+                        </a>
+                        <?php endif; ?>
+                    </div>
 
-                    $errorKey = $_GET["error"];
-                    if (array_key_exists($errorKey, $errorMessages)) {
-                        echo "<div class='mt-2 pt-2 text-red-500 text-center text-sm'>{$errorMessages[$errorKey]}</div>";
-                    }
-                }
-                ?>
-
-            </form>
+                    <div class="mt-8 text-center">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <?php include "../../includes/footer.php"; ?>
 </body>
 
 </html>

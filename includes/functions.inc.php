@@ -1,119 +1,90 @@
 <?php
 
+include_once 'dbh.inc.php'; // Include the connection function
+
 /*.......................SIGNUP FUNCTIONS.......................*/
 
-function emptyInputSignup($email, $pwd, $pwdRepeat)
-{
-    $result;
-    if (empty($email) || empty($pwd) || empty($pwdRepeat)) {
-        $result = true;
-    } else {
-        $result = false;
-    }
-    return $result;
+function emptyInputSignup($email, $pwd, $pwdRepeat) {
+    return empty($email) || empty($pwd) || empty($pwdRepeat);
 }
 
-function invalidEmail($email)
-{
-    $result;
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $result = true;
-    } else {
-        $result = false;
-    }
-    return $result;
+function invalidEmail($email) {
+    return !filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
-function pwdMatch($pwd, $pwdRepeat)
-{
-    $result;
-    if ($pwd !== $pwdRepeat) {
-        $result = true;
-    } else {
-        $result = false;
-    }
-    return $result;
+function pwdMatch($pwd, $pwdRepeat) {
+    return $pwd !== $pwdRepeat;
 }
 
-function emailExists($con, $email)
-{
+function emailExists($email) {
+    $conn = getDatabaseConnection();
     $sql = "SELECT * FROM users WHERE usersEmail = ?;";
-    $stmt = mysqli_stmt_init($con);
+    $stmt = mysqli_stmt_init($conn);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("Location: signup.php?error=stmtfailed");
-        exit();
+        error_log("emailExists - Prepare failed: " . mysqli_stmt_error($stmt));
+        return false;
     }
 
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
-
     $resultData = mysqli_stmt_get_result($stmt);
-
-    if ($row = mysqli_fetch_assoc($resultData)) {
-        return $row;
-    } else {
-        $result = false;
-        return $result;
-    }
+    $row = mysqli_fetch_assoc($resultData);
     mysqli_stmt_close($stmt);
+    return $row;
 }
 
-function createUser($con, $email, $pwd, $created_at, $role, $user_type, $volunteer, $organizer)
-{
-    $sql = "INSERT INTO users (usersEmail, usersPwd, created_at, role, user_type, volunteer, organizer) VALUES (?, ?, ?, ?, ?, ?, ?);";
-    $stmt = mysqli_stmt_init($con);
+function createUser($email, $pwd, $role = 'user', $user_type = 'volunteer') {
+    $conn = getDatabaseConnection();
+    $sql = "INSERT INTO users (usersEmail, usersPwd, role, user_type) VALUES (?, ?, ?, ?);";
+    $stmt = mysqli_stmt_init($conn);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("Location: signup.php?error=stmtfailed");
-        exit();
+        error_log("createUser - Prepare failed: " . mysqli_stmt_error($stmt) . ", SQL: " . $sql);
+        return false; 
     }
 
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
+    mysqli_stmt_bind_param($stmt, "ssss", $email, $hashedPwd, $role, $user_type);
 
-    mysqli_stmt_bind_param($stmt, "sssssii", $email, $hashedPwd, $created_at, $role, $user_type, $volunteer, $organizer);
-    mysqli_stmt_execute($stmt);
-    // Get the last inserted user's ID
-    $user_id = mysqli_insert_id($con);
-    mysqli_stmt_close($stmt);
-
-    // Start the session and set session variables
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("createUser - Execute failed: " . mysqli_stmt_error($stmt));
+        return false;
     }
-    $_SESSION["usersid"] = $user_id;
 
-    // Redirect the user to the profile page or wherever you want
-    header("Location: ../profile/profile-index.php");
-    exit();
+    $user_id = mysqli_insert_id($conn); // Get the ID immediately after successful insert
+    mysqli_stmt_close($stmt);
+    session_start();
+    $_SESSION["usersid"] = $user_id;
+    return true; 
 }
 
 /*.......................LOGIN FUNCTIONS.......................*/
 
-function emptyInputLogin($email, $pwd)
-{
-    $result;
-    if (empty($email) || empty($pwd)) {
-        $result = true;
-    } else {
-        $result = false;
-    }
-    return $result;
+function emptyInputLogin($email, $pwd) {
+    return empty($email) || empty($pwd);
 }
 
-function loginUser($con, $email, $pwd)
-{
-    // Check if the email exists in the users table
+
+function loginUser($email, $pwd) {  // Removed $con parameter
+    $conn = getDatabaseConnection();
     $sql = "SELECT * FROM users WHERE usersEmail = ?;";
-    $stmt = mysqli_stmt_init($con);
-    
+    $stmt = mysqli_stmt_init($conn);
+
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("Location: login.php?error=stmtfailed");
-        exit();
+        error_log("loginUser - Prepare failed: " . mysqli_stmt_error($stmt) . ", SQL: " . $sql);
+        return false;
     }
 
     mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
+
+
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("loginUser - Execute failed: " . mysqli_stmt_error($stmt));
+        return false;
+    }
+
+
     $resultData = mysqli_stmt_get_result($stmt);
 
     if ($row = mysqli_fetch_assoc($resultData)) {
@@ -121,126 +92,117 @@ function loginUser($con, $email, $pwd)
         $pwdHashed = $row["usersPwd"];
         $checkPwd = password_verify($pwd, $pwdHashed);
 
+
         if ($checkPwd === false) {
-            header("Location: login.php?error=wrongLogin");
-            exit();
+             return false; // Indicate incorrect password
         } else {
-            // Start the session and set session variables
             session_start();
             $_SESSION["usersid"] = $row["usersId"];
             $_SESSION["users_email"] = $row["usersEmail"];
             $_SESSION["role"] = $row["role"];
             $_SESSION["user_type"] = $row["user_type"];
-
-            // Redirect to the dashboard
-            if ($row["role"] === 'admin') {
-                header("Location: /miniProject/includes/admin-dashboard.php");
-            } else {
-                // Assuming we already have the user's information in $row
-                // and it includes a 'user_type' field that can be 'volunteer', 'organizer', or 'both'
-                
-                switch($row['user_type']) {
-                    case 'both':
-                    case 'volunteer':
-                        // If user is both or volunteer, redirect to volunteer dashboard
-                        header("Location: /miniProject/includes/dashboard.php");
-                        break;
-                    
-                    case 'organizer':
-                        // If user is organizer only, redirect to organizer dashboard
-                        header("Location: /miniProject/includes/org-dashboard.php");
-                        break;
-                    
-                    default:
-                        // If user_type is not set or is something else, 
-                        // redirect to create volunteer profile
-                        header("Location: /miniProject/pages/profile/vol-profile-creation.php");
-                }
-            }
-            exit();
+             return true;
         }
     } else {
-        // If the email doesn't exist
-        header("Location: login.php?error=wrongLogin");
-        exit();
+        return false; // Indicate user not found        
     }
 }
+
+
+
 
 
 /*.......................PROFILE FUNCTIONS.......................*/
 
 function invalidId($username)
 {
-    return preg_match("/^[a-zA-Z0-9]*$/", $username);
+    return !preg_match("/^[a-zA-Z0-9]*$/", $username);  // Inverted the logic: returns true if INVALID
 }
 
-function idExists($con, $username)
+function idExists($username)
 {
+	$conn = getDatabaseConnection();
     $sql = "SELECT * FROM user_profiles WHERE username = ?;";
-    $stmt = mysqli_stmt_init($con);
+    $stmt = mysqli_stmt_init($conn);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("Location: vol-profile-creation.php?error=stmtfailed");
-        exit();
+        error_log("idExists - Prepare failed: " . mysqli_stmt_error($stmt));
+        return false; // or handle error as needed
     }
 
     mysqli_stmt_bind_param($stmt, "s", $username);
     mysqli_stmt_execute($stmt);
+	$resultData = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($resultData);
+	mysqli_stmt_close($stmt);
 
-    $resultData = mysqli_stmt_get_result($stmt);
-
-    $exists = mysqli_fetch_assoc($resultData) !== null;
-
-    mysqli_stmt_close($stmt);
-    
-    return $exists;
+    return $row ? true : false;  // Returns true if username exists, false otherwise
 }
 
-function createSharedProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links) {
-    $sql = "INSERT INTO user_profiles (profile_usersId, full_name, username, identity, bio, degree_type, institution, field_of_study, graduation_month, graduation_year, phone, city, links) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_stmt_init($con);
+function createSharedProfile($user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links, $profilepicture) {
+    $conn = getDatabaseConnection();
+    $sql = "INSERT INTO user_profiles (profile_usersId, full_name, username, identity, bio, degree_type, institution, field_of_study, graduation_month, graduation_year, phone, city, links, profile_picture) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_stmt_init($conn);
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
+        error_log("createSharedProfile - Prepare failed: " . mysqli_stmt_error($stmt));
+        return false;
+    }    
+    mysqli_stmt_bind_param($stmt, "isssssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links, $profilepicture);
+    
+
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("createSharedProfile - Execute failed: " . mysqli_stmt_error($stmt) );
         return false;
     }
-    
-    mysqli_stmt_bind_param($stmt, "issssssssssss", $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
-    $result = mysqli_stmt_execute($stmt);
+
     mysqli_stmt_close($stmt);
-    
-    return $result;
+    return true;
 }
 
-function createVolunteerProfile($con, $user_id, $emergency_name, $emergency_phone) {
+function createVolunteerProfile($user_id, $emergency_name, $emergency_phone) {  // Removed $con
+    $conn = getDatabaseConnection();
     $sql = "INSERT INTO user_profiles_vol (userid, emergency_name, emergency_phone) 
             VALUES (?, ?, ?)";
-    $stmt = mysqli_stmt_init($con);
+    $stmt = mysqli_stmt_init($conn); // Use $conn
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
+         error_log("createVolunteerProfile - Prepare failed: " . mysqli_stmt_error($stmt));
         return false;
     }
     
     mysqli_stmt_bind_param($stmt, "iss", $user_id, $emergency_name, $emergency_phone);
-    $result = mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
     
-    return $result;
+    if (!mysqli_stmt_execute($stmt)) {
+         error_log("createVolunteerProfile - Execute failed: " . mysqli_stmt_error($stmt));
+        return false;
+    }
+    
+    mysqli_stmt_close($stmt);
+    return true; // Return true on success
 }
 
-function createOrganizerProfile($con, $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number) {
+function createOrganizerProfile($user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number) { // Removed $con
+    $conn = getDatabaseConnection();
     $sql = "INSERT INTO user_profiles_org (userid, organization_name, job_title, industry, location, official_address, official_contact_number) 
             VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_stmt_init($con);
+    $stmt = mysqli_stmt_init($conn);  // Use $conn
     
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        error_log("SQL Prepare Failed: " . mysqli_stmt_error($stmt));
+        error_log("createOrganizerProfile - Prepare failed: " . mysqli_stmt_error($stmt));
         return false;
     }    
     
     mysqli_stmt_bind_param($stmt, "issssss", $user_id, $organization_name, $job_title, $industry, $location, $official_address, $official_contact_number);
-    $result = mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
     
-    return $result;
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("createOrganizerProfile - Execute failed: " . mysqli_stmt_error($stmt));
+        return false;
+    }
+
+    mysqli_stmt_close($stmt);
+    return true; // Return true on success
+
 }
+?>
