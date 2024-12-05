@@ -71,6 +71,26 @@ if ($organizerDetails = mysqli_fetch_assoc($orgResult)) {
     die("Error: Organizer not found.");
 }
 
+// Check if the user has applied for this event
+$checkApplicationQuery = "SELECT request_status FROM requests WHERE event_id = ? AND requests_usersId = ?";
+$applicationStmt = mysqli_stmt_init($con);
+
+if (mysqli_stmt_prepare($applicationStmt, $checkApplicationQuery)) {
+    mysqli_stmt_bind_param($applicationStmt, "ii", $eventId, $_SESSION['usersid']);
+    mysqli_stmt_execute($applicationStmt);
+    $applicationResult = mysqli_stmt_get_result($applicationStmt);
+
+    if ($applicationStatus = mysqli_fetch_assoc($applicationResult)) {
+        $userApplicationStatus = $applicationStatus['request_status']; // pending, approved, or rejected
+    } else {
+        $userApplicationStatus = 'not_applied'; 
+    }
+    mysqli_stmt_close($applicationStmt);
+} else {
+    echo "SQL error in application check";
+    exit();
+}
+
 // Handle AJAX registration request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') {
     $userId = $_SESSION['usersid'];
@@ -88,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 mysqli_stmt_close($eventStmt);
-mysqli_stmt_close($orgStmt); // Close the organizer details statement
+mysqli_stmt_close($orgStmt);
 mysqli_close($con);
 ?>
 
@@ -203,12 +223,28 @@ mysqli_close($con);
                             <span>Contact: <?php echo htmlspecialchars($officialContact); ?></span>
                         </div>
                     </div>
-                    <!-- Register Button moved inside Organizer Details -->
+
                     <div class="mt-6 text-center">
-                        <button id="register-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out text-lg transform hover:scale-105">
-                            Register for the Event
-                        </button>
-                        <div id="registration-message" class="mt-4 text-lg"></div>
+                        <?php if ($userApplicationStatus == 'not_applied'): ?>
+                            <button id="register-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out text-lg transform hover:scale-105">
+                                Register for the Event
+                            </button>
+                            <?php elseif ($userApplicationStatus == 'pending'): ?>
+                            <div class="bg-yellow-500 bg-opacity-10 border border-yellow-500 text-yellow-500 px-4 py-3 rounded-lg">
+                                <p class="font-semibold">Your Registration is Pending</p>
+                                <p class="text-sm mt-1">We're reviewing your application. Please check back later.</p>
+                            </div>
+                        <?php elseif ($userApplicationStatus == 'approved'): ?>
+                            <div class="bg-green-500 bg-opacity-10 border border-green-500 text-green-500 px-4 py-3 rounded-lg">
+                                <p class="font-semibold">Congratulations!</p>
+                                <p class="text-sm mt-1">Your registration for this event has been approved.</p>
+                            </div>
+                        <?php elseif ($userApplicationStatus == 'rejected'): ?>
+                            <div class="bg-red-500 bg-opacity-10 border border-red-500 text-red-500 px-4 py-3 rounded-lg">
+                                <p class="font-semibold">Registration Declined</p>
+                                <p class="text-sm mt-1">Unfortunately, your registration for this event was not approved.</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -226,6 +262,7 @@ mysqli_close($con);
         const registerBtn = document.getElementById('register-btn');
         const registrationMessage = document.getElementById('registration-message');
 
+        <?php if ($userApplicationStatus == 'not_applied'): ?>
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
             registerBtn.disabled = true;
@@ -242,9 +279,8 @@ mysqli_close($con);
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    registerBtn.classList.add('hidden');
-                    registrationMessage.textContent = data.message;
-                    registrationMessage.classList.add('text-green-400', 'animate-fadeIn');
+                    // Redirect to the same page to show pending status
+                    window.location.reload();
                 } else {
                     registrationMessage.textContent = data.message;
                     registrationMessage.classList.add('text-red-400', 'animate-fadeIn');
@@ -260,6 +296,7 @@ mysqli_close($con);
                 registerBtn.textContent = 'Register for the Event';
             });
         });
+        <?php endif; ?>
     </script>
 </body>
 </html>

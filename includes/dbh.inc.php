@@ -25,8 +25,6 @@ if(!mysqli_query($con, $dbCreate))
 // Select the database
 mysqli_select_db($con, $dbName);
 
-// Table Creation
-// Ensure the data types and unsigned attribute match for both tables
 $table_create = "CREATE TABLE IF NOT EXISTS users (
     usersId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usersEmail VARCHAR(255) NOT NULL UNIQUE,
@@ -35,7 +33,8 @@ $table_create = "CREATE TABLE IF NOT EXISTS users (
     role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
     user_type SET('volunteer', 'organizer', 'both') NOT NULL DEFAULT 'volunteer',
     volunteer BOOLEAN DEFAULT 0,
-    organizer BOOLEAN DEFAULT 0
+    organizer BOOLEAN DEFAULT 0,
+    profile_completed BOOLEAN DEFAULT 0
 )";
 
 $table2_create = "CREATE TABLE IF NOT EXISTS user_profiles (
