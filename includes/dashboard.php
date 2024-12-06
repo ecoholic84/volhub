@@ -8,6 +8,20 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
+// Fetch user data first
+$userDataQuery = "SELECT * FROM users WHERE usersId = ?";
+$userDataStmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($userDataStmt, $userDataQuery)) {
+    echo "SQL error";
+    exit();
+} else {
+    mysqli_stmt_bind_param($userDataStmt, "i", $user_id);
+    mysqli_stmt_execute($userDataStmt);
+    $userDataResult = mysqli_stmt_get_result($userDataStmt);
+    $userData = mysqli_fetch_assoc($userDataResult);
+}
+mysqli_stmt_close($userDataStmt);
+
 // SQL query to fetch upcoming events (excluding those the user has applied for)
 $fetchEventsQuery = "SELECT * FROM events 
                     WHERE event_datetime >= CURDATE() AND reg_status = '1' AND admin_approve = '1'
@@ -37,6 +51,7 @@ if (!mysqli_stmt_prepare($appliedEventStmt, $fetchAppliedEventsQuery)) {
     $appliedEventResult = mysqli_stmt_get_result($appliedEventStmt);
 }
 mysqli_stmt_close($appliedEventStmt);
+
 ?>
 
 <!DOCTYPE html>

@@ -53,9 +53,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Redirect based on user type after successful submission
         if (strpos($userType, 'volunteer') !== false) {
+            updateVolProfileStatus($con, $user_id);
             header("Location: vol-profile-creation.php?success=1");
             exit();
         } elseif (strpos($userType, 'organizer') !== false) {
+            updateOrgProfileStatus($con, $user_id);
             header("Location: org-profile-creation.php?success=1");
             exit();
         }

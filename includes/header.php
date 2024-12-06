@@ -178,8 +178,15 @@ ob_start();
     showSubheader(false);
     ob_end_flush();
 
+    // Function to check if we're on one of the pages that should show the notification
+    function shouldShowNotification() {
+        $current_page = basename($_SERVER['PHP_SELF']);
+        $allowed_pages = ['dashboard.php', 'org-dashboard.php', 'event-page.php'];
+        return in_array($current_page, $allowed_pages);
+    }
+
     // Add this where you want the notification to appear
-    if (isset($_SESSION['usersid']) && needsProfileCompletion($con, $_SESSION['usersid'])) {
+    if (isset($_SESSION['usersid']) && needsProfileCompletion($con, $_SESSION['usersid']) && shouldShowNotification()) {
         echo '
         <div class="bg-indigo-600" x-data="{ show: true }" x-show="show">
             <div class="mx-auto max-w-7xl py-3 px-3 sm:px-6 lg:px-8">

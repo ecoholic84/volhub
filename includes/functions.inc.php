@@ -263,3 +263,63 @@ function needsProfileCompletion($con, $userId) {
     }
     return false;
 }
+
+// Function to update volunteer profile completion status
+function updateVolProfileStatus($con, $userId) {
+    $sql = "UPDATE user_profiles_vol SET vol_profile_completed = 1 WHERE userid = ?";
+    $stmt = mysqli_stmt_init($con);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header("Location: ../pages/profile/profile-creation.php?error=stmtfailed");
+        exit();
+    }
+    mysqli_stmt_bind_param($stmt, "i", $userId);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+}
+
+// Function to update organizer profile completion status
+function updateOrgProfileStatus($con, $userId) {
+    $sql = "UPDATE user_profiles_org SET org_profile_completed = 1 WHERE userid = ?";
+    $stmt = mysqli_stmt_init($con);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        header("Location: ../pages/profile/profile-creation.php?error=stmtfailed");
+        exit();
+    }
+    mysqli_stmt_bind_param($stmt, "i", $userId);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+}
+
+// Function to check volunteer profile completion status
+function isVolProfileComplete($con, $userId) {
+    $sql = "SELECT vol_profile_completed FROM user_profiles_vol WHERE userid = ?";
+    $stmt = mysqli_stmt_init($con);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        return false;
+    }
+    mysqli_stmt_bind_param($stmt, "i", $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($row = mysqli_fetch_assoc($result)) {
+        return (bool)$row['vol_profile_completed'];
+    }
+    return false;
+}
+
+// Function to check organizer profile completion status
+function isOrgProfileComplete($con, $userId) {
+    $sql = "SELECT org_profile_completed FROM user_profiles_org WHERE userid = ?";
+    $stmt = mysqli_stmt_init($con);
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        return false;
+    }
+    mysqli_stmt_bind_param($stmt, "i", $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($row = mysqli_fetch_assoc($result)) {
+        return (bool)$row['org_profile_completed'];
+    }
+    return false;
+}

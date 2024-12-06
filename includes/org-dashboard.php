@@ -11,6 +11,20 @@ else {
     exit();
 }
 
+// Fetch user data first
+$userDataQuery = "SELECT * FROM users WHERE usersId = ?";
+$userDataStmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($userDataStmt, $userDataQuery)) {
+    echo "SQL error";
+    exit();
+} else {
+    mysqli_stmt_bind_param($userDataStmt, "i", $user_id);
+    mysqli_stmt_execute($userDataStmt);
+    $userDataResult = mysqli_stmt_get_result($userDataStmt);
+    $userData = mysqli_fetch_assoc($userDataResult);
+}
+mysqli_stmt_close($userDataStmt);
+
 // Fetch the user's profile data
 $sql = "SELECT * FROM user_profiles WHERE profile_usersId=?";
 $stmt = mysqli_stmt_init($con);
