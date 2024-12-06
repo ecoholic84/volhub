@@ -1,4 +1,38 @@
+<?php
+// Check profile completion status
+$userId = $_SESSION["usersid"];
+$profileCheckQuery = "SELECT profile_completed FROM users WHERE usersId = ?";
+$profileStmt = mysqli_stmt_init($con);
+mysqli_stmt_prepare($profileStmt, $profileCheckQuery);
+mysqli_stmt_bind_param($profileStmt, "i", $userId);
+mysqli_stmt_execute($profileStmt);
+$profileResult = mysqli_stmt_get_result($profileStmt);
+$profileData = mysqli_fetch_assoc($profileResult);
+$basicProfileComplete = $profileData['profile_completed'];
+mysqli_stmt_close($profileStmt);
 
+// Check organizer profile completion
+$orgProfileQuery = "SELECT org_profile_completed FROM user_profiles_org WHERE userid = ?";
+$orgStmt = mysqli_stmt_init($con);
+mysqli_stmt_prepare($orgStmt, $orgProfileQuery);
+mysqli_stmt_bind_param($orgStmt, "i", $userId);
+mysqli_stmt_execute($orgStmt);
+$orgResult = mysqli_stmt_get_result($orgStmt);
+$orgData = mysqli_fetch_assoc($orgResult);
+$organizerProfileComplete = $orgData ? $orgData['org_profile_completed'] : false;
+mysqli_stmt_close($orgStmt);
+
+// If either profile is incomplete, redirect to appropriate profile page
+if (!$basicProfileComplete) {
+    header("Location: /miniProject/pages/profile/profile-creation.php");
+    exit();
+} elseif (!$organizerProfileComplete) {
+    header("Location: /miniProject/pages/profile/org-profile-creation.php");
+    exit();
+}
+
+// Rest of the event creation code...
+?>
 
 <!-- Modal Background -->
 <div id="createEventModal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex justify-center items-center z-50 hidden">

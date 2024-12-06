@@ -8,6 +8,31 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
+// Check profile completion status
+$userId = $_SESSION["usersid"];
+$profileCheckQuery = "SELECT profile_completed FROM users WHERE usersId = ?";
+$profileStmt = mysqli_stmt_init($con);
+mysqli_stmt_prepare($profileStmt, $profileCheckQuery);
+mysqli_stmt_bind_param($profileStmt, "i", $userId);
+mysqli_stmt_execute($profileStmt);
+$profileResult = mysqli_stmt_get_result($profileStmt);
+$profileData = mysqli_fetch_assoc($profileResult);
+$basicProfileComplete = $profileData['profile_completed'];
+
+// Check volunteer profile completion
+$volProfileQuery = "SELECT vol_profile_completed FROM user_profiles_vol WHERE userid = ?";
+$volStmt = mysqli_stmt_init($con);
+mysqli_stmt_prepare($volStmt, $volProfileQuery);
+mysqli_stmt_bind_param($volStmt, "i", $userId);
+mysqli_stmt_execute($volStmt);
+$volResult = mysqli_stmt_get_result($volStmt);
+$volData = mysqli_fetch_assoc($volResult);
+$volunteerProfileComplete = $volData ? $volData['vol_profile_completed'] : false;
+
+// Store profile status in session for JavaScript use
+$_SESSION['basic_profile_complete'] = $basicProfileComplete;
+$_SESSION['volunteer_profile_complete'] = $volunteerProfileComplete;
+
 // Get the event ID from the URL
 if (isset($_GET['id'])) {
     $eventId = $_GET['id'];
@@ -257,14 +282,69 @@ mysqli_close($con);
         </div>
     </footer>
 
+    <!-- Profile Completion Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-dark-light rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+                    <svg class="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-white mb-4" id="modalTitle">Complete Your Profile</h3>
+                <p class="text-gray-300 mb-6" id="modalMessage">You need to complete your profile before registering for events.</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="" id="profileRedirectBtn" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500">
+                        Complete Profile
+                    </a>
+                    <button type="button" onclick="closeProfileModal()" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-300 border border-gray-300 rounded-md hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Handle registration
+        // Modify the existing registration button click handler
         const registerBtn = document.getElementById('register-btn');
-        const registrationMessage = document.getElementById('registration-message');
+        const profileModal = document.getElementById('profileModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const profileRedirectBtn = document.getElementById('profileRedirectBtn');
+
+        function showProfileModal() {
+            const basicComplete = <?php echo $basicProfileComplete ? 'true' : 'false' ?>;
+            const volunteerComplete = <?php echo $volunteerProfileComplete ? 'true' : 'false' ?>;
+
+            if (!basicComplete) {
+                modalTitle.textContent = 'Basic Profile Incomplete';
+                modalMessage.textContent = 'Please complete your basic profile first to register for events.';
+                profileRedirectBtn.href = '/miniProject/pages/profile/profile-creation.php';
+            } else if (!volunteerComplete) {
+                modalTitle.textContent = 'Volunteer Profile Incomplete';
+                modalMessage.textContent = 'Please complete your volunteer profile to register for events.';
+                profileRedirectBtn.href = '/miniProject/pages/profile/vol-profile-creation.php';
+            }
+            profileModal.classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            profileModal.classList.add('hidden');
+        }
 
         <?php if ($userApplicationStatus == 'not_applied'): ?>
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            const basicComplete = <?php echo $basicProfileComplete ? 'true' : 'false' ?>;
+            const volunteerComplete = <?php echo $volunteerProfileComplete ? 'true' : 'false' ?>;
+
+            if (!basicComplete || !volunteerComplete) {
+                showProfileModal();
+                return;
+            }
+
+            // Existing registration code
             registerBtn.disabled = true;
             registerBtn.textContent = 'Registering...';
 

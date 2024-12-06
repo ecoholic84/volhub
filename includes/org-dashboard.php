@@ -124,9 +124,80 @@ else
     <header class="bg-transparent 00 py-4 px-8 flex justify-between items-center">
         <h1 class="text-xl font-bold"></h1>
         <div class="px-4 py-2 rounded-md">
-            <?php include_once 'event-creation.php'; ?>
+            <?php 
+            // Check if profiles are complete before showing create event button
+            $basicProfileComplete = $userData['profile_completed'];
+            
+            // Check organizer profile completion
+            $orgProfileQuery = "SELECT org_profile_completed FROM user_profiles_org WHERE userid = ?";
+            $orgStmt = mysqli_stmt_init($con);
+            mysqli_stmt_prepare($orgStmt, $orgProfileQuery);
+            mysqli_stmt_bind_param($orgStmt, "i", $user_id);
+            mysqli_stmt_execute($orgStmt);
+            $orgResult = mysqli_stmt_get_result($orgStmt);
+            $orgData = mysqli_fetch_assoc($orgResult);
+            $organizerProfileComplete = $orgData ? $orgData['org_profile_completed'] : false;
+            mysqli_stmt_close($orgStmt);
+
+            if (!$basicProfileComplete || !$organizerProfileComplete) {
+                echo '<button onclick="showProfileModal()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">
+                        Create Event
+                      </button>';
+            } else {
+                include_once 'event-creation.php';
+            }
+            ?>
         </div>
     </header>
+
+    <!-- Profile Completion Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-dark-light rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+                    <svg class="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-white mb-4" id="modalTitle">Complete Your Profile</h3>
+                <p class="text-gray-300 mb-6" id="modalMessage">You need to complete your profile before creating events.</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="" id="profileRedirectBtn" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500">
+                        Complete Profile
+                    </a>
+                    <button type="button" onclick="closeProfileModal()" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-300 border border-gray-300 rounded-md hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function showProfileModal() {
+        const basicComplete = <?php echo $basicProfileComplete ? 'true' : 'false' ?>;
+        const organizerComplete = <?php echo $organizerProfileComplete ? 'true' : 'false' ?>;
+        const profileModal = document.getElementById('profileModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const profileRedirectBtn = document.getElementById('profileRedirectBtn');
+
+        if (!basicComplete) {
+            modalTitle.textContent = 'Basic Profile Incomplete';
+            modalMessage.textContent = 'Please complete your basic profile first to create events.';
+            profileRedirectBtn.href = '/miniProject/pages/profile/profile-creation.php';
+        } else if (!organizerComplete) {
+            modalTitle.textContent = 'Organization Profile Incomplete';
+            modalMessage.textContent = 'Please complete your organization profile to create events.';
+            profileRedirectBtn.href = '/miniProject/pages/profile/org-profile-creation.php';
+        }
+        profileModal.classList.remove('hidden');
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').classList.add('hidden');
+    }
+    </script>
 
     <!-- Main Content -->
     <main class="flex-grow flex flex-col justify-center items-center">
