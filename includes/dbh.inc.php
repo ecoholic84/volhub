@@ -60,6 +60,7 @@ $table3_create = "CREATE TABLE IF NOT EXISTS  user_profiles_vol (
     emergency_name VARCHAR(100) NOT NULL,
     emergency_phone VARCHAR(20) NOT NULL,
     userid INT(11) UNSIGNED NOT NULL,
+    vol_profile_completed BOOLEAN DEFAULT 0,
     FOREIGN KEY (userid) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 
@@ -72,6 +73,7 @@ $table4_create = "CREATE TABLE IF NOT EXISTS user_profiles_org (
     official_address TEXT,
     official_contact_number VARCHAR(20),
     userid INT(11) UNSIGNED NOT NULL,
+    org_profile_completed BOOLEAN DEFAULT 0,
     FOREIGN KEY (userid) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 

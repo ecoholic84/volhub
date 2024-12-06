@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insert shared profile fields into `user_profiles`
         createSharedProfile($con, $user_id, $full_name, $username, $identity, $bio, $degree_type, $institution, $field_of_study, $graduation_month, $graduation_year, $phone, $city, $links);
 
-        // Update profile completion status
+        // Update the profile completion status
         $sql = "UPDATE users SET profile_completed = 1 WHERE usersId = ?";
         $stmt = mysqli_stmt_init($con);
         if (mysqli_stmt_prepare($stmt, $sql)) {

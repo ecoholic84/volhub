@@ -244,3 +244,22 @@ function createOrganizerProfile($con, $user_id, $organization_name, $job_title, 
     
     return $result;
 }
+
+/**
+ * Check if user needs profile completion reminder
+ * @param mysqli $con Database connection
+ * @param int $userId User ID
+ * @return bool True if profile needs completion
+ */
+function needsProfileCompletion($con, $userId) {
+    $sql = "SELECT profile_completed FROM users WHERE usersId = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($row = mysqli_fetch_assoc($result)) {
+        return $row['profile_completed'] == 0;
+    }
+    return false;
+}

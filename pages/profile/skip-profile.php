@@ -7,7 +7,7 @@ if (!isset($_SESSION["usersid"])) {
     exit();
 }
 
-// No need to update profile_completed since it's already 0 by default
+// No need to update profile_completed since we want it to remain 0 until they actually complete the profile
 
 // Redirect based on user type
 if (isset($_SESSION['user_type'])) {
