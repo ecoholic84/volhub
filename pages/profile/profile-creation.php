@@ -1,8 +1,45 @@
 <?php
-session_start(); // Start the session at the very beginning
+session_start();
+require_once '../../includes/dbh.inc.php';
 
+// Check if user is logged in
 if (!isset($_SESSION["usersid"])) {
     header("Location: ../login/login.php");
+    exit();
+}
+
+// Check if user already has a basic profile
+$userId = $_SESSION["usersid"];
+$checkProfileQuery = "SELECT profile_completed FROM users WHERE usersId = ?";
+$stmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($stmt, $checkProfileQuery)) {
+    echo "SQL error";
+    exit();
+}
+mysqli_stmt_bind_param($stmt, "i", $userId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$userData = mysqli_fetch_assoc($result);
+
+// Also check in user_profiles table
+$checkUserProfileQuery = "SELECT profile_id FROM user_profiles WHERE profile_usersId = ?";
+$profileStmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($profileStmt, $checkUserProfileQuery)) {
+    echo "SQL error";
+    exit();
+}
+mysqli_stmt_bind_param($profileStmt, "i", $userId);
+mysqli_stmt_execute($profileStmt);
+$profileResult = mysqli_stmt_get_result($profileStmt);
+$profileExists = mysqli_fetch_assoc($profileResult);
+
+// If user already has a profile, redirect to appropriate dashboard
+if ($userData['profile_completed'] == 1 || $profileExists) {
+    if ($_SESSION['user_type'] === 'organizer') {
+        header("Location: ../../includes/org-dashboard.php");
+    } else {
+        header("Location: ../../includes/dashboard.php");
+    }
     exit();
 }
 
