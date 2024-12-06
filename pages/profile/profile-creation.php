@@ -242,6 +242,10 @@ if (isset($_GET["error"])) {
 
                 <div class="mt-4 pb-10 flex py-items-center justify-end gap-x-6">
                     <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
+                    <a href="skip-profile.php" 
+                       class="rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
+                        Skip for now
+                    </a>
                     <button type="submit" name="basic_profile"
                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Next</button>
                 </div>
