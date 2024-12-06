@@ -185,11 +185,11 @@ else
         if (!basicComplete) {
             modalTitle.textContent = 'Basic Profile Incomplete';
             modalMessage.textContent = 'Please complete your basic profile first to create events.';
-            profileRedirectBtn.href = '/miniProject/pages/profile/profile-creation.php';
+            profileRedirectBtn.href = '/volhub/pages/profile/profile-creation.php';
         } else if (!organizerComplete) {
             modalTitle.textContent = 'Organization Profile Incomplete';
             modalMessage.textContent = 'Please complete your organization profile to create events.';
-            profileRedirectBtn.href = '/miniProject/pages/profile/org-profile-creation.php';
+            profileRedirectBtn.href = '/volhub/pages/profile/org-profile-creation.php';
         }
         profileModal.classList.remove('hidden');
     }

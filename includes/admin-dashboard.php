@@ -4,7 +4,7 @@ include_once "dbh.inc.php";
 
 // Check if user is logged in as admin
 if (!isset($_SESSION["usersid"]) || $_SESSION["role"] !== 'admin') {
-    header("Location: /miniProject/pages/login/login.php");
+    header("Location: /volhub/pages/login/login.php");
     exit();
 }
 

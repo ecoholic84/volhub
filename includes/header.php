@@ -32,7 +32,7 @@ ob_start();
                 <!-- Left side (logo and mobile menu button) -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="/miniProject/includes/dashboard.php" class="flex items-center space-x-2 font-extrabold text-white">
+                        <a href="/volhub/includes/dashboard.php" class="flex items-center space-x-2 font-extrabold text-white">
                             <span
                                 class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-900 rounded-full bg-gradient-to-br from-white via-gray-200 to-white">
                                 <svg class="w-auto h-5 -translate-y-px" viewBox="0 0 69 66" fill="none"
@@ -91,7 +91,7 @@ ob_start();
     class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1"
     style="display: none;">
-    <a href="/miniProject/pages/profile/profile-edit.php"
+    <a href="/volhub/pages/profile/profile-edit.php"
         class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
         tabindex="-1" id="user-menu-item-0">Your Profile</a>
     <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
@@ -126,10 +126,10 @@ ob_start();
     $is_organizer_dashboard = strpos($current_dashboard, 'org-dashboard.php') !== false;
 
     // Set up URLs for different scenarios
-    $volunteer_dashboard_url = "/miniProject/includes/dashboard.php";
-    $organizer_dashboard_url = "/miniProject/includes/org-dashboard.php";
-    $create_volunteer_profile_url = "/miniProject/pages/profile/vol-profile-creation.php"; // Adjust this URL
-    $create_organizer_profile_url = "/miniProject/pages/profile/org-profile-creation.php"; // Adjust this URL
+    $volunteer_dashboard_url = "/volhub/includes/dashboard.php";
+    $organizer_dashboard_url = "/volhub/includes/org-dashboard.php";
+    $create_volunteer_profile_url = "/volhub/pages/profile/vol-profile-creation.php"; // Adjust this URL
+    $create_organizer_profile_url = "/volhub/pages/profile/org-profile-creation.php"; // Adjust this URL
 
     // Determine appropriate URLs and text based on current dashboard and profile existence
     if ($is_organizer_dashboard) {
@@ -150,7 +150,7 @@ ob_start();
         </a>
     <?php } ?>
 
-    <a href="/miniProject/includes/signout.php"
+    <a href="/volhub/includes/signout.php"
         class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem"
         tabindex="-1" id="user-menu-item-2">Sign out</a>
 </div>
@@ -204,7 +204,7 @@ ob_start();
                         </p>
                     </div>
                     <div class="order-3 mt-2 w-full flex-shrink-0 sm:order-2 sm:mt-0 sm:w-auto">
-                        <a href="/miniProject/pages/profile/profile-creation.php" class="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-indigo-600 shadow-sm hover:bg-indigo-50">Complete now</a>
+                        <a href="/volhub/pages/profile/profile-creation.php" class="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-indigo-600 shadow-sm hover:bg-indigo-50">Complete now</a>
                     </div>
                     <div class="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
                         <button type="button" @click="show = false" class="-mr-1 flex rounded-md p-2 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2">

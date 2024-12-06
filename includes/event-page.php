@@ -4,7 +4,7 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION["usersid"])) {
-    header("Location: miniProject/pages/login/login.php?error=notLoggedIn");
+    header("Location: volhub/pages/login/login.php?error=notLoggedIn");
     exit();
 }
 
@@ -320,11 +320,11 @@ mysqli_close($con);
             if (!basicComplete) {
                 modalTitle.textContent = 'Basic Profile Incomplete';
                 modalMessage.textContent = 'Please complete your basic profile first to register for events.';
-                profileRedirectBtn.href = '/miniProject/pages/profile/profile-creation.php';
+                profileRedirectBtn.href = '/volhub/pages/profile/profile-creation.php';
             } else if (!volunteerComplete) {
                 modalTitle.textContent = 'Volunteer Profile Incomplete';
                 modalMessage.textContent = 'Please complete your volunteer profile to register for events.';
-                profileRedirectBtn.href = '/miniProject/pages/profile/vol-profile-creation.php';
+                profileRedirectBtn.href = '/volhub/pages/profile/vol-profile-creation.php';
             }
             profileModal.classList.remove('hidden');
         }

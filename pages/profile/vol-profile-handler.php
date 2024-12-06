@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_close($stmt);
 
     
-            header("Location: /miniProject/includes/dashboard.php?profile=created");
+            header("Location: /volhub/includes/dashboard.php?profile=created");
             exit();
         }
 } else {

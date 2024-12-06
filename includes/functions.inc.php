@@ -134,7 +134,7 @@ function loginUser($con, $email, $pwd)
 
             // Redirect to the dashboard
             if ($row["role"] === 'admin') {
-                header("Location: /miniProject/includes/admin-dashboard.php");
+                header("Location: /volhub/includes/admin-dashboard.php");
             } else {
                 // Assuming we already have the user's information in $row
                 // and it includes a 'user_type' field that can be 'volunteer', 'organizer', or 'both'
@@ -143,18 +143,18 @@ function loginUser($con, $email, $pwd)
                     case 'both':
                     case 'volunteer':
                         // If user is both or volunteer, redirect to volunteer dashboard
-                        header("Location: /miniProject/includes/dashboard.php");
+                        header("Location: /volhub/includes/dashboard.php");
                         break;
                     
                     case 'organizer':
                         // If user is organizer only, redirect to organizer dashboard
-                        header("Location: /miniProject/includes/org-dashboard.php");
+                        header("Location: /volhub/includes/org-dashboard.php");
                         break;
                     
                     default:
                         // If user_type is not set or is something else, 
                         // redirect to create volunteer profile
-                        header("Location: /miniProject/pages/profile/vol-profile-creation.php");
+                        header("Location: /volhub/pages/profile/vol-profile-creation.php");
                 }
             }
             exit();

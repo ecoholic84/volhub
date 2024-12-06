@@ -45,7 +45,7 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
         $phone = 'Your Phone Number';
         $city = 'Your City';
         $links = '';
-        $profile_picture = '/miniProject/images/default_profile.webp'; // Path to your default profile picture
+        $profile_picture = '/volhub/images/default_profile.webp'; // Path to your default profile picture
     }
 }
 
@@ -137,7 +137,7 @@ mysqli_stmt_close($stmt);
             <div class="p-8">
                 <h2 class="text-3xl font-bold text-center text-blue-400 mb-8">Edit Profile</h2>
 
-                <form action="/miniProject/pages/profile/profile-edit-handler.php" method="POST" enctype="multipart/form-data">
+                <form action="/volhub/pages/profile/profile-edit-handler.php" method="POST" enctype="multipart/form-data">
                     <!-- Profile Picture -->
                     <div class="mb-6 text-center">
                         <label for="profile_picture" class="block text-gray-300 font-semibold mb-2">Profile Picture</label>

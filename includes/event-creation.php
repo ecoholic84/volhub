@@ -24,10 +24,10 @@ mysqli_stmt_close($orgStmt);
 
 // If either profile is incomplete, redirect to appropriate profile page
 if (!$basicProfileComplete) {
-    header("Location: /miniProject/pages/profile/profile-creation.php");
+    header("Location: /volhub/pages/profile/profile-creation.php");
     exit();
 } elseif (!$organizerProfileComplete) {
-    header("Location: /miniProject/pages/profile/org-profile-creation.php");
+    header("Location: /volhub/pages/profile/org-profile-creation.php");
     exit();
 }
 
