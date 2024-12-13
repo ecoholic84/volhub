@@ -30,6 +30,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
             header("Location: /volhub/includes/dashboard.php?profile=created");
             exit();
+        } elseif (isset($_POST['skip_profile'])) {
+            // Just update the users table to mark as volunteer
+            $sql = "UPDATE users SET volunteer = '1' WHERE usersId = ?";
+            $stmt = mysqli_prepare($con, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $user_id);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+
+            // Create an empty volunteer profile
+            createVolunteerProfile($con, $user_id, '', '');
+
+            header("Location: /volhub/includes/dashboard.php?profile=skipped");
+            exit();
         }
 } else {
     header("Location: ../login/login.php");

@@ -36,6 +36,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         header("Location: ../../includes/org-dashboard.php?profile=created");
         exit();
+    } elseif (isset($_POST['skip_profile'])) {
+        // Just update the users table to mark as organizer
+        $sql = "UPDATE users SET organizer = '1' WHERE usersId = ?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+        // Create an empty organizer profile
+        createOrganizerProfile($con, $user_id, '', '', '', '', '', '');
+
+        header("Location: ../../includes/org-dashboard.php?profile=skipped");
+        exit();
     }
 }
 else {

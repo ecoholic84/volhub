@@ -202,7 +202,10 @@ if ($orgProfileExists) {
                 </div>
             </div>
             <div class="mt-4 pb-10 flex items-center justify-end gap-x-6">
-                <button type="button" class="text-sm font-semibold leading-6 text-white">Cancel</button>
+                <a href="../../includes/org-dashboard.php" 
+                   class="text-sm font-semibold leading-6 text-white hover:text-gray-300">
+                    Skip for now
+                </a>
                 <button type="submit" name="organizer_profile"
                     class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
             </div>
