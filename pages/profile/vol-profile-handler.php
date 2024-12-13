@@ -25,6 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
+            // Update volunteer profile completion status
+            updateVolProfileStatus($con, $user_id);
     
             header("Location: /volhub/includes/dashboard.php?profile=created");
             exit();

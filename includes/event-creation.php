@@ -1,14 +1,14 @@
 <?php
 // Check profile completion status
 $userId = $_SESSION["usersid"];
-$profileCheckQuery = "SELECT profile_completed FROM users WHERE usersId = ?";
+$profileCheckQuery = "SELECT profile_completed FROM user_profiles WHERE profile_usersId = ?";
 $profileStmt = mysqli_stmt_init($con);
 mysqli_stmt_prepare($profileStmt, $profileCheckQuery);
 mysqli_stmt_bind_param($profileStmt, "i", $userId);
 mysqli_stmt_execute($profileStmt);
 $profileResult = mysqli_stmt_get_result($profileStmt);
 $profileData = mysqli_fetch_assoc($profileResult);
-$basicProfileComplete = $profileData['profile_completed'];
+$basicProfileComplete = $profileData ? $profileData['profile_completed'] : false;
 mysqli_stmt_close($profileStmt);
 
 // Check organizer profile completion

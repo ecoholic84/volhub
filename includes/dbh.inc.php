@@ -33,8 +33,7 @@ $table_create = "CREATE TABLE IF NOT EXISTS users (
     role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
     user_type SET('volunteer', 'organizer', 'both') NOT NULL DEFAULT 'volunteer',
     volunteer BOOLEAN DEFAULT 0,
-    organizer BOOLEAN DEFAULT 0,
-    profile_completed BOOLEAN DEFAULT 0
+    organizer BOOLEAN DEFAULT 0
 )";
 
 $table2_create = "CREATE TABLE IF NOT EXISTS user_profiles (
@@ -52,6 +51,7 @@ $table2_create = "CREATE TABLE IF NOT EXISTS user_profiles (
     graduation_month VARCHAR(20),
     graduation_year INT,
     links TEXT,
+    profile_completed BOOLEAN DEFAULT 0,
     FOREIGN KEY (profile_usersId) REFERENCES users(usersId) ON DELETE CASCADE
 )";
 

@@ -186,37 +186,40 @@ ob_start();
     }
 
     // Add this where you want the notification to appear
-    if (isset($_SESSION['usersid']) && needsProfileCompletion($con, $_SESSION['usersid']) && shouldShowNotification()) {
-        echo '
-        <div class="bg-indigo-600" x-data="{ show: true }" x-show="show">
-            <div class="mx-auto max-w-7xl py-3 px-3 sm:px-6 lg:px-8">
-                <div class="flex flex-wrap items-center justify-between">
-                    <div class="flex w-0 flex-1 items-center">
-                        <span class="flex rounded-lg bg-indigo-800 p-2">
-                            <!-- Heroicon name: outline/megaphone -->
-                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                            </svg>
-                        </span>
-                        <p class="ml-3 truncate font-medium text-white">
-                            <span class="md:hidden">Complete your profile!</span>
-                            <span class="hidden md:inline">Your profile is incomplete. Complete it to get better opportunities!</span>
-                        </p>
-                    </div>
-                    <div class="order-3 mt-2 w-full flex-shrink-0 sm:order-2 sm:mt-0 sm:w-auto">
-                        <a href="/volhub/pages/profile/profile-creation.php" class="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-indigo-600 shadow-sm hover:bg-indigo-50">Complete now</a>
-                    </div>
-                    <div class="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
-                        <button type="button" @click="show = false" class="-mr-1 flex rounded-md p-2 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2">
-                            <span class="sr-only">Dismiss</span>
-                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+    if (isset($_SESSION['usersid']) && shouldShowNotification()) {
+        $profileStatus = checkProfileStatus($con, $_SESSION["usersid"]);
+        if (!$profileStatus['basic_complete']) {
+            echo '
+            <div class="bg-indigo-600" x-data="{ show: true }" x-show="show">
+                <div class="mx-auto max-w-7xl py-3 px-3 sm:px-6 lg:px-8">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div class="flex w-0 flex-1 items-center">
+                            <span class="flex rounded-lg bg-indigo-800 p-2">
+                                <!-- Heroicon name: outline/megaphone -->
+                                <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                                </svg>
+                            </span>
+                            <p class="ml-3 truncate font-medium text-white">
+                                <span class="md:hidden">Complete your profile!</span>
+                                <span class="hidden md:inline">Your profile is incomplete. Complete it to get better opportunities!</span>
+                            </p>
+                        </div>
+                        <div class="order-3 mt-2 w-full flex-shrink-0 sm:order-2 sm:mt-0 sm:w-auto">
+                            <a href="/volhub/pages/profile/profile-creation.php" class="flex items-center justify-center rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-indigo-600 shadow-sm hover:bg-indigo-50">Complete now</a>
+                        </div>
+                        <div class="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
+                            <button type="button" @click="show = false" class="-mr-1 flex rounded-md p-2 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2">
+                                <span class="sr-only">Dismiss</span>
+                                <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>';
+            </div>';
+        }
     }
 
     ?>

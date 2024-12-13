@@ -126,20 +126,9 @@ else
         <div class="px-4 py-2 rounded-md">
             <?php 
             // Check if profiles are complete before showing create event button
-            $basicProfileComplete = $userData['profile_completed'];
-            
-            // Check organizer profile completion
-            $orgProfileQuery = "SELECT org_profile_completed FROM user_profiles_org WHERE userid = ?";
-            $orgStmt = mysqli_stmt_init($con);
-            mysqli_stmt_prepare($orgStmt, $orgProfileQuery);
-            mysqli_stmt_bind_param($orgStmt, "i", $user_id);
-            mysqli_stmt_execute($orgStmt);
-            $orgResult = mysqli_stmt_get_result($orgStmt);
-            $orgData = mysqli_fetch_assoc($orgResult);
-            $organizerProfileComplete = $orgData ? $orgData['org_profile_completed'] : false;
-            mysqli_stmt_close($orgStmt);
+            $profileStatus = checkProfileStatus($con, $user_id);
 
-            if (!$basicProfileComplete || !$organizerProfileComplete) {
+            if (!$profileStatus['basic_complete'] || !$profileStatus['org_complete']) {
                 echo '<button onclick="showProfileModal()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">
                         Create Event
                       </button>';
@@ -175,18 +164,17 @@ else
 
     <script>
     function showProfileModal() {
-        const basicComplete = <?php echo $basicProfileComplete ? 'true' : 'false' ?>;
-        const organizerComplete = <?php echo $organizerProfileComplete ? 'true' : 'false' ?>;
+        const profileStatus = <?php echo json_encode(checkProfileStatus($con, $user_id)); ?>;
         const profileModal = document.getElementById('profileModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
         const profileRedirectBtn = document.getElementById('profileRedirectBtn');
 
-        if (!basicComplete) {
+        if (!profileStatus.basic_complete) {
             modalTitle.textContent = 'Basic Profile Incomplete';
             modalMessage.textContent = 'Please complete your basic profile first to create events.';
             profileRedirectBtn.href = '/volhub/pages/profile/profile-creation.php';
-        } else if (!organizerComplete) {
+        } else if (!profileStatus.org_complete) {
             modalTitle.textContent = 'Organization Profile Incomplete';
             modalMessage.textContent = 'Please complete your organization profile to create events.';
             profileRedirectBtn.href = '/volhub/pages/profile/org-profile-creation.php';

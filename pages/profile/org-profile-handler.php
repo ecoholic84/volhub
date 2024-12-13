@@ -4,7 +4,7 @@ include "../../includes/functions.inc.php";
 session_start();
 
 if (isset($_SESSION['usersid'])) {
-    echo $user_id = $_SESSION['usersid'];
+    $user_id = $_SESSION['usersid'];
 } 
 else {
     // Handle error or redirect to login
@@ -30,6 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_stmt_bind_param($stmt, "i", $user_id);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
+
+        // Update organizer profile completion status
+        updateOrgProfileStatus($con, $user_id);
 
         header("Location: ../../includes/org-dashboard.php?profile=created");
         exit();

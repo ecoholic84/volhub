@@ -10,14 +10,14 @@ if (!isset($_SESSION["usersid"])) {
 
 // Check profile completion status
 $userId = $_SESSION["usersid"];
-$profileCheckQuery = "SELECT profile_completed FROM users WHERE usersId = ?";
+$profileCheckQuery = "SELECT profile_completed FROM user_profiles WHERE profile_usersId = ?";
 $profileStmt = mysqli_stmt_init($con);
 mysqli_stmt_prepare($profileStmt, $profileCheckQuery);
 mysqli_stmt_bind_param($profileStmt, "i", $userId);
 mysqli_stmt_execute($profileStmt);
 $profileResult = mysqli_stmt_get_result($profileStmt);
 $profileData = mysqli_fetch_assoc($profileResult);
-$basicProfileComplete = $profileData['profile_completed'];
+$basicProfileComplete = $profileData ? $profileData['profile_completed'] : false;
 
 // Check volunteer profile completion
 $volProfileQuery = "SELECT vol_profile_completed FROM user_profiles_vol WHERE userid = ?";
@@ -314,14 +314,17 @@ mysqli_close($con);
         const profileRedirectBtn = document.getElementById('profileRedirectBtn');
 
         function showProfileModal() {
-            const basicComplete = <?php echo $basicProfileComplete ? 'true' : 'false' ?>;
-            const volunteerComplete = <?php echo $volunteerProfileComplete ? 'true' : 'false' ?>;
+            const profileStatus = <?php echo json_encode(checkProfileStatus($con, $userId)); ?>;
+            const profileModal = document.getElementById('profileModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const profileRedirectBtn = document.getElementById('profileRedirectBtn');
 
-            if (!basicComplete) {
+            if (!profileStatus.basic_complete) {
                 modalTitle.textContent = 'Basic Profile Incomplete';
                 modalMessage.textContent = 'Please complete your basic profile first to register for events.';
                 profileRedirectBtn.href = '/volhub/pages/profile/profile-creation.php';
-            } else if (!volunteerComplete) {
+            } else if (!profileStatus.vol_complete) {
                 modalTitle.textContent = 'Volunteer Profile Incomplete';
                 modalMessage.textContent = 'Please complete your volunteer profile to register for events.';
                 profileRedirectBtn.href = '/volhub/pages/profile/vol-profile-creation.php';
