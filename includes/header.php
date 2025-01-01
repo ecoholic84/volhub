@@ -3,7 +3,7 @@
 require_once 'functions.inc.php';
 
 $user_id = $_SESSION['usersid'];
-$user_type = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : '';
+$user_type = $_SESSION['user_type'];
 $full_name = '';
 
 // Get user's name from database
