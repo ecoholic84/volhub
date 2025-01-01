@@ -264,119 +264,94 @@ mysqli_stmt_close($stmt);
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <!-- Contact Information -->
-                        <div>
-                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Contact Information</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="phone" class="block text-gray-300">Phone Number</label>
-                                    <input type="tel" name="phone" id="phone" placeholder="Your Phone Number"
-                                        value="<?php echo htmlspecialchars($phone); ?>" autocomplete="tel"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <div>
-                                    <label for="city" class="block text-gray-300">City</label>
-                                    <input type="text" name="city" id="city" placeholder="Your City"
-                                        value="<?php echo htmlspecialchars($city); ?>" autocomplete="address-level2"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
+                    <!-- Contact Information -->
+                    <div class="mt-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-400">Contact Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="phone" class="block text-gray-300">Phone Number</label>
+                                <input type="tel" name="phone" id="phone" placeholder="Your Phone Number"
+                                    value="<?php echo htmlspecialchars($phone); ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label for="city" class="block text-gray-300">City</label>
+                                <input type="text" name="city" id="city" placeholder="Your City"
+                                    value="<?php echo htmlspecialchars($city); ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
                             </div>
                         </div>
-
-                        <!-- Emergency Contact (for Volunteers) -->
-                        <?php if ($user_type === 'volunteer' || $user_type === 'both'): ?>
-                        <div>
-                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Emergency Contact</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="emergency-name" class="block text-gray-300">Emergency Contact
-                                        Name</label>
-                                    <input type="text" name="emergency-name" id="emergency-name"
-                                        placeholder="Emergency Contact Name"
-                                        value="<?php echo htmlspecialchars($emergency_name); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <div>
-                                    <label for="emergency-phone" class="block text-gray-300">Emergency Contact
-                                        Number</label>
-                                    <input type="tel" name="emergency-phone" id="emergency-phone"
-                                        placeholder="Emergency Contact Number"
-                                        value="<?php echo htmlspecialchars($emergency_phone); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-
-                        <!-- Organizer Details (for Organizers) -->
-                        <?php if ($user_type === 'organizer' || $user_type === 'both'): ?>
-                        <div>
-                            <h3 class="text-xl font-semibold mb-4 text-blue-400">Organizer Details</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="organization_name" class="block text-gray-300">Organization Name</label>
-                                    <input type="text" name="organization_name" id="organization_name"
-                                        placeholder="Organization Name"
-                                        value="<?php echo htmlspecialchars($organization_name); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <div>
-                                    <label for="job_title" class="block text-gray-300">Job Title</label>
-                                    <input type="text" name="job_title" id="job_title" placeholder="Job Title"
-                                        value="<?php echo htmlspecialchars($job_title); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <div>
-                                    <label for="industry" class="block text-gray-300">Industry</label>
-                                    <input type="text" name="industry" id="industry" placeholder="Industry"
-                                        value="<?php echo htmlspecialchars($industry); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <div>
-                                    <label for="location" class="block text-gray-300">Location</label>
-                                    <input type="text" name="location" id="location" placeholder="Location"
-                                        value="<?php echo htmlspecialchars($location); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                                <div>
-                                    <label for="official_address" class="block text-gray-300">Official Address</label>
-                                    <textarea name="official_address" id="official_address" rows="3"
-                                        placeholder="Official Address"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"><?php echo htmlspecialchars($official_address); ?></textarea>
-                                </div>
-                                <div>
-                                    <label for="official_contact_number" class="block text-gray-300">Official Contact
-                                        Number</label>
-                                    <input type="tel" name="official_contact_number" id="official_contact_number"
-                                        placeholder="Official Contact Number"
-                                        value="<?php echo htmlspecialchars($official_contact_number); ?>"
-                                        class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                </div>
-                            </div>
-                        </div>
-                        <?php endif; ?>
                     </div>
 
-                    <!-- Profile Creation Buttons -->
-                    <div class="mt-8 text-center space-y-4">
-                        <?php if ($user_type === 'volunteer'): ?>
-                        <a href="org-profile-creation.php"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-                            Create Your Organizer Profile
-                        </a>
-                        <?php endif; ?>
-                        <?php if ($user_type === 'organizer'): ?>
-                        <a href="vol-profile-creation.php"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-                            Create Your Volunteer Profile
-                        </a>
-                        <?php endif; ?>
+                    <!-- Emergency Contact Information -->
+                    <div class="mt-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-400">Emergency Contact Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="emergency-name" class="block text-gray-300">Emergency Contact Name</label>
+                                <input type="text" name="emergency-name" id="emergency-name"
+                                    placeholder="Emergency Contact Name"
+                                    value="<?php echo isset($emergency_name) ? htmlspecialchars($emergency_name) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label for="emergency-phone" class="block text-gray-300">Emergency Contact Phone</label>
+                                <input type="tel" name="emergency-phone" id="emergency-phone"
+                                    placeholder="Emergency Contact Phone"
+                                    value="<?php echo isset($emergency_phone) ? htmlspecialchars($emergency_phone) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mt-8 text-center">
+                    <!-- Organization Information -->
+                    <div class="mt-6">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-400">Organization Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="organization-name" class="block text-gray-300">Organization Name</label>
+                                <input type="text" name="organization-name" id="organization-name"
+                                    placeholder="Organization Name"
+                                    value="<?php echo isset($organization_name) ? htmlspecialchars($organization_name) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label for="job-title" class="block text-gray-300">Job Title</label>
+                                <input type="text" name="job-title" id="job-title" placeholder="Job Title"
+                                    value="<?php echo isset($job_title) ? htmlspecialchars($job_title) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label for="industry" class="block text-gray-300">Industry</label>
+                                <input type="text" name="industry" id="industry" placeholder="Industry"
+                                    value="<?php echo isset($industry) ? htmlspecialchars($industry) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div>
+                                <label for="location" class="block text-gray-300">Location</label>
+                                <input type="text" name="location" id="location" placeholder="Location"
+                                    value="<?php echo isset($location) ? htmlspecialchars($location) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="official-address" class="block text-gray-300">Official Address</label>
+                                <textarea name="official-address" id="official-address" rows="2"
+                                    placeholder="Official Address"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"><?php echo isset($official_address) ? htmlspecialchars($official_address) : ''; ?></textarea>
+                            </div>
+                            <div>
+                                <label for="official-contact" class="block text-gray-300">Official Contact Number</label>
+                                <input type="tel" name="official-contact" id="official-contact"
+                                    placeholder="Official Contact Number"
+                                    value="<?php echo isset($official_contact_number) ? htmlspecialchars($official_contact_number) : ''; ?>"
+                                    class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-center">
                         <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors">
                             Save Changes
                         </button>
                     </div>
