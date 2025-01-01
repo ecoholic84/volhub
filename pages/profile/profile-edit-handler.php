@@ -9,6 +9,43 @@ if (!isset($_SESSION["usersid"])) {
 
 $user_id = $_SESSION["usersid"];
 
+// Get current username
+$currentUsernameQuery = "SELECT username FROM user_profiles WHERE profile_usersId = ?";
+$currentStmt = mysqli_stmt_init($con);
+if (!mysqli_stmt_prepare($currentStmt, $currentUsernameQuery)) {
+    header("Location: profile-edit.php?error=sqlerror");
+    exit();
+}
+mysqli_stmt_bind_param($currentStmt, "i", $user_id);
+mysqli_stmt_execute($currentStmt);
+$currentResult = mysqli_stmt_get_result($currentStmt);
+$currentRow = mysqli_fetch_assoc($currentResult);
+$currentUsername = $currentRow ? $currentRow['username'] : '';
+mysqli_stmt_close($currentStmt);
+
+// Only check for username uniqueness if username is being changed
+$newUsername = trim($_POST['username']);
+if ($newUsername !== $currentUsername) {
+    // Check if username already exists (excluding current user)
+    $checkUsername = "SELECT profile_usersId FROM user_profiles WHERE username = ? AND profile_usersId != ?";
+    $checkStmt = mysqli_stmt_init($con);
+    if (!mysqli_stmt_prepare($checkStmt, $checkUsername)) {
+        header("Location: profile-edit.php?error=sqlerror");
+        exit();
+    }
+    mysqli_stmt_bind_param($checkStmt, "si", $newUsername, $user_id);
+    mysqli_stmt_execute($checkStmt);
+    mysqli_stmt_store_result($checkStmt);
+
+    if (mysqli_stmt_num_rows($checkStmt) > 0) {
+        // Username already exists
+        mysqli_stmt_close($checkStmt);
+        header("Location: profile-edit.php?error=usernametaken");
+        exit();
+    }
+    mysqli_stmt_close($checkStmt);
+}
+
 // Get user type
 $userTypeQuery = "SELECT user_type FROM users WHERE usersId = ?";
 $userTypeStmt = mysqli_stmt_init($con);
@@ -23,23 +60,21 @@ $userTypeRow = mysqli_fetch_assoc($userTypeResult);
 $user_type = $userTypeRow['user_type'];
 
 // Update basic profile information
-$sql = "INSERT INTO user_profiles (profile_usersId, full_name, username, identity, phone, city, bio, degree_type, 
-        institution, field_of_study, graduation_month, graduation_year, links, profile_completed) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1) 
-        ON DUPLICATE KEY UPDATE 
-        full_name = VALUES(full_name),
-        username = VALUES(username),
-        identity = VALUES(identity),
-        phone = VALUES(phone),
-        city = VALUES(city),
-        bio = VALUES(bio),
-        degree_type = VALUES(degree_type),
-        institution = VALUES(institution),
-        field_of_study = VALUES(field_of_study),
-        graduation_month = VALUES(graduation_month),
-        graduation_year = VALUES(graduation_year),
-        links = VALUES(links),
-        profile_completed = 1";
+$sql = "UPDATE user_profiles SET 
+        full_name = ?,
+        username = ?,
+        identity = ?,
+        phone = ?,
+        city = ?,
+        bio = ?,
+        degree_type = ?,
+        institution = ?,
+        field_of_study = ?,
+        graduation_month = ?,
+        graduation_year = ?,
+        links = ?,
+        profile_completed = 1
+        WHERE profile_usersId = ?";
 
 $stmt = mysqli_stmt_init($con);
 if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -47,10 +82,9 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
     exit();
 }
 
-mysqli_stmt_bind_param($stmt, "issssssssssis", 
-    $user_id,
+mysqli_stmt_bind_param($stmt, "ssssssssssssi", 
     $_POST['full-name'],
-    $_POST['username'],
+    $newUsername,
     $_POST['identity'],
     $_POST['phone'],
     $_POST['city'],
@@ -60,19 +94,27 @@ mysqli_stmt_bind_param($stmt, "issssssssssis",
     $_POST['field-of-study'],
     $_POST['graduation-month'],
     $_POST['graduation-year'],
-    $_POST['links']
+    $_POST['links'],
+    $user_id
 );
 
-mysqli_stmt_execute($stmt);
+if (!mysqli_stmt_execute($stmt)) {
+    // Check if the error is due to duplicate username (in case of race condition)
+    if (mysqli_errno($con) === 1062) { // 1062 is MySQL error code for duplicate entry
+        header("Location: profile-edit.php?error=usernametaken");
+        exit();
+    }
+    header("Location: profile-edit.php?error=sqlerror");
+    exit();
+}
 
 // Update volunteer profile if user is volunteer or both
 if ($user_type === 'volunteer' || $user_type === 'both') {
-    $volSql = "INSERT INTO user_profiles_vol (userid, emergency_name, emergency_phone, vol_profile_completed) 
-               VALUES (?, ?, ?, 1)
-               ON DUPLICATE KEY UPDATE 
-               emergency_name = VALUES(emergency_name),
-               emergency_phone = VALUES(emergency_phone),
-               vol_profile_completed = 1";
+    $volSql = "UPDATE user_profiles_vol SET 
+               emergency_name = ?,
+               emergency_phone = ?,
+               vol_profile_completed = 1
+               WHERE userid = ?";
     
     $volStmt = mysqli_stmt_init($con);
     if (!mysqli_stmt_prepare($volStmt, $volSql)) {
@@ -80,10 +122,10 @@ if ($user_type === 'volunteer' || $user_type === 'both') {
         exit();
     }
     
-    mysqli_stmt_bind_param($volStmt, "iss",
-        $user_id,
+    mysqli_stmt_bind_param($volStmt, "ssi",
         $_POST['emergency-name'],
-        $_POST['emergency-phone']
+        $_POST['emergency-phone'],
+        $user_id
     );
     
     mysqli_stmt_execute($volStmt);
@@ -91,17 +133,15 @@ if ($user_type === 'volunteer' || $user_type === 'both') {
 
 // Update organizer profile if user is organizer or both
 if ($user_type === 'organizer' || $user_type === 'both') {
-    $orgSql = "INSERT INTO user_profiles_org (userid, organization_name, job_title, industry, location, 
-               official_address, official_contact_number, org_profile_completed) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, 1)
-               ON DUPLICATE KEY UPDATE 
-               organization_name = VALUES(organization_name),
-               job_title = VALUES(job_title),
-               industry = VALUES(industry),
-               location = VALUES(location),
-               official_address = VALUES(official_address),
-               official_contact_number = VALUES(official_contact_number),
-               org_profile_completed = 1";
+    $orgSql = "UPDATE user_profiles_org SET 
+               organization_name = ?,
+               job_title = ?,
+               industry = ?,
+               location = ?,
+               official_address = ?,
+               official_contact_number = ?,
+               org_profile_completed = 1
+               WHERE userid = ?";
     
     $orgStmt = mysqli_stmt_init($con);
     if (!mysqli_stmt_prepare($orgStmt, $orgSql)) {
@@ -109,14 +149,14 @@ if ($user_type === 'organizer' || $user_type === 'both') {
         exit();
     }
     
-    mysqli_stmt_bind_param($orgStmt, "issssss",
-        $user_id,
+    mysqli_stmt_bind_param($orgStmt, "ssssssi",
         $_POST['organization-name'],
         $_POST['job-title'],
         $_POST['industry'],
         $_POST['location'],
         $_POST['official-address'],
-        $_POST['official-contact']
+        $_POST['official-contact'],
+        $user_id
     );
     
     mysqli_stmt_execute($orgStmt);
