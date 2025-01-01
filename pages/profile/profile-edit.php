@@ -135,18 +135,6 @@ mysqli_stmt_close($stmt);
             <div class="p-8">
                 <h2 class="text-3xl font-bold text-center text-blue-400 mb-8">Edit Profile</h2>
 
-                <?php if (isset($_GET['error']) && $_GET['error'] == 'usernametaken'): ?>
-                <div class="mb-6 p-4 bg-red-500 text-white rounded-lg">
-                    <p class="text-center">This username is already taken. Please choose a different one.</p>
-                </div>
-                <?php endif; ?>
-
-                <?php if (isset($_GET['success']) && $_GET['success'] == 'updated'): ?>
-                <div class="mb-6 p-4 bg-green-500 text-white rounded-lg">
-                    <p class="text-center">Profile updated successfully!</p>
-                </div>
-                <?php endif; ?>
-
                 <form action="/volhub/pages/profile/profile-edit-handler.php" method="POST">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Personal Information -->

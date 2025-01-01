@@ -40,7 +40,7 @@ $table2_create = "CREATE TABLE IF NOT EXISTS user_profiles (
     profile_id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     profile_usersId INT(11) UNSIGNED NOT NULL,
     full_name VARCHAR(255) NOT NULL,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL,
     identity VARCHAR(20),
     phone VARCHAR(20),
     city VARCHAR(50),
