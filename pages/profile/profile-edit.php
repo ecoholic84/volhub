@@ -138,15 +138,6 @@ mysqli_stmt_close($stmt);
                 <h2 class="text-3xl font-bold text-center text-blue-400 mb-8">Edit Profile</h2>
 
                 <form action="/volhub/pages/profile/profile-edit-handler.php" method="POST" enctype="multipart/form-data">
-                    <!-- Profile Picture -->
-                    <div class="mb-6 text-center">
-                        <label for="profile_picture" class="block text-gray-300 font-semibold mb-2">Profile Picture</label>
-                        <input type="file" name="profile_picture" id="profile_picture" class="hidden">
-                        <label for="profile_picture" class="cursor-pointer">
-                            <img src="uploads/<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture"
-                                class="rounded-full w-32 h-32 mx-auto object-cover border-2 border-gray-700">
-                        </label>
-                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Personal Information -->

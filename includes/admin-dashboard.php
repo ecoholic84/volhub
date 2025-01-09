@@ -25,12 +25,16 @@ if (isset($_POST['approve_event']) || isset($_POST['reject_event'])) {
     mysqli_stmt_close($stmt);
 }
 
-// Fetch all events
-$sql_events = "SELECT e.*, u.usersEmail as organizer_email, up.full_name as organizer_name, upo.organization_name 
+// Fetch all events with the fixed query
+$sql_events = "SELECT DISTINCT e.*, 
+               u.usersEmail as organizer_email, 
+               up.full_name as organizer_name, 
+               upo.organization_name 
                FROM events e
                LEFT JOIN users u ON e.organizer_id = u.usersId
                LEFT JOIN user_profiles up ON u.usersId = up.profile_usersId
                LEFT JOIN user_profiles_org upo ON u.usersId = upo.userid
+               GROUP BY e.event_id
                ORDER BY e.event_id DESC";
 $result_events = mysqli_query($con, $sql_events);
 
@@ -39,7 +43,6 @@ $totalUsers = mysqli_fetch_assoc(mysqli_query($con, "SELECT COUNT(*) as count FR
 $totalEvents = mysqli_fetch_assoc(mysqli_query($con, "SELECT COUNT(*) as count FROM events"))['count'];
 $totalVolunteers = mysqli_fetch_assoc(mysqli_query($con, "SELECT COUNT(*) as count FROM users WHERE volunteer = 1"))['count'];
 $totalOrganizers = mysqli_fetch_assoc(mysqli_query($con, "SELECT COUNT(*) as count FROM users WHERE organizer = 1"))['count'];
-
 ?>
 
 <!DOCTYPE html>
@@ -154,94 +157,78 @@ $totalOrganizers = mysqli_fetch_assoc(mysqli_query($con, "SELECT COUNT(*) as cou
         </div>
     </div>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const eventHeaders = document.querySelectorAll('.event-header');
-    const searchInput = document.getElementById('searchInput');
-    const sortSelect = document.getElementById('sortSelect');
-    const eventsList = document.getElementById('eventsList');
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventHeaders = document.querySelectorAll('.event-header');
+            const searchInput = document.getElementById('searchInput');
+            const sortSelect = document.getElementById('sortSelect');
+            const eventsList = document.getElementById('eventsList');
 
-    // Toggle event details
-    eventHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-            const eventId = this.getAttribute('data-event-id');
-            const details = document.getElementById(`event-${eventId}`);
-            const arrow = this.querySelector('svg');
-            details.classList.toggle('hidden');
-            arrow.classList.toggle('rotate-180');
-        });
-    });
+            // Toggle event details
+            eventHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const eventId = this.getAttribute('data-event-id');
+                    const details = document.getElementById(`event-${eventId}`);
+                    const arrow = this.querySelector('svg');
+                    details.classList.toggle('hidden');
+                    arrow.classList.toggle('rotate-180');
+                });
+            });
 
-    // Search functionality
-    searchInput.addEventListener('input', filterEvents);
+            // Search functionality
+            searchInput.addEventListener('input', filterEvents);
 
-    // Sort functionality
-    sortSelect.addEventListener('change', sortEvents);
+            // Sort functionality
+            sortSelect.addEventListener('change', sortEvents);
 
-    function filterEvents() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const events = document.querySelectorAll('.event-card');
+            function filterEvents() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const events = document.querySelectorAll('.event-card');
 
-        events.forEach(event => {
-            const eventName = event.getAttribute('data-event-name');
-            if (eventName.includes(searchTerm)) {
-                event.style.display = '';
-            } else {
-                event.style.display = 'none';
+                events.forEach(event => {
+                    const eventName = event.getAttribute('data-event-name');
+                    if (eventName.includes(searchTerm)) {
+                        event.style.display = '';
+                    } else {
+                        event.style.display = 'none';
+                    }
+                });
+            }
+
+            function sortEvents() {
+                const sortBy = sortSelect.value;
+                const events = Array.from(document.querySelectorAll('.event-card'));
+
+                events.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'name':
+                            return a.getAttribute('data-event-name').localeCompare(b.getAttribute('data-event-name'));
+                        case 'date':
+                            return new Date(a.getAttribute('data-event-date')) - new Date(b.getAttribute('data-event-date'));
+                        case 'status':
+                            return b.getAttribute('data-event-status') - a.getAttribute('data-event-status');
+                        default:
+                            return 0;
+                    }
+                });
+
+                events.forEach(event => eventsList.appendChild(event));
+            }
+
+            // Notification handling
+            const notification = document.getElementById('notification');
+            if (notification) {
+                setTimeout(() => {
+                    closeNotification();
+                }, 2000);
             }
         });
-    }
 
-    function sortEvents() {
-        const sortBy = sortSelect.value;
-        const events = Array.from(document.querySelectorAll('.event-card'));
-
-        events.sort((a, b) => {
-            switch (sortBy) {
-                case 'name':
-                    return a.getAttribute('data-event-name').localeCompare(b.getAttribute('data-event-name'));
-                case 'date':
-                    return new Date(a.getAttribute('data-event-date')) - new Date(b.getAttribute('data-event-date'));
-                case 'status':
-                    return b.getAttribute('data-event-status') - a.getAttribute('data-event-status');
-                case 'pending':
-                    return sortByStatus(a, b, '0', '1');
-                case 'approved':
-                    return sortByStatus(a, b, '1', '1');
-                case 'rejected':
-                    return sortByStatus(a, b, '0', '0');
-                default:
-                    return 0;
+        function closeNotification() {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.style.display = 'none';
             }
-        });
-
-        events.forEach(event => eventsList.appendChild(event));
-    }
-
-    function sortByStatus(a, b, adminApprove, regStatus) {
-        const aMatch = a.getAttribute('data-event-status') === adminApprove && a.getAttribute('data-event-reg-status') === regStatus;
-        const bMatch = b.getAttribute('data-event-status') === adminApprove && b.getAttribute('data-event-reg-status') === regStatus;
-        
-        if (aMatch && !bMatch) return -1;
-        if (!aMatch && bMatch) return 1;
-        return 0;
-    }
-
-    // Notification handling
-    const notification = document.getElementById('notification');
-    if (notification) {
-        setTimeout(() => {
-            closeNotification();
-        }, 2000);
-    }
-});
-
-function closeNotification() {
-    const notification = document.getElementById('notification');
-    if (notification) {
-        notification.style.display = 'none';
-    }
-}
-</script>
+        }
+    </script>
 </body>
 </html>
-
